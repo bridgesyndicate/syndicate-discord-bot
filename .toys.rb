@@ -22,11 +22,11 @@ tool 'create-command' do
     client = DiscordApi.new(bot_token: token)
     definition = {
       name: "q",
-      description: "Hop into the scrim queue",
+      description: "Hop into the scrims queue",
       options: [
         {
           name: 'gamemode',
-          description: 'The size of teams',
+          description: 'Size of teams',
           type: 3,
           required: true,
           choices: [
