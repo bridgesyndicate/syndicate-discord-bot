@@ -1,0 +1,12 @@
+{
+  "name": "deletablecommand",
+  "description": "This can be deleted",
+  "options": [
+    {
+      "type": 5,
+      "name": "icecream",
+      "description": "do you want it",
+      "required": false
+    }
+  ]
+}

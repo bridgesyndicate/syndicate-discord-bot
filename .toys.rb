@@ -14,9 +14,20 @@ tool 'list-commands' do
   end
 end
 
+tool 'delete-command' do
+  flag :token, '--token TOKEN'
+  flag :command_id, '--command-id ID'
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: token)
+    result = client.delete_command(command_id)
+    puts JSON.pretty_generate(result)
+  end
+end
+
 tool 'create-command' do
   flag :token, '--token TOKEN'
-
+  
   def run
     require_relative 'discord_api'
     client = DiscordApi.new(bot_token: token)

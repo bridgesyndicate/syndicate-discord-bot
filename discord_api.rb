@@ -15,6 +15,11 @@ class DiscordApi
       call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands")
     end
 
+    def delete_command(command_id)
+      call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands/#{command_id}",
+                method: :delete)
+    end
+
     def create_command(command_definition)
       definition_json = JSON.dump(command_definition)
       headers = {"Content-Type" => "application/json"}
