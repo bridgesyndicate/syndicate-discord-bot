@@ -1,6 +1,15 @@
 Lists commands in guild '855996952348327946'
+
+use toys
+bundle exec toys list-commands | jq '.[].id'
+
 curl -v https://discord.com/api/v8/applications/856369764729618432/guilds/855996952348327946/commands -H 'Authorization: Bot ODU2MzY5NzY0NzI5NjE4NDMy.YNACfg.0EfzhPl44YdmsYvLl8RyTvVyHHs'
+
 Creates command specified in the file @foo
 curl -v -H "Content-Type: application/json" -d @deletable.json https://discord.com/api/v8/applications/856369764729618432/guilds/855996952348327946/commands -H 'Authorization: Bot ODU2MzY5NzY0NzI5NjE4NDMy.YNACfg.0EfzhPl44YdmsYvLl8RyTvVyHHs'
+
 Deletes command '857332689231937597'
+
+bundle exec toys delete-command --command-id 856377574757367818
+
 curl -v -X "DELETE" https://discord.com/api/v8/applications/856369764729618432/guilds/855996952348327946/commands/857332689231937597 -H 'Authorization: Bot ODU2MzY5NzY0NzI5NjE4NDMy.YNACfg.0EfzhPl44YdmsYvLl8RyTvVyHHs'
