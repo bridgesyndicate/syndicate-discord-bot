@@ -25,7 +25,7 @@ tool 'delete-command' do
   end
 end
 
-tool 'create-command' do  
+tool 'create-command' do
   def run
     require_relative 'discord_api'
     client = DiscordApi.new(bot_token: $token)
@@ -34,29 +34,17 @@ tool 'create-command' do
       description: "Hop into the scrims queue",
       options: [
         {
-          name: 'gamemode',
-          description: 'Size of teams',
+          name: 'red',
+          description: 'Comma-separated list of red team',
           type: 3,
           required: true,
-          choices: [
-            {
-              name: '1v1',
-              value: '1v1'
-            },
-            {
-              name: '2v2',
-              value: '2v2'
-            },
-            {
-              name: '3v3',
-              value: '3v3'
-            },
-            {
-              name: '4v4',
-              value: '4v4'
-            }
-          ]
-        }
+        },
+        {
+          name: 'blue',
+          description: 'Comma-separated list of blue team',
+          type: 3,
+          required: true
+        },
       ]
     }
     result = client.create_command(definition)
