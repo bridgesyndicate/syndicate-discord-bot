@@ -10,3 +10,4 @@ gem "faraday", "~> 1.4"
 gem "functions_framework", "~> 0.9"
 gem 'discordrb', github: 'shardlab/discordrb', branch: 'slash_commands'
 gem 'aws-sigv4'
+gem 'aws-sdk-secretsmanager'

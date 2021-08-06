@@ -5,10 +5,15 @@
 require 'discordrb'
 require 'aws-sigv4'
 
+libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
+$LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
+
+require 'secrets.rb'
+
 WAITING_ROOM_ID = 855996952348327950
 BASE_URL = 'https://knopfnsxoh.execute-api.us-west-2.amazonaws.com/Prod/auth/game'
 
-bot = Discordrb::Bot.new token: 'ODU2MzY5NzY0NzI5NjE4NDMy.YNACfg.0EfzhPl44YdmsYvLl8RyTvVyHHs'
+bot = Discordrb::Bot.new token: Secrets.instance.get_secret('DISCORD_BOT_TOKEN')
 
 def make_game_json(red, blue)
   match = {
@@ -26,8 +31,8 @@ def send_game_to_syndicate_web_service(game_json)
   signer = Aws::Sigv4::Signer.new(
                                   service: 'execute-api',
                                   region: 'us-west-2',
-                                  access_key_id: 'AKIAYVJYQ7DNBK4E3CVM',
-                                  secret_access_key: 'foo'
+                                  access_key_id: ENV['AWS_ACCESS_KEY_ID'],
+                                  secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
                                   )
 
   signature = signer.sign_request(
@@ -63,11 +68,11 @@ bot.message do |event|
   event.respond "processed message #{$message_number}"
   unless event.user.voice_channel.nil?
     unless event.user.voice_channel.id == WAITING_ROOM_ID
-      event.respond "you are not in the Waiting ROom"
+      event.respond "you are not in the Waiting Room"
       event.respond "your voice channel is: #{event.user.voice_channel.name}"
       event.respond "your voice channel is: #{event.user.voice_channel.id}"
     else
-      event.respond 'you are in the waitingdifjn rooosdfosdfm'
+      event.respond 'you are in the waiting room'
     end
   else
     event.respond 'you must be in a voice channel'
