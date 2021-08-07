@@ -15,13 +15,13 @@ BASE_URL = 'https://knopfnsxoh.execute-api.us-west-2.amazonaws.com/Prod/auth/gam
 
 bot = Discordrb::Bot.new token: Secrets.instance.get_secret('DISCORD_BOT_TOKEN')
 
-def make_game_json(red, blue)
+def make_game_json(red, blue, goals, length)
   match = {
     blueTeam: blue.split(/,\s*/),
     redTeam:  red.split(/,\s*/),
     requiredPlayers: blue.split(/,\s*/).size + red.split(/,\s*/).size,
-    goalsToWin: 3,
-    gameLengthInSeconds: 300
+    goalsToWin: goals,
+    gameLengthInSeconds: length
   }
   JSON.pretty_generate(match)
 end
@@ -49,13 +49,20 @@ def send_game_to_syndicate_web_service(game_json)
     req[header] = signature.headers[header]
   end
   req.body = game_json
-  https.request(req).body
+  ret = https.request(req)
+  if ret.class == Net::HTTPSuccess
+    return ret.body
+  else
+    return ret.to_s
+  end
 end
 
 bot.application_command(:q) do |event|
   red = event.options['red']
   blue = event.options['blue']
-  game_json = make_game_json(red, blue)
+  goals = event.options['goals'] || 4
+  length = event.options['length'] || 600
+  game_json = make_game_json(red, blue, goals, length)
   event.respond(content: "your game is #{red} vs. #{blue} with json of #{game_json} #{send_game_to_syndicate_web_service(game_json)}")
 end
 

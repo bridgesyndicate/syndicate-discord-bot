@@ -1,4 +1,12 @@
-$token = 'ODU2MzY5NzY0NzI5NjE4NDMy.YNACfg.0EfzhPl44YdmsYvLl8RyTvVyHHs'
+require 'discordrb'
+require 'aws-sigv4'
+
+libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
+$LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
+
+require 'secrets.rb'
+
+$token = Secrets.instance.get_secret('DISCORD_BOT_TOKEN')
 
 tool 'hello' do
   def run
@@ -45,6 +53,47 @@ tool 'create-command' do
           type: 3,
           required: true
         },
+        {
+          name: 'goals',
+          description: 'Number of goals to win',
+          type: 4,
+          required: false,
+          choices: [
+            {
+                name: "1",
+                value: 1
+            },
+            {
+              name: "2",
+              value: 2
+            },
+            {
+              name: "3",
+              value: 3
+            },
+          ]
+        },
+        {
+          name: 'length',
+          description: 'Length of game in minutes',
+          type: 4,
+          required: false,
+          choices: [
+            {
+                name: "5",
+                value: 300
+            },
+            {
+              name: "10",
+              value: 600
+            },
+            {
+              name: "15",
+              value: 900
+            },
+          ]
+        },
+
       ]
     }
     result = client.create_command(definition)
