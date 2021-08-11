@@ -100,7 +100,7 @@ def sqs_client
   )
 end
 
-WEBHOOK_URL = Secrets.instance.get_secret('discord-webhook-url')['DISCORD_WEBHOOK_URL']
+# WEBHOOK_URL = Secrets.instance.get_secret('discord-webhook-url')['DISCORD_WEBHOOK_URL']
 
 def discord_webhook_client
   client ||= Discordrb::Webhooks::Client.new(url: WEBHOOK_URL)
