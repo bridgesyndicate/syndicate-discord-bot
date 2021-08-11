@@ -1,14 +1,16 @@
 require 'singleton'
 require 'aws-sdk-secretsmanager'
 require 'base64'
+require 'aws_credentials'
 
 class Secrets
   include Singleton
   attr_accessor :client
 
   def initialize
-    region_name = "us-west-2"  
-    @client = Aws::SecretsManager::Client.new(region: region_name)
+    @client = Aws::SecretsManager::Client.new(
+      region: AwsCredentials.instance.region,
+      credentials: AwsCredentials.instance.credentials)
   end
 
   def get_secret(secret_key)

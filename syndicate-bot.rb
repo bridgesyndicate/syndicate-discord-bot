@@ -18,7 +18,7 @@ require 'secrets.rb'
 WAITING_ROOM_ID = 855996952348327950
 BASE_URL = 'https://knopfnsxoh.execute-api.us-west-2.amazonaws.com/Prod/auth/game'
 
-# bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
 
 def make_game_json(red, blue, goals, length)
   match = {
@@ -34,9 +34,9 @@ end
 
 def send_game_to_syndicate_web_service(game_json)
   signer = Aws::Sigv4::Signer.new(
-                                  service: 'execute-api'
-                                  )
-
+    service: 'execute-api',
+    credentials: AwsCredentials.instance.credentials,
+    region: AwsCredentials.instance.region)
   signature = signer.sign_request(
                                   http_method: 'POST',
                                   url: BASE_URL,
@@ -59,7 +59,6 @@ def send_game_to_syndicate_web_service(game_json)
   end
 end
 
-if false
 bot.application_command(:q) do |event|
   red = event.options['red']
   blue = event.options['blue']
@@ -90,24 +89,15 @@ bot.message do |event|
     end
   end
 end
-end
 
-def sqs_client
-  $sqs_client ||= Aws::SQS::Client.new(
-    region: 'us-west-2',
-    access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-    secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
-  )
-end
+$sqs_client = Aws::SQS::Client.new(credentials: AwsCredentials.instance.credentials)
 
-# WEBHOOK_URL = Secrets.instance.get_secret('discord-webhook-url')['DISCORD_WEBHOOK_URL']
+WEBHOOK_URL = Secrets.instance.get_secret('discord-webhook-url')['DISCORD_WEBHOOK_URL']
 
-def discord_webhook_client
-  client ||= Discordrb::Webhooks::Client.new(url: WEBHOOK_URL)
-end
+$discord_webhook_client = Discordrb::Webhooks::Client.new(url: WEBHOOK_URL)
 
 def send_discord_webhook(msg)
-  discord_webhook_client.execute do |builder|
+  $discord_webhook_client.execute do |builder|
     builder.add_embed do |embed|
       embed.title = msg
       embed.description = 'New IP for Direct Connect'
@@ -115,9 +105,6 @@ def send_discord_webhook(msg)
     end
   end
 end
-# def discord_bot_client
-#   bot ||= Discordrb::Bot.new token: Secrets.instance.get_secret('DISCORD_BOT_TOKEN')
-# end
 
 # binding.pry;1
 
@@ -125,7 +112,7 @@ SQS_QUEUE_URL='https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_produc
 
 def poll_sqs
   while true
-    puts "polling sqs with #{sqs_client}"
+    puts "polling sqs with #{$sqs_client} and #{AwsCredentials.instance.credentials}"
     res = $sqs_client.receive_message({
       queue_url: SQS_QUEUE_URL,
     })
@@ -141,12 +128,7 @@ def poll_sqs
   end
 end
 
-#t = Thread.new { poll_sqs }
+t = Thread.new { poll_sqs }
 
-#bot.run
-#t.join
-
-while true
-  puts 'running'
-  sleep 5
-end
+bot.run
+t.join
