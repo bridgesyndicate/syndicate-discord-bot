@@ -18,7 +18,7 @@ require 'secrets.rb'
 WAITING_ROOM_ID = 855996952348327950
 BASE_URL = 'https://knopfnsxoh.execute-api.us-west-2.amazonaws.com/Prod/auth/game'
 
-bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+# bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
 
 def make_game_json(red, blue, goals, length)
   match = {
@@ -34,10 +34,7 @@ end
 
 def send_game_to_syndicate_web_service(game_json)
   signer = Aws::Sigv4::Signer.new(
-                                  service: 'execute-api',
-                                  region: 'us-west-2',
-                                  access_key_id: ENV['AWS_ACCESS_KEY_ID'],
-                                  secret_access_key: ENV['AWS_SECRET_ACCESS_KEY']
+                                  service: 'execute-api'
                                   )
 
   signature = signer.sign_request(
@@ -62,6 +59,7 @@ def send_game_to_syndicate_web_service(game_json)
   end
 end
 
+if false
 bot.application_command(:q) do |event|
   red = event.options['red']
   blue = event.options['blue']
@@ -71,7 +69,7 @@ bot.application_command(:q) do |event|
   event.respond(content: "your game is #{red} vs. #{blue} with json of #{game_json} #{send_game_to_syndicate_web_service(game_json)}")
 end
 
-$message_number = 0
+# $message_number = 0
 
 bot.message do |event|
   # $message_number += 1
@@ -91,6 +89,7 @@ bot.message do |event|
       event.respond 'you must be in a voice channel'
     end
   end
+end
 end
 
 def sqs_client
@@ -142,7 +141,12 @@ def poll_sqs
   end
 end
 
-t = Thread.new { poll_sqs }
+#t = Thread.new { poll_sqs }
 
-bot.run
-t.join
+#bot.run
+#t.join
+
+while true
+  puts 'running'
+  sleep 5
+end
