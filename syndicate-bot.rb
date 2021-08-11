@@ -51,12 +51,7 @@ def send_game_to_syndicate_web_service(game_json)
     req[header] = signature.headers[header]
   end
   req.body = game_json
-  ret = https.request(req)
-  if ret.class == Net::HTTPSuccess
-    return ret.body
-  else
-    return ret.to_s
-  end
+  return https.request(req)
 end
 
 bot.application_command(:q) do |event|
@@ -65,7 +60,8 @@ bot.application_command(:q) do |event|
   goals = event.options['goals'] || 5
   length = event.options['length'] || 900
   game_json = make_game_json(red, blue, goals, length)
-  event.respond(content: "your game is #{red} vs. #{blue} with json of #{game_json} #{send_game_to_syndicate_web_service(game_json)}")
+  response = send_game_to_syndicate_web_service(game_json)
+  event.respond(content: "your game is #{red} vs. #{blue} with json of #{game_json} status: #{response.code} response body: #{response.body}")
 end
 
 # $message_number = 0
