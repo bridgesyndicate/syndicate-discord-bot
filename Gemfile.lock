@@ -25,6 +25,9 @@ GEM
     aws-sdk-secretsmanager (1.48.0)
       aws-sdk-core (~> 3, >= 3.119.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-sqs (1.42.0)
+      aws-sdk-core (~> 3, >= 3.119.0)
+      aws-sigv4 (~> 1.1)
     aws-sigv4 (1.2.4)
       aws-eventstream (~> 1, >= 1.0.2)
     cloud_events (0.4.0)
@@ -87,6 +90,7 @@ PLATFORMS
 
 DEPENDENCIES
   aws-sdk-secretsmanager
+  aws-sdk-sqs
   aws-sigv4
   discordrb!
   ed25519 (~> 1.2)

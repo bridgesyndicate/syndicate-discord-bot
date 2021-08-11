@@ -4,19 +4,16 @@ require 'base64'
 
 class Secrets
   include Singleton
-  attr_accessor :secret
-
-  def get_secret(secret_key)
-    @secret[secret_key]
-  end
+  attr_accessor :client
 
   def initialize
-    secret_name = "discord-bot-token"
     region_name = "us-west-2"  
-    client = Aws::SecretsManager::Client.new(region: region_name)
+    @client = Aws::SecretsManager::Client.new(region: region_name)
+  end
 
+  def get_secret(secret_key)
     begin
-      get_secret_value_response = client.get_secret_value(secret_id: secret_name)
+      get_secret_value_response = @client.get_secret_value(secret_id: secret_key)
     rescue Aws::SecretsManager::Errors::DecryptionFailure => e
       # Secrets Manager can't decrypt the protected secret text using the provided KMS key.
       # Deal with the exception here, and/or rethrow at your discretion.
@@ -46,7 +43,7 @@ class Secrets
       else
         secret_json = decoded_binary_secret = Base64.decode64(get_secret_value_response.secret_binary)
       end
-      @secret = JSON.parse(secret_json)
+      JSON.parse(secret_json)
     end
   end
 end
