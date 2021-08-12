@@ -8,6 +8,8 @@ require 'aws-sigv4'
 require 'aws-sdk-sqs'
 # require 'pry'
 
+$stdout.sync = true
+
 Thread.abort_on_exception = true
 
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
@@ -107,6 +109,7 @@ end
 SQS_QUEUE_URL='https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_production_player_messages'
 
 def poll_sqs
+  $stdout.sync = true
   while true
     puts "polling sqs with #{$sqs_client} and #{AwsCredentials.instance.credentials}"
     res = $sqs_client.receive_message({
