@@ -111,7 +111,6 @@ SQS_QUEUE_URL='https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_produc
 def poll_sqs
   $stdout.sync = true
   while true
-    puts "polling sqs with #{$sqs_client} and #{AwsCredentials.instance.credentials}"
     res = $sqs_client.receive_message({
       queue_url: SQS_QUEUE_URL,
     })
@@ -123,7 +122,7 @@ def poll_sqs
         receipt_handle: message[:receipt_handle]
       })
     end
-    sleep 5
+    sleep 1
   end
 end
 
