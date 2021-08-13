@@ -28,7 +28,8 @@ def make_game_json(red, blue, goals, length)
     redTeam:  red.split(/,\s*/),
     requiredPlayers: blue.split(/,\s*/).size + red.split(/,\s*/).size,
     goalsToWin: goals,
-    gameLengthInSeconds: length
+    gameLengthInSeconds: length,
+    queuedAt: Time.now.utc.iso8601
   }
   JSON.pretty_generate(match)
 end
