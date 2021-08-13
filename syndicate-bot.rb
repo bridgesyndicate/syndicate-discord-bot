@@ -2,6 +2,7 @@
 
 # frozen_string_literal: true
 
+require 'time'
 require 'discordrb'
 require 'discordrb/webhooks'
 require 'aws-sigv4'
