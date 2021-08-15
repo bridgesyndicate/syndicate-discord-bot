@@ -114,7 +114,8 @@ def poll_sqs
   $stdout.sync = true
   while true
     res = $sqs_client.receive_message({
-      queue_url: SQS_QUEUE_URL,
+                                        queue_url: SQS_QUEUE_URL,
+                                        wait_time_seconds: 20
     })
     unless res.to_h[:messages].nil?
       message = res.to_h[:messages][0]
