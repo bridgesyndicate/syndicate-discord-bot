@@ -30,7 +30,9 @@ GEM
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.2.4)
       aws-eventstream (~> 1, >= 1.0.2)
+    byebug (11.1.3)
     cloud_events (0.4.0)
+    coderay (1.1.3)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     ed25519 (1.2.4)
@@ -57,6 +59,7 @@ GEM
     http-cookie (1.0.4)
       domain_name (~> 0.5)
     jmespath (1.4.0)
+    method_source (1.0.0)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0704)
@@ -65,6 +68,12 @@ GEM
     nio4r (2.5.7)
     opus-ruby (1.0.1)
       ffi
+    pry (0.13.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    pry-byebug (3.9.0)
+      byebug (~> 11.0)
+      pry (~> 0.13.0)
     puma (5.3.2)
       nio4r (~> 2.0)
     rack (2.2.3)
@@ -96,6 +105,7 @@ DEPENDENCIES
   ed25519 (~> 1.2)
   faraday (~> 1.4)
   functions_framework (~> 0.9)
+  pry-byebug
   toys
 
 BUNDLED WITH

@@ -4,20 +4,23 @@ require "json"
 class DiscordApi
     DISCORD_APPLICATION_ID = "856369764729618432"
     DISCORD_GUILD_ID = "855996952348327946"
-    
+
     def initialize(bot_token:)
       @client_id = DISCORD_APPLICATION_ID
       @guild_id = DISCORD_GUILD_ID
       @bot_token = bot_token
     end
-    
+
     def list_commands
       call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands")
+#      call_api("/applications/#{@client_id}/commands")
     end
 
     def delete_command(command_id)
       call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands/#{command_id}",
                 method: :delete)
+#      call_api("/applications/#{@client_id}/commands/#{command_id}",
+#                method: :delete)
     end
 
     def create_command(command_definition)
@@ -27,10 +30,10 @@ class DiscordApi
               method: :post,
               body: definition_json,
               headers: headers)
-    end  
-    
+    end
+
     private
-    
+
     def call_api(path,
                method: :get,
                body: nil,

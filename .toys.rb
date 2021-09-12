@@ -1,12 +1,14 @@
 require 'discordrb'
 require 'aws-sigv4'
+require 'bundler'
+Bundler.require
 
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
 require 'secrets.rb'
 
-$token = Secrets.instance.get_secret('DISCORD_BOT_TOKEN')
+$token = Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
 
 tool 'hello' do
   def run
@@ -33,7 +35,28 @@ tool 'delete-command' do
   end
 end
 
-tool 'create-command' do
+tool 'create-register-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'verify',
+      description: 'Use a kick code to complete your registration',
+      options: [
+        {
+          name: 'kick-code',
+          description: 'The kick code provided by our Minecraft server',
+          type: 3,
+          required: true,
+        }
+      ]
+    }
+    result = client.create_command(definition)
+    puts JSON.pretty_generate(result)
+  end
+end
+
+tool 'create-queue-command' do
   def run
     require_relative 'discord_api'
     client = DiscordApi.new(bot_token: $token)
