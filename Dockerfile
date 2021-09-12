@@ -12,5 +12,5 @@ RUN set -eux; \
     	cd; \
 	bundle install
 
-CMD cd; bundle exec ruby syndicate-bot.rb
+CMD cd; ./syndicate-bot.rb
 
