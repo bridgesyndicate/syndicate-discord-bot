@@ -35,6 +35,28 @@ tool 'delete-command' do
   end
 end
 
+tool 'create-duel-command' do
+  def run
+    require_relative 'discord_api'
+    require_relative 'game_options'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'duel',
+      description: 'Challenge a verified player to a game of Bridge',
+      options: [
+        {
+          name: 'opponent',
+          description: 'Your opponent',
+          type: 6,
+          required: true,
+        }
+      ].concat(game_options)
+    }
+    result = client.create_command(definition)
+    puts JSON.pretty_generate(result)
+  end
+end
+
 tool 'create-register-command' do
   def run
     require_relative 'discord_api'
@@ -49,82 +71,6 @@ tool 'create-register-command' do
           type: 3,
           required: true,
         }
-      ]
-    }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
-tool 'create-queue-command' do
-  def run
-    require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: "q",
-      description: "Hop into the scrims queue",
-      options: [
-        {
-          name: 'red',
-          description: 'Comma-separated list of red team',
-          type: 3,
-          required: true,
-        },
-        {
-          name: 'blue',
-          description: 'Comma-separated list of blue team',
-          type: 3,
-          required: true
-        },
-        {
-          name: 'goals',
-          description: 'Number of goals to win',
-          type: 4,
-          required: false,
-          choices: [
-            {
-                name: "1",
-                value: 1
-            },
-            {
-              name: "2",
-              value: 2
-            },
-            {
-              name: "3",
-              value: 3
-            },
-            {
-              name: "4",
-              value: 4
-            },
-            {
-              name: "5",
-              value: 5
-            }
-          ]
-        },
-        {
-          name: 'length',
-          description: 'Length of game in minutes',
-          type: 4,
-          required: false,
-          choices: [
-            {
-                name: "5",
-                value: 300
-            },
-            {
-              name: "10",
-              value: 600
-            },
-            {
-              name: "15",
-              value: 900
-            },
-          ]
-        },
-
       ]
     }
     result = client.create_command(definition)

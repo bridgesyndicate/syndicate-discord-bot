@@ -8,7 +8,7 @@ gem 'toys'
 gem "ed25519", "~> 1.2"
 gem "faraday", "~> 1.4"
 gem "functions_framework", "~> 0.9"
-gem 'discordrb', github: 'shardlab/discordrb', branch: 'slash_commands'
+gem 'discordrb', github: 'shardlab/discordrb', branch: 'main'
 gem 'aws-sigv4'
 gem 'aws-sdk-secretsmanager'
 gem 'aws-sdk-sqs'
