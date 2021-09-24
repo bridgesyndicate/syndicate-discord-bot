@@ -4,12 +4,8 @@
 require 'bundler'
 require 'time'
 Bundler.require
-#require 'time'
 require 'discordrb'
 require 'discordrb/webhooks'
-#require 'aws-sigv4'
-#require 'aws-sdk-sqs'
-# require 'pry'
 
 $stdout.sync = true
 
@@ -171,6 +167,9 @@ bot.button(custom_id: /^duel_accept_uuid_/) do |event|
   uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
   discord_id = event.user.id.to_s
   ret = accept_game_syndicate_web_service(uuid, discord_id)
+  puts ret.inspect
+  puts ret.body
+  puts ret.to_hash.inspect
   event.update_message(content: "Accepted duel #{uuid}")
 end
 

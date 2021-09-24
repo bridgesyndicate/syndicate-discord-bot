@@ -1,0 +1,4 @@
+519c519
+<         @author = bot.ensure_user(data['author'] || data['member']['user'])
+---
+> #        @author = bot.ensure_user(data['author'] || data['member']['user'])

@@ -10,7 +10,8 @@ ADD syn-bot.tar /root
 
 RUN set -eux; \
     	cd; \
-	bundle install
+	bundle install; \
+	find . -name interaction.rb
 
 CMD cd; ./syndicate-bot.rb
 
