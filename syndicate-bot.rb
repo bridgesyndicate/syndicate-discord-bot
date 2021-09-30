@@ -7,10 +7,6 @@ Bundler.require
 require 'discordrb'
 require 'discordrb/webhooks'
 
-$stdout.sync = true
-
-Thread.abort_on_exception = true
-
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
@@ -84,66 +80,4 @@ bot.application_command(:verify) do |event|
   end
 end
 
-WAITING_ROOM_ID = 855996952348327950
-
-bot.message do |event|
-  # $message_number += 1
-  # puts event.inspect
-
-  # event.respond "processed message #{$message_number}"
-  if false
-    unless event.user.voice_channel.nil?
-      unless event.user.voice_channel.id == WAITING_ROOM_ID
-        event.respond "you are not in the Waiting Room"
-        event.respond "your voice channel is: #{event.user.voice_channel.name}"
-        event.respond "your voice channel is: #{event.user.voice_channel.id}"
-      else
-        event.respond 'you are in the waiting room'
-      end
-    else
-      event.respond 'you must be in a voice channel'
-    end
-  end
-end
-
-$sqs_client = Aws::SQS::Client.new(credentials: AwsCredentials.instance.credentials)
-
-WEBHOOK_URL = Secrets.instance.get_secret('discord-webhook-url')['DISCORD_WEBHOOK_URL']
-
-$discord_webhook_client = Discordrb::Webhooks::Client.new(url: WEBHOOK_URL)
-
-def send_discord_webhook(msg)
-  $discord_webhook_client.execute do |builder|
-    builder.add_embed do |embed|
-      embed.title = msg
-      embed.description = 'New IP for Direct Connect'
-      embed.timestamp = Time.now.utc.iso8601
-    end
-  end
-end
-
-SQS_QUEUE_URL='https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_production_player_messages'
-
-def poll_sqs
-  $stdout.sync = true
-  while true
-    res = $sqs_client.receive_message({
-                                        queue_url: SQS_QUEUE_URL,
-                                        wait_time_seconds: 20
-    })
-    unless res.to_h[:messages].nil?
-      message = res.to_h[:messages][0]
-      send_discord_webhook(JSON.parse(message[:body])["public_ip"])
-      $sqs_client.delete_message({
-        queue_url: SQS_QUEUE_URL,
-        receipt_handle: message[:receipt_handle]
-      })
-    end
-    sleep 1
-  end
-end
-
-t = Thread.new { poll_sqs }
-
 bot.run
-t.join
