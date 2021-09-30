@@ -59,10 +59,14 @@ bot.button(custom_id: /^duel_accept_uuid_/) do |event|
   uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
   discord_id = event.user.id.to_s
   ret = SyndicateWebService.accept_game_syndicate_web_service(uuid, discord_id)
-  puts ret.inspect
-  puts ret.body
-  puts ret.to_hash.inspect
-  event.update_message(content: "Accepted duel #{uuid}")
+  if status.class == Net::HTTPOK
+    event.update_message(content: "Accepted duel #{uuid}")
+  else
+    event.respond(content: "Something went wrong.")
+    puts ret.inspect
+    puts ret.body
+    puts ret.to_hash.inspect
+  end
 end
 
 bot.application_command(:verify) do |event|
