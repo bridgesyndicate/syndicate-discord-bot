@@ -77,3 +77,29 @@ tool 'create-register-command' do
     puts JSON.pretty_generate(result)
   end
 end
+
+tool 'create-queue-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'q',
+      description: 'Hop into the bridge queue.',
+    }
+    result = client.create_command(definition)
+    puts JSON.pretty_generate(result)
+  end
+end
+
+tool 'create-list-queue-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'list',
+      description: 'List the queue',
+    }
+    result = client.create_command(definition)
+    puts JSON.pretty_generate(result)
+  end
+end

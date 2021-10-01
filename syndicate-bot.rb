@@ -6,6 +6,7 @@ require 'time'
 Bundler.require
 require 'discordrb'
 require 'discordrb/webhooks'
+require 'rom-repository'
 
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
@@ -82,6 +83,14 @@ bot.application_command(:verify) do |event|
     event.user.add_role(role)
     event.respond(content: "You are now verified!")
   end
+end
+
+bot.application_command(:q) do |event|
+  event.respond(content: "Queued #{event.user.username}")
+end
+
+bot.application_command(:list) do |event|
+  event.respond(content: "The current queue is :")
 end
 
 bot.run
