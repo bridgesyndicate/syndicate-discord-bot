@@ -95,38 +95,44 @@ bot.application_command(:verify) do |event|
 end
 
 bot.application_command(:q) do |event|
-  # GET ELO FOR PLAYER
-  success = false
-  begin
-    puts "Request to join queue from #{event.user.id}, #{event.user.username}"
-    queue.queue_player(
-      {
-        discord_id: event.user.id,
-        discord_username: event.user.username,
-        queue_time: Time.now.to_i,
-#        elo: (event.user.username == 'ken') ? 800 : 1000
-      }
-    )
-    success = true
-  rescue ROM::SQL::UniqueConstraintError
-  end
-  if success
-    event.respond(content: "#{event.user.username} is queued. Click below to dequeue.") do |_, view|
-      view.row do |r|
-        r.button(
-          label: 'Dequeue',
-          style: :danger,
-          custom_id: 'XXXX'
-        )
-      end
-    end
+  unless event.user.roles.map { |v|
+           v.name.downcase }
+           .include?("verified")
+    event.respond(content: "You must be verified to queue.")
   else
-    event.respond(content: "You are already queued")
-  end
-  DelayedWorker.new(Ranked::MAX_QUEUE_TIME) do
+    # GET ELO FOR PLAYER
+    success = false
+    begin
+      puts "Request to join queue from #{event.user.id}, #{event.user.username}"
+      queue.queue_player(
+        {
+          discord_id: event.user.id,
+          discord_username: event.user.username,
+          queue_time: Time.now.to_i,
+          #        elo: (event.user.username == 'ken') ? 800 : 1000
+        }
+      )
+      success = true
+    rescue ROM::SQL::UniqueConstraintError
+    end
+    if success
+      event.respond(content: "#{event.user.username} is queued. Click below to dequeue.") do |_, view|
+        view.row do |r|
+          r.button(
+            label: 'Dequeue',
+            style: :danger,
+            custom_id: 'XXXX'
+          )
+        end
+      end
+    else
+      event.respond(content: "You are already queued")
+    end
+    DelayedWorker.new(Ranked::MAX_QUEUE_TIME) do
+      GameMaker.from_match(queue.process_queue)
+    end.run
     GameMaker.from_match(queue.process_queue)
-  end.run
-  GameMaker.from_match(queue.process_queue)
+  end
 end
 
 bot.application_command(:list) do |event|
