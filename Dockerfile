@@ -4,7 +4,8 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		build-essential \
-		git
+		git \
+		libsqlite3-dev
 
 ADD syn-bot.tar /root
 
