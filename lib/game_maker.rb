@@ -1,7 +1,8 @@
 class GameMaker
   def self.from_match(match)
     unless match.nil?
-      puts "Making game from match: #{match}"
+      puts "Making match player A: #{match.playerA.discord_id}, #{match.playerA.discord_username}"
+      puts "Making match player B: #{match.playerB.discord_id}, #{match.playerB.discord_username}"
       blue_team_discord_ids = [match.playerA.discord_id.to_s]
       blue_team_discord_names = [match.playerA.discord_username]
       red_team_discord_ids = [match.playerB.discord_id.to_s]
