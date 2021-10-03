@@ -42,8 +42,8 @@ class Ranked
       end
       if queue.size == 2
         if within_elo(queue.all[0], queue.all[1])
-          return new_match(queue.all[0].discord_id,
-                           queue.all[1].discord_id)
+          return new_match(queue.all[0],
+                           queue.all[1])
         else
           return nil
         end

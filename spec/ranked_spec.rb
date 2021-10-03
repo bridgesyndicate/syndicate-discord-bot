@@ -33,12 +33,28 @@ RSpec.describe '#ranked' do
         elo: 750
       }
     }
+    let(:p4) {
+      {
+        discord_id: rand(100),
+        discord_username: 'ellis',
+        queue_time: now,
+        elo: 550
+      }
+    }
 
     describe 'with one player queued' do
       it 'keeps the player queued' do
         @queue.queue_player(p1)
         expect(@queue.process_queue).to eq nil
         expect(@queue.size).to eq 1
+      end
+    end
+    describe 'with two players who are elo-matchable queued' do
+      it 'keeps the player queued' do
+        @queue.queue_player(p1)
+        @queue.queue_player(p4)
+        expect(@queue.process_queue).to be_a Ranked::Match
+        expect(@queue.size).to eq 0
       end
     end
     describe 'with two players who are not elo-matchable queued' do

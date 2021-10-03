@@ -12,10 +12,18 @@ libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
 require 'syndicate_web_service'
+require 'ranked'
+require 'helpers'
+require 'game_maker'
+require 'delayed_worker'
 
 bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
+
+queue = Ranked::Queue.new
+
+Thread.abort_on_exception = true
 
 bot.application_command(:duel) do |event|
   blue_team_discord_ids = [event.user.id.to_s]
@@ -24,7 +32,8 @@ bot.application_command(:duel) do |event|
   red_team_discord_names = red_team_discord_ids.map {|id| event.server.member(id).username}
   goals = event.options['goals'] || 5
   length = event.options['length'] || 900
-  game_json = SyndicateWebService.make_game_json(
+  game = SyndicateWebService.make_game(
+    via: 'discord duel slash command',
     blue_team_discord_ids: blue_team_discord_ids,
     red_team_discord_ids: red_team_discord_ids,
     blue_team_discord_names: blue_team_discord_names,
@@ -32,7 +41,7 @@ bot.application_command(:duel) do |event|
     goals: goals,
     length: length
   )
-
+  game_json = JSON.pretty_generate(game)
   status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
 
   if status.class == Net::HTTPOK
@@ -86,11 +95,45 @@ bot.application_command(:verify) do |event|
 end
 
 bot.application_command(:q) do |event|
-  event.respond(content: "Queued #{event.user.username}")
+  # GET ELO FOR PLAYER
+  success = false
+  begin
+    puts "Request to join queue from #{event.user.id}, #{event.user.username}"
+    queue.queue_player(
+      {
+        discord_id: event.user.id,
+        discord_username: event.user.username,
+        queue_time: Time.now.to_i,
+#        elo: (event.user.username == 'ken') ? 800 : 1000
+      }
+    )
+    success = true
+  rescue ROM::SQL::UniqueConstraintError
+  end
+  if success
+    event.respond(content: "#{event.user.username} is queued. Click below to dequeue.") do |_, view|
+      view.row do |r|
+        r.button(
+          label: 'Dequeue',
+          style: :danger,
+          custom_id: 'XXXX'
+        )
+      end
+    end
+  else
+    event.respond(content: "You are already queued")
+  end
+  DelayedWorker.new(Ranked::MAX_QUEUE_TIME) do
+    GameMaker.from_match(queue.process_queue)
+  end.run
+  GameMaker.from_match(queue.process_queue)
 end
 
 bot.application_command(:list) do |event|
-  event.respond(content: "The current queue is :")
+  queue_members = queue.queue.all
+                    .map{ |u| "#{u.discord_username}|#{u.elo}" }
+                    .join(', ')
+  event.respond(content: "The current queue is : #{queue_members}")
 end
 
 bot.run

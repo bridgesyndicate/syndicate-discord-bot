@@ -9,32 +9,42 @@ class SyndicateWebService
     end
   end
 
-  def self.make_game_json(blue_team_discord_ids:,
+  def self.add_acceptance(game, discord_id)
+    game[:accepted_by_discord_ids].push(
+      {
+        discord_id: discord_id,
+        accepted_at: Time.now.utc.iso8601
+      }
+    )
+    return game
+  end
+
+  def self.make_game(blue_team_discord_ids:,
                      blue_team_discord_names:,
                      red_team_discord_ids:,
                      red_team_discord_names:,
                      goals:,
-                     length:
+                     length:,
+                     via:
                     )
-    match = {
+    {
       uuid: SecureRandom.uuid,
       blue_team_discord_ids: blue_team_discord_ids,
       blue_team_discord_names: blue_team_discord_names,
       red_team_discord_ids: red_team_discord_ids,
       red_team_discord_names: red_team_discord_names,
       required_players: blue_team_discord_ids.size + red_team_discord_ids.size,
+      goals_to_win: goals,
+      game_length_in_seconds: length,
+      queued_at: Time.now.utc.iso8601,
       accepted_by_discord_ids: blue_team_discord_ids.map{ |id|
         {
           discord_id: id,
           accepted_at: Time.now.utc.iso8601
         }
       },
-      goals_to_win: goals,
-      game_length_in_seconds: length,
-      queued_at: Time.now.utc.iso8601,
-      queued_via: 'discord duel slash command'
+      queued_via: via
     }
-    JSON.pretty_generate(match)
   end
 
   def self.get_sigv4_signer
@@ -66,7 +76,11 @@ class SyndicateWebService
     end
     puts game_json if SYNDICATE_ENV == 'development'
     req.body = game_json
-    https.request(req)
+    begin
+      https.request(req)
+    rescue Exception => e
+      e
+    end
   end
 
   def self.register_with_syndicate_web_service(kick_code, discord_id)
