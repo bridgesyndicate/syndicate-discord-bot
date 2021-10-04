@@ -86,7 +86,7 @@ bot.application_command(:verify) do |event|
   when Net::HTTPBadRequest
     event.respond(content: "Invalid kick code format.")
   when Net::HTTPNotFound
-    event.respond(content: "Your kick code was not found.")
+    event.respond(content: "Your kick code was not found or is invalid.")
   when Net::HTTPOK
     role = event.server.roles.select {|e| e.name == 'verified'}
     event.user.add_role(role)
