@@ -83,6 +83,9 @@ bot.application_command(:verify) do |event|
   kick_code = event.options['kick-code']
   response = SyndicateWebService.register_with_syndicate_web_service(kick_code, event.user.id)
   case response
+  when Net::HTTPBadGateway
+    event.respond(content: "Something went wrong.")
+    puts "error. response is #{response}"
   when Net::HTTPBadRequest
     event.respond(content: "Invalid kick code format.")
   when Net::HTTPNotFound
@@ -99,40 +102,47 @@ bot.application_command(:q) do |event|
            v.name.downcase }
            .include?("verified")
     event.respond(content: "You must be verified to queue.")
-  else
-    # GET ELO FOR PLAYER
-    success = false
-    begin
-      puts "Request to join queue from #{event.user.id}, #{event.user.username}"
-      queue.queue_player(
-        {
-          discord_id: event.user.id,
-          discord_username: event.user.username,
-          queue_time: Time.now.to_i,
-          #        elo: (event.user.username == 'ken') ? 800 : 1000
-        }
-      )
-      success = true
-    rescue ROM::SQL::UniqueConstraintError
-    end
-    if success
-      event.respond(content: "#{event.user.username} is queued. Click below to dequeue.") do |_, view|
-        view.row do |r|
-          r.button(
-            label: 'Dequeue',
-            style: :danger,
-            custom_id: 'XXXX'
-          )
-        end
-      end
-    else
-      event.respond(content: "You are already queued")
-    end
-    DelayedWorker.new(Ranked::MAX_QUEUE_TIME) do
-      GameMaker.from_match(queue.process_queue)
-    end.run
-    GameMaker.from_match(queue.process_queue)
+    break
   end
+
+  puts "Request to join queue from #{event.user.id}, #{event.user.username}"
+
+  response = SyndicateWebService.get_user_record(event.user.id)
+  unless response.class == Net::HTTPOK
+    event.respond(content: "We encountered an error.")
+    puts "error: cannot fetch user for #{event.user.id}"
+    break
+  end
+
+  user = JSON.parse(response.body)
+  queue_params = {
+    discord_id: event.user.id,
+    discord_username: event.user.username,
+    queue_time: Time.now.to_i,
+  }
+  queue_params.merge!(elo: user['elo']) if user['elo']
+  puts "queue_params for #{event.user.id} are #{queue_params}"
+  begin
+    queue.queue_player(queue_params)
+  rescue ROM::SQL::UniqueConstraintError => e
+  end
+  if e.nil?
+    event.respond(content: "#{event.user.username} is queued. Click below to dequeue.") do |_, view|
+      view.row do |r|
+        r.button(
+          label: 'Dequeue',
+          style: :danger,
+          custom_id: 'XXXX'
+        )
+      end
+    end
+  else
+    event.respond(content: "You are already queued")
+  end
+  DelayedWorker.new(Ranked::MAX_QUEUE_TIME) do
+    GameMaker.from_match(queue.process_queue)
+  end.run
+  GameMaker.from_match(queue.process_queue)
 end
 
 bot.application_command(:list) do |event|

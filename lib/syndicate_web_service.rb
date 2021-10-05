@@ -83,6 +83,22 @@ class SyndicateWebService
     end
   end
 
+  def self.get_user_record(discord_id)
+    url = generate_knopfnsxoh_url("auth/user/by-discord-id/#{discord_id}")
+    signer = get_sigv4_signer
+    signature = sign_request(signer, 'GET', url, '')
+    uri = URI.parse(url)
+    https = Net::HTTP.new(uri.host,uri.port)
+    https.use_ssl = true unless SYNDICATE_ENV == 'development'
+    req = Net::HTTP::Get.new(uri.path)
+    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
+    header_list.each do |header|
+      req[header] = signature.headers[header]
+    end
+    req.body = ''
+    return https.request(req)
+  end
+
   def self.register_with_syndicate_web_service(kick_code, discord_id)
     url = generate_knopfnsxoh_url("auth/register/by-kick-code/#{kick_code}/discord-id/#{discord_id}")
     signer = get_sigv4_signer
