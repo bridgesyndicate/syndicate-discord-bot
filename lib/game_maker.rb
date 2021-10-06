@@ -16,8 +16,15 @@ class GameMaker
         blue_team_discord_names: blue_team_discord_names,
         red_team_discord_names: red_team_discord_names,
         goals: goals,
-        length: length
+        length: length,
       )
+      game = game.merge({
+                   :elo_before_game => {
+                     match.playerA.discord_id => match.playerA.elo,
+                     match.playerB.discord_id => match.playerB.elo
+                   }
+                 }
+                )
       game = SyndicateWebService.add_acceptance(game, match.playerB.discord_id.to_s)
       game_json = JSON.pretty_generate(game)
       status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
