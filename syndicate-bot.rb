@@ -16,6 +16,8 @@ require 'ranked'
 require 'helpers'
 require 'game_maker'
 require 'delayed_worker'
+require 'discord_embed_client'
+require 'sqs_poller'
 
 bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
 
@@ -152,4 +154,7 @@ bot.application_command(:list) do |event|
   event.respond(content: "The current queue is : #{queue_members}")
 end
 
+poller = SqsPoller.new
+poller.run
 bot.run
+poller.join
