@@ -4,7 +4,7 @@ require 'ranked/sql_tables'
 class Ranked
   class Storage
     def self.rom
-      if ENV['POSTGRES_URL'].nil?
+      if ENV['POSTGRES_HOST'].nil?
         MemoryTables.rom
       else
         SqlTables.rom
