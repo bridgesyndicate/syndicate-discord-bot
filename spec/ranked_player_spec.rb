@@ -16,7 +16,7 @@ RSpec.describe '#user model' do
     let(:num_users) { 3 }
 
     before(:each) do
-      rom = MemoryTables.rom
+      rom = Ranked::Storage.rom
       @players = Ranked::Player.new(rom)
     end
 

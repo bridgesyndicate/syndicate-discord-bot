@@ -1,4 +1,3 @@
-require 'memory_tables'
 require 'rom-repository'
 
 class Ranked

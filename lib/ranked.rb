@@ -1,4 +1,4 @@
-require 'memory_tables'
+require 'ranked/storage'
 require 'ranked/player'
 require 'ranked/match'
 require 'ranked/queue'
