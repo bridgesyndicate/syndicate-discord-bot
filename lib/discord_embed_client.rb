@@ -2,6 +2,9 @@ require 'time'
 require 'game'
 
 class DiscordEmbedClient
+  BRIDGE_ICON_THUMB = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'
+  BRIDGE_FQDN = 'bridgesyndicate.gg'
+  BRIDGE_HOME_URL = 'https://#{BRIDGE_FQDN}/'
   attr_accessor :discord_webhook_client
 
   def initialize
@@ -14,9 +17,22 @@ class DiscordEmbedClient
 
     discord_webhook_client.execute do |builder|
       builder.add_embed do |embed|
-        embed.title = 'New Game Results'
-        embed.description = game.description
+        embed.title = "Match Results"
+        embed.colour = '0x4b7bbf'
+        embed.url = "#{BRIDGE_HOME_URL}/g/#{game.uuid}"
         embed.timestamp = Time.now
+        embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail
+                            .new(url: BRIDGE_ICON_THUMB)
+        embed.author = Discordrb::Webhooks::EmbedAuthor
+                         .new(name: BRIDGE_FQDN,
+                              url: BRIDGE_HOME_URL,
+                              icon_url: BRIDGE_ICON_THUMB)
+        embed.add_field(name: ":regional_indicator_w:",
+                        value: "#{game.winner_names}\n#{game.winner_score}",
+                        inline: true)
+        embed.add_field(name: ":regional_indicator_l:",
+                        value: "#{game.loser_names}\n#{game.loser_score}",
+                        inline: true)
       end
     end
   end

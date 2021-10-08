@@ -1,9 +1,10 @@
 class Game
-  attr_accessor :game, :winner
+  attr_accessor :game, :winner, :uuid
 
   def initialize game
     @game = game
     @winner = winner
+    @uuid = game.uuid
   end
 
   def winner
