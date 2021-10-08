@@ -30,6 +30,9 @@ class GameMaker
       status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
       unless status.class == Net::HTTPOK
         puts "Error making game from match #{match}, #{status}"
+      else
+        embed = DiscordEmbedClient.instance
+        embed.send_new_game_alert(match)
       end
     end
   end
