@@ -11,13 +11,14 @@ require 'rom-repository'
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
-require 'syndicate_web_service'
-require 'ranked'
-require 'helpers'
-require 'game_maker'
 require 'delayed_worker'
 require 'discord_embed_client'
+require 'game_maker'
+require 'helpers'
+require 'leaderboard'
+require 'ranked'
 require 'sqs_poller'
+require 'syndicate_web_service'
 
 bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
 
@@ -152,6 +153,13 @@ bot.application_command(:list) do |event|
                     .map{ |u| "#{u.discord_username}|#{u.elo}" }
                     .join(', ')
   event.respond(content: "The current queue is : #{queue_members}")
+end
+
+bot.application_command(:lb) do |event|
+  rom = Leaderboard.rom
+  leaderboard = Leaderboard.new(rom).sort_by_elo
+  discord_embed_client = DiscordEmbedClient.instance
+  discord_embed_client.send_leaderboard(leaderboard)
 end
 
 poller = SqsPoller.new

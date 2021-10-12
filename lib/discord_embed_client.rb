@@ -1,5 +1,7 @@
+# coding: utf-8
 require 'time'
 require 'game'
+require 'singleton'
 
 class DiscordEmbedClient
   include Singleton
@@ -58,6 +60,35 @@ class DiscordEmbedClient
         embed.add_field(name: ":regional_indicator_l:",
                         value: "#{game.loser_names}\n#{game.loser_score}",
                         inline: true)
+      end
+    end
+  end
+
+  def format_discord_mention(id)
+    '<@' + id.to_s + '>'
+  end
+
+  def get_place_emoji(n)
+    (%w/:first_place: :second_place: :third_place: :four: :five: :six: :seven:
+       :eight: :nine: :keycap_ten:/)[n]
+  end
+
+  def build_description(leaderboard)
+    leaderboard.each_with_index.map do |leader, idx|
+      "#{get_place_emoji(idx)} #{format_discord_mention(leader.discord_id)} • #{leader.elo}"
+    end.join("\n")
+  end
+
+  def send_leaderboard(leaderboard)
+    discord_webhook_client.execute do |builder|
+      builder.add_embed do |embed|
+        embed.description = build_description(leaderboard)
+        embed.title = "Leaderboard"
+        embed.colour = '0x2f3137'
+        embed.timestamp = Time.now
+        embed.footer = Discordrb::Webhooks::EmbedFooter
+                         .new(text: "Season 0",
+                              icon_url: 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png')
       end
     end
   end

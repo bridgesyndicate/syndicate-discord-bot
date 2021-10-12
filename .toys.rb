@@ -103,3 +103,16 @@ tool 'create-list-queue-command' do
     puts JSON.pretty_generate(result)
   end
 end
+
+tool 'create-lb-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'lb',
+      description: 'Display the leaderboard',
+    }
+    result = client.create_command(definition)
+    puts JSON.pretty_generate(result)
+  end
+end
