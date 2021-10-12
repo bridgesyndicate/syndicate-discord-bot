@@ -12,7 +12,7 @@ libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
 require 'delayed_worker'
-require 'discord_embed_client'
+require 'discord_response_helper'
 require 'game_maker'
 require 'helpers'
 require 'leaderboard'
@@ -158,8 +158,8 @@ end
 bot.application_command(:lb) do |event|
   rom = Leaderboard.rom
   leaderboard = Leaderboard.new(rom).sort_by_elo
-  discord_embed_client = DiscordWebhookClient.instance
-  discord_embed_client.send_leaderboard(leaderboard)
+  response_helper = DiscordResponseHelper.new
+  event.respond(content: response_helper.send_leaderboard(leaderboard))
 end
 
 poller = SqsPoller.new

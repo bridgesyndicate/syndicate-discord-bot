@@ -1,3 +1,5 @@
+require 'discord_webhook_client'
+
 class SqsPoller
   attr_accessor :sqs_client, :discord_embed_client, :thread
 
