@@ -6,7 +6,7 @@ class SqsPoller
   def initialize
     @sqs_client = Aws::SQS::Client
                     .new(credentials: AwsCredentials.instance.credentials)
-    @discord_embed_client = DiscordEmbedClient.instance
+    @discord_embed_client = DiscordWebhookClient.instance
   end
 
   def poll_sqs

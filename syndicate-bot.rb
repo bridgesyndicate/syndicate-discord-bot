@@ -158,7 +158,7 @@ end
 bot.application_command(:lb) do |event|
   rom = Leaderboard.rom
   leaderboard = Leaderboard.new(rom).sort_by_elo
-  discord_embed_client = DiscordEmbedClient.instance
+  discord_embed_client = DiscordWebhookClient.instance
   discord_embed_client.send_leaderboard(leaderboard)
 end
 

@@ -3,7 +3,7 @@ require 'time'
 require 'game'
 require 'singleton'
 
-class DiscordEmbedClient
+class DiscordWebhookClient
   include Singleton
 
   BRIDGE_ICON_THUMB = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'

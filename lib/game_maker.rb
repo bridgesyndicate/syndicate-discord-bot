@@ -31,7 +31,7 @@ class GameMaker
       unless status.class == Net::HTTPOK
         puts "Error making game from match #{match}, #{status}"
       else
-        embed = DiscordEmbedClient.instance
+        embed = DiscordWebhookClient.instance
         embed.send_new_game_alert(match)
       end
     end
