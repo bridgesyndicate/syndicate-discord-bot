@@ -13,7 +13,8 @@ phases:
       - DOCKER_ID=$(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_ID')
       - aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_PASSWORD' | docker login --username $DOCKER_ID --password-stdin
       - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker tag $REPOSITORY_URI:latest
+      - echo not tagging with $REPOSITORY_URI:$IMAGE_TAG so ECR lifecycle can eventually delete
   post_build:
     commands:
       - echo Build completed on `date`
