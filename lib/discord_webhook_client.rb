@@ -29,10 +29,10 @@ class DiscordWebhookClient
                          .new(name: BRIDGE_FQDN,
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
-        embed.add_field(name: "player",
+        embed.add_field(name: "blue",
                         value: "#{match.playerA.discord_username}",
                         inline: true)
-        embed.add_field(name: "player",
+        embed.add_field(name: "red",
                         value: "#{match.playerB.discord_username}",
                         inline: true)
       end
