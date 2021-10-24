@@ -7,8 +7,8 @@ class GameMaker
       blue_team_discord_names = [match.playerA.discord_username]
       red_team_discord_ids = [match.playerB.discord_id.to_s]
       red_team_discord_names = [match.playerB.discord_username]
-      goals = 5
-      length = 300
+      goals = 3
+      length = 180
       game = SyndicateWebService.make_game(
         via: 'queue match',
         blue_team_discord_ids: blue_team_discord_ids,
