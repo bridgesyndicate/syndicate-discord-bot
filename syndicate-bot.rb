@@ -158,8 +158,9 @@ end
 bot.application_command(:lb) do |event|
   rom = Leaderboard.rom
   leaderboard = Leaderboard.new(rom).sort_by_elo
-  response_helper = DiscordResponseHelper.new
-  event.respond(content: response_helper.send_leaderboard(leaderboard))
+  event.respond(content: 'The current leaderboard:')
+  discord_embed_client = DiscordWebhookClient.instance
+  discord_embed_client.send_leaderboard(leaderboard)
 end
 
 poller = SqsPoller.new

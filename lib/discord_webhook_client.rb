@@ -75,7 +75,7 @@ class DiscordWebhookClient
 
   def build_description(leaderboard)
     leaderboard.each_with_index.map do |leader, idx|
-      "#{get_place_emoji(idx)} #{format_discord_mention(leader.discord_id)} • #{leader.elo}"
+      "#{get_place_emoji(idx)} #{format_discord_mention(leader.discord_id)} • #{leader.elo} (#{leader.wins}/#{leader.losses}/#{leader.ties})"
     end.join("\n")
   end
 
