@@ -39,7 +39,7 @@ class DiscordWebhookClient
     end
   end
 
-  def send_new_game_score(msg)
+  def send_new_score(msg)
     game = Game.new(msg.game)
 
     discord_webhook_client.execute do |builder|
@@ -54,10 +54,10 @@ class DiscordWebhookClient
                          .new(name: BRIDGE_FQDN,
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
-        embed.add_field(name: ":regional_indicator_w:",
+        embed.add_field(name: game.tie ? ":regional_indicator_t:" : ":regional_indicator_w:",
                         value: "#{game.winner_names}\n#{game.winner_score}",
                         inline: true)
-        embed.add_field(name: ":regional_indicator_l:",
+        embed.add_field(name: game.tie ? ":regional_indicator_t:" : ":regional_indicator_l:",
                         value: "#{game.loser_names}\n#{game.loser_score}",
                         inline: true)
       end

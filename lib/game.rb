@@ -1,5 +1,5 @@
 class Game
-  attr_accessor :game, :winner, :uuid
+  attr_accessor :game, :winner, :uuid, :tie
 
   def initialize game
     @game = game
@@ -17,6 +17,7 @@ class Game
     elsif diff < 0
       -1
     else
+      @tie = true
       0
     end
   end
