@@ -39,7 +39,7 @@ class DiscordWebhookClient
     end
   end
 
-  def send_new_score(msg)
+  def send_game_score(msg)
     game = Game.new(msg.game)
 
     discord_webhook_client.execute do |builder|
