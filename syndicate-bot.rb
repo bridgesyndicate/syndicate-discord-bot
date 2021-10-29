@@ -108,7 +108,7 @@ bot.application_command(:q) do |event|
     break
   end
 
-  puts "Request to join queue from #{event.user.id}, #{event.user.username}"
+  puts "Request to queue from #{event.user.id}, #{event.user.username}"
 
   response = SyndicateWebService.get_user_record(event.user.id)
   unless response.class == Net::HTTPOK
@@ -130,15 +130,7 @@ bot.application_command(:q) do |event|
   rescue ROM::SQL::UniqueConstraintError => e
   end
   if e.nil?
-    event.respond(content: "#{event.user.username} is queued. Click below to dequeue.") do |_, view|
-      view.row do |r|
-        r.button(
-          label: 'Dequeue',
-          style: :danger,
-          custom_id: 'XXXX'
-        )
-      end
-    end
+    event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")
   else
     event.respond(content: "You are already queued")
   end
@@ -146,6 +138,35 @@ bot.application_command(:q) do |event|
     GameMaker.from_match(queue.process_queue)
   end.run
   GameMaker.from_match(queue.process_queue)
+end
+
+bot.application_command(:dq) do |event|
+  puts "Request to dequeue from #{event.user.id}, #{event.user.username}"
+
+  response = SyndicateWebService.get_user_record(event.user.id)
+  unless response.class == Net::HTTPOK
+    event.respond(content: "We encountered an error.")
+    puts "error: cannot fetch user for #{event.user.id}"
+    break
+  end
+
+  user = JSON.parse(response.body)
+  queue_params = {
+    discord_id: event.user.id,
+    discord_username: event.user.username,
+    queue_time: Time.now.to_i,
+  }
+  queue_params.merge!(elo: user['elo']) if user['elo']
+  puts "queue_params for #{event.user.id} are #{queue_params}"
+  begin
+    queue.queue_player(queue_params)
+  rescue ROM::SQL::UniqueConstraintError => e
+  end
+  if e.nil?
+    event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")
+  else
+    event.respond(content: "You are already queued")
+  end
 end
 
 bot.application_command(:list) do |event|
