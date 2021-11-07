@@ -16,7 +16,7 @@ phases:
       - bundle exec rspec spec/ --format RspecJunitFormatter --out out/report.xml
   build:
     commands:
-      - tar --exclude .git -cvf syn-bot.tar .
+      - tar --exclude .git -cf syn-bot.tar .
       - echo running docker build
       - DOCKER_ID=$(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_ID')
       - aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_PASSWORD' | docker login --username $DOCKER_ID --password-stdin
@@ -30,4 +30,9 @@ phases:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password  | docker login --username AWS --password-stdin $REPOSITORY_HOST
       - docker push $REPOSITORY_URI:latest
-
+reports:
+    rspec_reports:
+        files:
+            - report.xml
+        base-directory: out
+        file-format: JunitXml
