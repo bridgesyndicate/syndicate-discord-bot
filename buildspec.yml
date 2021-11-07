@@ -1,11 +1,19 @@
 version: 0.2
 phases:
+  install:
+    runtime-versions:
+        ruby: 2.7
   pre_build:
     commands:
       - REPOSITORY_HOST=595508394202.dkr.ecr.us-west-2.amazonaws.com
       - REPOSITORY_URI=$REPOSITORY_HOST/syn-bot
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - rbenv versions | cut -c3- | grep '2.7' > .ruby-version
+      - bundle config set without development
+      - bundle config set path vendor/bundle
+      - bundle install
+      - bundle exec rspec spec/ --format RspecJunitFormatter --out out/report.xml
   build:
     commands:
       - tar --exclude .git -cvf syn-bot.tar .
