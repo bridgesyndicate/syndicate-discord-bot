@@ -13,10 +13,10 @@ phases:
       - bundle config set without development
       - bundle config set path vendor/bundle
       - bundle install
-      - bundle exec rspec spec/ --format RspecJunitFormatter --out out/report.xml
-      - ./apply-patches.sh
+      - bundle exec rspec -fd spec/
   build:
     commands:
+      - ./apply-patches.sh
       - tar --exclude .git -cf syn-bot.tar .
       - echo running docker build
       - DOCKER_ID=$(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_ID')
