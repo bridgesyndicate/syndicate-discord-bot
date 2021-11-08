@@ -1,4 +1,13 @@
-519c519
-<         @author = bot.ensure_user(data['author'] || data['member']['user'])
----
-> #        @author = bot.ensure_user(data['author'] || data['member']['user'])
+diff --git a/lib/discordrb/data/interaction.rb b/lib/discordrb/data/interaction.rb
+index 7c2eb5e9..430e8bdf 100644
+--- a/lib/discordrb/data/interaction.rb
++++ b/lib/discordrb/data/interaction.rb
+@@ -516,7 +516,7 @@ def initialize(data, bot, interaction)
+ 
+         @id = data['id'].to_i
+ 
+-        @author = bot.ensure_user(data['author'] || data['member']['user'])
++#        @author = bot.ensure_user(data['author'] || data['member']['user'])
+ 
+         @attachments = []
+         @attachments = data['attachments'].map { |e| Attachment.new(e, self, @bot) } if data['attachments']
