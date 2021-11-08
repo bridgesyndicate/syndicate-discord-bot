@@ -13,7 +13,7 @@ phases:
       - bundle config set without development
       - bundle config set path vendor/bundle
       - bundle install
-      - bundle exec rspec -fd spec/
+      - bundle exec rspec -fd spec/ --format RspecJunitFormatter --out out/report.xml
   build:
     commands:
       - ./apply-patches.sh
