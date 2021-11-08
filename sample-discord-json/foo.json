@@ -1,0 +1,62 @@
+{
+  "username": "Webhook",
+  "avatar_url": "https://i.imgur.com/4M34hi2.png",
+  "content": "Text message. Up to 2000 characters.",
+  "components": [
+        {
+            "type": 1,
+            "components": [
+                {
+                    "type": 2,
+                    "label": "Click me!",
+                    "style": 1,
+                    "custom_id": "deadbeef"
+                }
+            ]
+
+        }
+  ],
+  "embeds": [
+    {
+      "author": {
+        "name": "Birdie♫",
+        "url": "https://www.reddit.com/r/cats/",
+        "icon_url": "https://i.imgur.com/R66g1Pe.jpg"
+      },
+      "title": "Title",
+      "url": "https://google.com/",
+      "description": "Text message. You can use Markdown here. *Italic* **bold** __underline__ ~~strikeout~~ [hyperlink](https://google.com) `code`",
+      "color": 15258703,
+      "fields": [
+        {
+          "name": "Text",
+          "value": "More text",
+          "inline": true
+        },
+        {
+          "name": "Even more text",
+          "value": "Yup",
+          "inline": true
+        },
+        {
+          "name": "Use `\"inline\": true` parameter, if you want to display fields in the same line.",
+          "value": "okay..."
+        },
+        {
+          "name": "Thanks!",
+          "value": "You're welcome :wink:"
+        }
+      ],
+      "thumbnail": {
+        "url": "https://cdn.discordapp.com/attachments/240175462045843458/906416538280673320/5t66f3.jpg"
+      },
+      "image": {
+        "url": "https://www.who.com.au/media/68819/what-is-cosplay-25.jpg?width=720&center=0.0,0.0"
+      },
+      "footer": {
+        "text": "Woah! So cool! :smirk:",
+        "icon_url": "https://i.imgur.com/fKL31aD.jpg"
+      }
+    }
+  ]
+}

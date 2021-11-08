@@ -21,6 +21,7 @@ require 'sqs_poller'
 require 'syndicate_web_service'
 
 bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+DiscordWebhookClient.instance.set_bot(bot)
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 
@@ -74,6 +75,22 @@ bot.button(custom_id: /^duel_accept_uuid_/) do |event|
   ret = SyndicateWebService.accept_game_syndicate_web_service(uuid, discord_id)
   if status.class == Net::HTTPOK
     event.update_message(content: "Accepted duel #{uuid}")
+  else
+    event.respond(content: "Something went wrong.")
+    puts ret.inspect
+    puts ret.body
+    puts ret.to_hash.inspect
+  end
+end
+
+bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
+  discord_id = event.user.id
+  uuid = event.interaction.button.custom_id
+           .split(DiscordWebhookClient::SPECTATE_KEY)
+           .last
+  ret = SyndicateWebService.warp_game_syndicate_web_service(uuid, discord_id)
+  if status.class == Net::HTTPOK
+    event.respond(content: "<@#{event.user.id}> Adding you as a spectator to #{uuid}")
   else
     event.respond(content: "Something went wrong.")
     puts ret.inspect
@@ -180,8 +197,7 @@ bot.application_command(:lb) do |event|
   rom = Leaderboard.rom
   leaderboard = Leaderboard.new(rom).sort_by_elo
   event.respond(content: 'The current leaderboard:')
-  discord_embed_client = DiscordWebhookClient.instance
-  discord_embed_client.send_leaderboard(leaderboard)
+  DiscordWebhookClient.instance.send_leaderboard(leaderboard)
 end
 
 poller = SqsPoller.new

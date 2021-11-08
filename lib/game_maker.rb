@@ -32,7 +32,7 @@ class GameMaker
         puts "Error making game from match #{match}, #{status}"
       else
         embed = DiscordWebhookClient.instance
-        embed.send_new_game_alert(match)
+        embed.send_new_game_alert(match, game[:uuid])
       end
     end
   end

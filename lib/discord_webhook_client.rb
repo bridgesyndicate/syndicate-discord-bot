@@ -6,18 +6,23 @@ require 'singleton'
 class DiscordWebhookClient
   include Singleton
 
+  SPECTATE_KEY = 'spectate-'
   BRIDGE_ICON_THUMB = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'
   BRIDGE_FQDN = 'bridgesyndicate.gg'
   BRIDGE_HOME_URL = "https://#{BRIDGE_FQDN}/"
-  attr_accessor :discord_webhook_client
+  CHANNEL = 855996952348327949
+  HOOK = 906962753498013696
 
-  def initialize
-    webhook_url = Secrets.instance.get_secret('discord-webhook-url')['DISCORD_WEBHOOK_URL']
-    @discord_webhook_client = Discordrb::Webhooks::Client.new(url: webhook_url)
+  attr_accessor :webhook
+
+  def set_bot(bot)
+    @webhook = bot.channel(CHANNEL).webhooks
+         .filter { |h| h.id == HOOK }
+         .first
   end
 
-  def send_new_game_alert(match)
-    discord_webhook_client.execute do |builder|
+  def send_new_game_alert(match, uuid)
+    webhook.execute do |builder, view|
       builder.add_embed do |embed|
         embed.title = "New Match"
         embed.colour = '0x4b7bbf'
@@ -35,14 +40,20 @@ class DiscordWebhookClient
         embed.add_field(name: '<:red:898104606276603914>',
                         value: "#{match.playerB.discord_username}",
                         inline: true)
+        view.row do |r|
+          r.button(
+            label: 'Spectate',
+            style: :secondary,
+            custom_id: "#{SPECTATE_KEY}#{uuid}"
+          )
+        end
       end
     end
   end
 
   def send_game_score(msg)
     game = Game.new(msg.game)
-
-    discord_webhook_client.execute do |builder|
+    webhook.execute do |builder|
       builder.add_embed do |embed|
         embed.title = "Match Results"
         embed.colour = '0x4b7bbf'
@@ -80,7 +91,7 @@ class DiscordWebhookClient
   end
 
   def send_leaderboard(leaderboard)
-    discord_webhook_client.execute do |builder|
+    webhook.execute do |builder|
       builder.add_embed do |embed|
         embed.description = build_description(leaderboard)
         embed.title = "Leaderboard"

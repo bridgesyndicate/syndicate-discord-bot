@@ -1,7 +1,7 @@
 GIT
-  remote: https://github.com/kenberland/discordrb
-  revision: 2e8d6437678d705829d594535183c36982ae65ce
-  branch: main
+  remote: https://github.com/swarley/discordrb-1
+  revision: 914a71aee7b41e27e5f20daa2bd76e535476b88a
+  branch: refactor/webhook-view
   specs:
     discordrb (3.4.2)
       discordrb-webhooks (~> 3.4.2)
