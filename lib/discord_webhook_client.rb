@@ -65,10 +65,10 @@ class DiscordWebhookClient
                          .new(name: BRIDGE_FQDN,
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
-        embed.add_field(name: game.tie ? ":regional_indicator_t:" : ":regional_indicator_w:",
+        embed.add_field(name: game.tie ? ":tie:" : ":win:",
                         value: "#{game.winner_names(:with_elo_changes)}\n#{game.winner_score}",
                         inline: true)
-        embed.add_field(name: game.tie ? ":regional_indicator_t:" : ":regional_indicator_l:",
+        embed.add_field(name: game.tie ? ":tie:" : ":loss:",
                         value: "#{game.loser_names(:with_elo_changes)}\n#{game.loser_score}",
                         inline: true)
       end
