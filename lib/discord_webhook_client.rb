@@ -12,6 +12,9 @@ class DiscordWebhookClient
   BRIDGE_HOME_URL = "https://#{BRIDGE_FQDN}/"
   CHANNEL = 855996952348327949
   HOOK = 906962753498013696
+  CUSTOM_EMOJI_WIN = '<win:907734836746272798>'
+  CUSTOM_EMOJI_LOSS = '<loss:907734925480960021>'
+  CUSTOM_EMOJI_TIE = '<tie:907734967302373397>'
 
   attr_accessor :webhook
 
@@ -65,10 +68,10 @@ class DiscordWebhookClient
                          .new(name: BRIDGE_FQDN,
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
-        embed.add_field(name: game.tie ? ":tie:" : ":win:",
+        embed.add_field(name: game.tie ? CUSTOM_EMOJI_TIE : CUSTOM_EMOJI_WIN,
                         value: "#{game.winner_names(:with_elo_changes)}\n#{game.winner_score}",
                         inline: true)
-        embed.add_field(name: game.tie ? ":tie:" : ":loss:",
+        embed.add_field(name: game.tie ? CUSTOM_EMOJI_TIE : CUSTOM_EMOJI_LOSS,
                         value: "#{game.loser_names(:with_elo_changes)}\n#{game.loser_score}",
                         inline: true)
       end
