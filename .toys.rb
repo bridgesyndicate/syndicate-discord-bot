@@ -91,6 +91,19 @@ tool 'create-queue-command' do
   end
 end
 
+tool 'create-dequeue-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'dq',
+      description: 'Remove myself from the queue.',
+    }
+    result = client.create_command(definition)
+    puts JSON.pretty_generate(result)
+  end
+end
+
 tool 'create-list-queue-command' do
   def run
     require_relative 'discord_api'

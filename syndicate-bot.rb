@@ -160,29 +160,10 @@ end
 bot.application_command(:dq) do |event|
   puts "Request to dequeue from #{event.user.id}, #{event.user.username}"
 
-  response = SyndicateWebService.get_user_record(event.user.id)
-  unless response.class == Net::HTTPOK
-    event.respond(content: "We encountered an error.")
-    puts "error: cannot fetch user for #{event.user.id}"
-    break
-  end
-
-  user = JSON.parse(response.body)
-  queue_params = {
-    discord_id: event.user.id,
-    discord_username: event.user.username,
-    queue_time: Time.now.to_i,
-  }
-  queue_params.merge!(elo: user['elo']) if user['elo']
-  puts "queue_params for #{event.user.id} are #{queue_params}"
-  begin
-    queue.queue_player(queue_params)
-  rescue ROM::SQL::UniqueConstraintError => e
-  end
-  if e.nil?
-    event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")
+  if queue.dequeue_player(event.user.id) == 1
+    event.respond(content: "#{event.user.username}(#{event.user.id}) has been removed from the queue.")
   else
-    event.respond(content: "You are already queued")
+    event.respond(content: "You are not in the queue.")
   end
 end
 

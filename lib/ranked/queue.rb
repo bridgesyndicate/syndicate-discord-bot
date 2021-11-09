@@ -9,6 +9,9 @@ class Ranked
     def size
       @queue.all.size
     end
+    def dequeue_player queued_player
+      queue.by_id(queued_player).delete
+    end
     def queue_player queued_player
       queue.create(queued_player)
     end

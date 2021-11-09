@@ -21,7 +21,7 @@ class Ranked
     end
 
     def by_id(id)
-      discord_user_queue.by_pk(id).one!
+      discord_user_queue.by_pk(id)
     end
 
     def ids
