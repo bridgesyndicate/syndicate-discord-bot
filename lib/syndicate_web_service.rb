@@ -130,4 +130,21 @@ class SyndicateWebService
     req.body = ''
     return https.request(req)
   end
+
+  def self.warp_game_syndicate_web_service(game_uuid, discord_id)
+    url = generate_knopfnsxoh_url(
+      "auth/warp/by-discord-id/#{discord_id}/to-game/#{game_uuid}")
+    signer = get_sigv4_signer
+    signature = sign_request(signer, 'POST', url, '')
+    uri = URI.parse(url)
+    https = Net::HTTP.new(uri.host,uri.port)
+    https.use_ssl = true unless SYNDICATE_ENV == 'development'
+    req = Net::HTTP::Post.new(uri.path)
+    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
+    header_list.each do |header|
+      req[header] = signature.headers[header]
+    end
+    req.body = ''
+    return https.request(req)
+  end
 end
