@@ -30,6 +30,11 @@ class GameMaker
       status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
       if status.class == Net::HTTPOK
         puts "Sent new game #{match}, #{status}"
+        # tell the players they are in a match.
+        discord_webhook_client = DiscordWebhookClient.instance
+        message = OpenStruct.new
+        message.game = game
+        discord_webhook_client.send_new_game_alert(message, false)
       else
         puts "Error sending game from match #{match}, #{status}"
       end

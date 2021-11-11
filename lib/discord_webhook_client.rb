@@ -24,7 +24,7 @@ class DiscordWebhookClient
          .first
   end
 
-  def send_new_game_alert(msg)
+  def send_new_game_alert(msg, with_spectate_button=true)
     game = Game.new(msg.game)
     webhook.execute do |builder, view|
       builder.add_embed do |embed|
@@ -44,12 +44,14 @@ class DiscordWebhookClient
         embed.add_field(name: '<:red:898104606276603914>',
                         value: "#{game.blue_team_discord_mentions}",
                         inline: true)
-        view.row do |r|
-          r.button(
-            label: 'Spectate',
-            style: :secondary,
-            custom_id: "#{SPECTATE_KEY}#{game.uuid}"
-          )
+        if with_spectate_button
+          view.row do |r|
+            r.button(
+              label: 'Spectate',
+              style: :secondary,
+              custom_id: "#{SPECTATE_KEY}#{game.uuid}"
+            )
+          end
         end
       end
     end
