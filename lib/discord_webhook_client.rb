@@ -15,6 +15,8 @@ class DiscordWebhookClient
   CUSTOM_EMOJI_WIN = '<:win:907177703810170891>'
   CUSTOM_EMOJI_LOSS = '<:loss:907177703751450674>'
   CUSTOM_EMOJI_TIE = '<:tie:907177703642394634>'
+  CUSTOM_EMOJI_RED = '<:r_for_red:908161726543982654>'
+  CUSTOM_EMOJI_BLUE = '<:b_for_blue:908161738510307368>'
 
   attr_accessor :webhook
 
@@ -38,10 +40,10 @@ class DiscordWebhookClient
                          .new(name: BRIDGE_FQDN,
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
-        embed.add_field(name: '<:blue:898104576329261087>',
+        embed.add_field(name: CUSTOM_EMOJI_BLUE,
                         value: "#{game.red_team_discord_mentions}",
                         inline: true)
-        embed.add_field(name: '<:red:898104606276603914>',
+        embed.add_field(name: CUSTOM_EMOJI_RED,
                         value: "#{game.blue_team_discord_mentions}",
                         inline: true)
         if with_spectate_button
