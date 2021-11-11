@@ -55,4 +55,17 @@ describe '#game model' do
       expect(game.blue_team_discord_mentions).to eq "<@417766998471213061>, <@517766998471213062>"
     end
   end
+  context 'tie game' do
+    let(:game_json) { File.read('spec/mocks/tie-game-score-sqs.json') }
+    it 'is a tie' do
+      expect(game.tie).to eq true
+      expect(game.winner_names(:with_elo_changes))
+        .to eq '<@246107858712788993> (+16), <@346107858712788994> (+15)'
+      expect(game.winner_score).to eq 0
+      expect(game.tie).to eq true
+      expect(game.loser_names(:with_elo_changes))
+        .to eq '<@417766998471213061> (-16), <@517766998471213062> (-15)'
+      expect(game.loser_score).to eq 0
+    end
+  end
 end

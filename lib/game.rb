@@ -5,6 +5,7 @@ class Game
     @game = game
     @uuid = game.uuid
     make_elo_map unless game["elo_info"].nil?
+    winner unless game.game_score.nil?
   end
 
   def make_elo_map
