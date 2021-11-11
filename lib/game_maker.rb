@@ -28,11 +28,10 @@ class GameMaker
       game = SyndicateWebService.add_acceptance(game, match.playerB.discord_id.to_s)
       game_json = JSON.pretty_generate(game)
       status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
-      unless status.class == Net::HTTPOK
-        puts "Error making game from match #{match}, #{status}"
+      if status.class == Net::HTTPOK
+        puts "Sent new game #{match}, #{status}"
       else
-        embed = DiscordWebhookClient.instance
-        embed.send_new_game_alert(match, game[:uuid])
+        puts "Error sending game from match #{match}, #{status}"
       end
     end
   end

@@ -20,7 +20,8 @@ require 'ranked'
 require 'sqs_poller'
 require 'syndicate_web_service'
 
-bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+bot = Discordrb::Bot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'],
+                         log_mode: :debug)
 DiscordWebhookClient.instance.set_bot(bot)
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'

@@ -24,7 +24,8 @@ class DiscordWebhookClient
          .first
   end
 
-  def send_new_game_alert(match, uuid)
+  def send_new_game_alert(msg)
+    game = Game.new(msg.game)
     webhook.execute do |builder, view|
       builder.add_embed do |embed|
         embed.title = "New Match"
@@ -38,16 +39,16 @@ class DiscordWebhookClient
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
         embed.add_field(name: '<:blue:898104576329261087>',
-                        value: "#{match.playerA.discord_username}",
+                        value: "#{game.red_team_discord_mentions}",
                         inline: true)
         embed.add_field(name: '<:red:898104606276603914>',
-                        value: "#{match.playerB.discord_username}",
+                        value: "#{game.blue_team_discord_mentions}",
                         inline: true)
         view.row do |r|
           r.button(
             label: 'Spectate',
             style: :secondary,
-            custom_id: "#{SPECTATE_KEY}#{uuid}"
+            custom_id: "#{SPECTATE_KEY}#{game.uuid}"
           )
         end
       end

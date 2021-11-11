@@ -1,11 +1,10 @@
 class Game
-  attr_accessor :game, :winner, :uuid, :tie, :elo_change
+  attr_accessor :game, :uuid, :tie, :elo_change
 
   def initialize game
     @game = game
-    @winner = winner
     @uuid = game.uuid
-    make_elo_map
+    make_elo_map unless game["elo_info"].nil?
   end
 
   def make_elo_map
@@ -79,5 +78,13 @@ class Game
   def description
     "#{winner_names} (#{winner_score}) #{comparison_word} " +
       "#{loser_names} (#{loser_score})"
+  end
+
+  def red_team_discord_mentions
+    profiles_from_ids(game.red_team_discord_ids)
+  end
+
+  def blue_team_discord_mentions
+    profiles_from_ids(game.blue_team_discord_ids)
   end
 end

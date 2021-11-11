@@ -1,0 +1,62 @@
+{
+  "event_id": "9912d3386af991a12e56a31ea7889e0f",
+  "event_name": "MODIFY",
+  "event_version": "1.1",
+  "event_source": "aws:dynamodb",
+  "aws_region": "us-west-2",
+  "dynamodb": {
+    "approximate_creation_date_time": "2021-11-10 20:06:19 +0000",
+    "keys": {
+      "game_uuid": "098274fa-b2d8-4816-be2e-f5f5b4be2fa8"
+    },
+    "new_image": {
+      "game": {
+        "blue_team_minecraft_uuids": [
+          "9bf95247-d0ed-4c22-877e-0ac31532ade7"
+        ],
+        "queued_at": "2021-11-10T20:04:38Z",
+        "red_team_minecraft_uuids": [
+          "f0885cea-8291-4734-be1b-bf37f6bcab7c"
+        ],
+        "required_players": "0.2e1",
+        "queued_via": "queue match",
+        "blue_team_discord_ids": [
+          "240177490906054658"
+        ],
+        "uuid": "098274fa-b2d8-4816-be2e-f5f5b4be2fa8",
+        "elo_before_game": {
+          "417766998471213061": "0.1e4",
+          "240177490906054658": "0.1049e4"
+        },
+        "blue_team_discord_names": [
+          "ken"
+        ],
+        "taskIP": "10.0.0.35",
+        "accepted_by_discord_ids": [
+          {
+            "accepted_at": "2021-11-10T20:04:38Z",
+            "discord_id": "240177490906054658"
+          },
+          {
+            "accepted_at": "2021-11-10T20:04:38Z",
+            "discord_id": "417766998471213061"
+          }
+        ],
+        "red_team_discord_ids": [
+          "417766998471213061"
+        ],
+        "game_length_in_seconds": "0.18e3",
+        "goals_to_win": "0.3e1",
+        "red_team_discord_names": [
+          "viceversa"
+        ]
+      },
+      "updated_at": "2021-11-10T20:04:39Z",
+      "game_uuid": "098274fa-b2d8-4816-be2e-f5f5b4be2fa8",
+      "created_at": "2021-11-10T20:04:39Z"
+    },
+    "sequence_number": "165787500000000048615569787",
+    "size_bytes": 830,
+    "stream_view_type": "NEW_IMAGE"
+  }
+}
