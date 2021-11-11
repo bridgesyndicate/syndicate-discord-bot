@@ -38,7 +38,7 @@ class SqsPoller
   end
 
   def run
-    thread = Thread.new { poll_sqs }
+    @thread = Thread.new { poll_sqs }
   end
 
   def join
