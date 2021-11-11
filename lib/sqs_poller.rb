@@ -29,7 +29,7 @@ class SqsPoller
           end
           sqs_client.delete_message({
                                       queue_url: SQS_QUEUE_URL,
-                                      receipt_handle: game_stream.receipt_image
+                                      receipt_handle: game_stream.receipt_handle
                                     })
         end
       end

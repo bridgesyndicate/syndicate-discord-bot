@@ -36,8 +36,8 @@ class GameStream
     body.dynamodb.new_image
   end
 
-  def receipt_image
-    message.receipt_image
+  def receipt_handle
+    message[:receipt_handle]
   end
 
 end
