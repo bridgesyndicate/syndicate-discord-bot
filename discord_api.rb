@@ -3,7 +3,7 @@ require "json"
 
 class DiscordApi
     DISCORD_APPLICATION_ID = "856369764729618432"
-    DISCORD_GUILD_ID = "855996952348327946"
+    DISCORD_GUILD_ID = "903122113924317184"
 
     def initialize(bot_token:)
       @client_id = DISCORD_APPLICATION_ID
@@ -11,22 +11,37 @@ class DiscordApi
       @bot_token = bot_token
     end
 
-    def list_commands
+    def list_guild_commands
       call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands")
-#      call_api("/applications/#{@client_id}/commands")
+    end
+
+    def list_commands
+      call_api("/applications/#{@client_id}/commands")
+    end
+
+    def delete_guild_command(command_id)
+      call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands/#{command_id}",
+                method: :delete)
     end
 
     def delete_command(command_id)
-      call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands/#{command_id}",
-                method: :delete)
-#      call_api("/applications/#{@client_id}/commands/#{command_id}",
-#                method: :delete)
+          call_api("/applications/#{@client_id}/commands/#{command_id}",
+                    method: :delete)
+        end
+
+    def create_guild_command(command_definition)
+      definition_json = JSON.dump(command_definition)
+      headers = {"Content-Type" => "application/json"}
+      call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands",
+              method: :post,
+              body: definition_json,
+              headers: headers)
     end
 
     def create_command(command_definition)
       definition_json = JSON.dump(command_definition)
       headers = {"Content-Type" => "application/json"}
-      call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands",
+      call_api("/applications/#{@client_id}/commands",
               method: :post,
               body: definition_json,
               headers: headers)
