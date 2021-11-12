@@ -31,10 +31,10 @@ class GameMaker
       if status.class == Net::HTTPOK
         puts "Sent new game #{match}, #{status}"
         # tell the players they are in a match.
-        discord_webhook_client = DiscordWebhookClient.instance
-        message = OpenStruct.new
-        message.game = JSON.parse(game_json, object_class: OpenStruct)
-        discord_webhook_client.send_new_game_alert(message, false)
+        # discord_webhook_client = DiscordWebhookClient.instance
+        # message = OpenStruct.new
+        # message.game = JSON.parse(game_json, object_class: OpenStruct)
+        # discord_webhook_client.send_new_game_alert(message, false)
       else
         puts "Error sending game from match #{match}, #{status}"
       end
