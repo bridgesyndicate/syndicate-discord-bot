@@ -13,11 +13,15 @@ require 'helpers'
 task default: %w/create_tables/
 
 task :create_tables do
-  %w/discord_user_queue/.each do |table|
+  %w/discord_user_queue parties/.each do |table|
     Rake::Task["create_#{table}_table"].execute
   end
 end
 
 task :create_discord_user_queue_table do
   Ranked::SqlTables.create_table
+end
+
+task :create_parties_table do
+  Scrims::SqlTables.create_table
 end
