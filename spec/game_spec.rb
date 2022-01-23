@@ -1,5 +1,5 @@
 load 'spec/spec_helper.rb'
-require 'lib/game'
+require 'game'
 
 describe '#game model' do
   let(:message_struct) { JSON.parse(game_json, object_class: OpenStruct) }

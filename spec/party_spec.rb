@@ -13,18 +13,18 @@ RSpec.describe '#scrims' do
 
   before(:each) do
     rom = Scrims::Storage.rom
-    @party_adapter = Scrims::Party.new(rom)
+    @party_repo = Scrims::PartyRepo.new(rom)
   end
 
   describe 'party' do
     describe 'does not exist' do
       it 'returns false' do
-        expect(@party_adapter.by_party_uuid(party_uuid).size).to eq 0
+        expect(@party_repo.party_uuid_exists?(party_uuid)).to be false
       end
       describe 'does exist' do
-        before(:each) { @party_adapter.create(party) }
+        before(:each) { @party_repo.create(party) }
         it 'returns true' do
-          expect(@party_adapter.by_party_uuid(party_uuid).size).to eq 1
+          expect(@party_repo.party_uuid_exists?(party_uuid)).to be true
         end
       end
     end
