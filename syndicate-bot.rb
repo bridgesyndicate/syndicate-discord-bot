@@ -20,8 +20,8 @@ require 'ranked'
 require 'sqs_poller'
 require 'syndicate_web_service'
 
-bot = Discordrb::Bot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'],
-                         log_mode: :debug)
+bot = Discordrb::Bot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'])
+#                         log_mode: :debug)
 DiscordWebhookClient.instance.set_bot(bot)
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
@@ -29,6 +29,8 @@ SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 queue = Ranked::Queue.new
 
 Thread.abort_on_exception = true
+
+PARTY_INVITE_KEY = 'party_invite'
 
 bot.application_command(:duel) do |event|
   blue_team_discord_ids = [event.user.id.to_s]
@@ -98,6 +100,10 @@ bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
     puts ret.body
     puts ret.to_hash.inspect
   end
+end
+
+bot.button(custom_id: /^#{PARTY_INVITE_KEY}/) do |event|
+  event.update_message(content: "You accepted an invite, #{event.interaction.button.custom_id}.")
 end
 
 bot.application_command(:verify) do |event|
@@ -180,6 +186,24 @@ bot.application_command(:lb) do |event|
   leaderboard = Leaderboard.new(rom).sort_by_elo
   event.respond(content: 'The current leaderboard:')
   DiscordWebhookClient.instance.send_leaderboard(leaderboard)
+end
+
+bot.application_command(:party).group(:actions) do |group|
+  group.subcommand(:invite) do |event|
+    party_target = event.options['player']
+    custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
+    event.server.member(party_target).pm.send_embed() do |embed, view|
+      embed.description = "Party Request from <@#{event.user.id}>"
+      view.row do |r|
+        r.button(
+          label: 'Accept',
+          style: :primary,
+          custom_id: custom_id
+        )
+      end
+    end
+    event.respond(content: "Your party request has been sent.")
+  end
 end
 
 poller = SqsPoller.new

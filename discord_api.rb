@@ -32,19 +32,23 @@ class DiscordApi
     def create_guild_command(command_definition)
       definition_json = JSON.dump(command_definition)
       headers = {"Content-Type" => "application/json"}
-      call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands",
-              method: :post,
-              body: definition_json,
-              headers: headers)
+      puts JSON.pretty_generate(
+             call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands",
+                      method: :post,
+                      body: definition_json,
+                      headers: headers)
+           )
     end
 
     def create_command(command_definition)
       definition_json = JSON.dump(command_definition)
       headers = {"Content-Type" => "application/json"}
-      call_api("/applications/#{@client_id}/commands",
-              method: :post,
-              body: definition_json,
-              headers: headers)
+      puts JSON.pretty_generate(
+             call_api("/applications/#{@client_id}/commands",
+                      method: :post,
+                      body: definition_json,
+                      headers: headers)
+           )
     end
 
     def create_application_and_guild_command(command_definition)
