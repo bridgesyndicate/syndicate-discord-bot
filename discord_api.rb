@@ -47,6 +47,11 @@ class DiscordApi
               headers: headers)
     end
 
+    def create_application_and_guild_command(command_definition)
+      puts JSON.pretty_generate(create_guild_command(command_definition))
+      puts JSON.pretty_generate(create_command(command_definition))
+    end
+
     private
 
     def call_api(path,

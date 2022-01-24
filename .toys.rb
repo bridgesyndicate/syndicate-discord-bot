@@ -71,30 +71,7 @@ tool 'create-duel-command' do
         }
       ].concat(game_options)
     }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
-tool 'create-duel-guild-command' do
-  def run
-    require_relative 'discord_api'
-    require_relative 'game_options'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: 'duel',
-      description: 'Challenge a verified player to a game of Bridge',
-      options: [
-        {
-          name: 'opponent',
-          description: 'Your opponent',
-          type: 6,
-          required: true,
-        }
-      ].concat(game_options)
-    }
-    result = client.create_guild_command(definition)
-    puts JSON.pretty_generate(result)
+    client.create_application_and_guild_command(definition)
   end
 end
 
@@ -114,29 +91,7 @@ tool 'create-register-command' do
         }
       ]
     }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
-tool 'create-register-guild-command' do
-  def run
-    require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: 'verify',
-      description: 'Use a kick code to complete your registration',
-      options: [
-        {
-          name: 'kick-code',
-          description: 'The kick code provided by our Minecraft server',
-          type: 3,
-          required: true,
-        }
-      ]
-    }
-    result = client.create_guild_command(definition)
-    puts JSON.pretty_generate(result)
+    client.create_application_and_guild_command(definition)
   end
 end
 
@@ -148,21 +103,7 @@ tool 'create-queue-command' do
       name: 'q',
       description: 'Hop into the bridge queue.',
     }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
-tool 'create-queue-guild-command' do
-  def run
-    require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: 'q',
-      description: 'Hop into the bridge queue.',
-    }
-    result = client.create_guild_command(definition)
-    puts JSON.pretty_generate(result)
+    client.create_application_and_guild_command(definition)
   end
 end
 
@@ -174,21 +115,7 @@ tool 'create-dequeue-command' do
       name: 'dq',
       description: 'Remove myself from the queue.',
     }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
-tool 'create-dequeue-guild-command' do
-  def run
-    require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: 'dq',
-      description: 'Remove myself from the queue.',
-    }
-    result = client.create_guild_command(definition)
-    puts JSON.pretty_generate(result)
+    client.create_application_and_guild_command(definition)
   end
 end
 
@@ -200,21 +127,7 @@ tool 'create-list-queue-command' do
       name: 'list',
       description: 'List the queue',
     }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
-tool 'create-list-queue-guild-command' do
-  def run
-    require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: 'list',
-      description: 'List the queue',
-    }
-    result = client.create_guild_command(definition)
-    puts JSON.pretty_generate(result)
+    client.create_application_and_guild_command(definition)
   end
 end
 
@@ -226,21 +139,6 @@ tool 'create-lb-command' do
       name: 'lb',
       description: 'Display the leaderboard',
     }
-    result = client.create_command(definition)
-    puts JSON.pretty_generate(result)
+    client.create_application_and_guild_command(definition)
   end
 end
-
-tool 'create-lb-guild-command' do
-  def run
-    require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
-    definition = {
-      name: 'lb',
-      description: 'Display the leaderboard',
-    }
-    result = client.create_guild_command(definition)
-    puts JSON.pretty_generate(result)
-  end
-end
-
