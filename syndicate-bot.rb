@@ -32,6 +32,8 @@ queue = Ranked::Queue.new
 
 Thread.abort_on_exception = true
 
+$scrims_storage_rom = Scrims::Storage.new.rom
+
 bot.application_command(:duel) do |event|
   blue_team_discord_ids = [event.user.id.to_s]
   red_team_discord_ids = [event.options['opponent']]

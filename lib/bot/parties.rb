@@ -22,16 +22,14 @@ class Bot
           event.respond(content: "Your party request has been sent.")
         end
         group.subcommand(:list) do |event|
-          rom = Scrims::Storage.instance.rom
-          list_party = Scrims::ListParty.new(rom)
+          list_party = Scrims::ListParty.new($scrims_storage_rom)
           party_list = list_party.list(event.user.id)
           event.respond(content: "Your party: #{format_discord_id_mention_list(party_list)}")
         end
       end
 
       bot.button(custom_id: /^#{PARTY_INVITE_KEY}/) do |event|
-        rom = Scrims::Storage.instance.rom
-        invites = Scrims::Invites.new(rom)
+        invites = Scrims::Invites.new($scrims_storage_rom)
         invitee_discord_id = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         invites.accept(event.user.id, invitee_discord_id)

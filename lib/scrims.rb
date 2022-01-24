@@ -6,11 +6,8 @@ require 'scrims/member_repo'
 require 'scrims/invites'
 require 'scrims/list_party'
 
-require 'singleton'
-
 class Scrims
   class Storage
-    include Singleton
 
     attr_accessor :rom
 
