@@ -2,6 +2,7 @@
 require 'time'
 require 'game'
 require 'singleton'
+require 'helpers'
 
 class DiscordWebhookClient
   include Singleton
@@ -81,10 +82,6 @@ class DiscordWebhookClient
                         inline: true)
       end
     end
-  end
-
-  def format_discord_mention(id)
-    '<@' + id.to_s + '>'
   end
 
   def get_place_emoji(n)

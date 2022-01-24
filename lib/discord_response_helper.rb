@@ -2,14 +2,11 @@
 require 'time'
 require 'game'
 require 'singleton'
+require 'helpers'
 
 class DiscordResponseHelper
 
   ICON_URL = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'
-
-  def format_discord_mention(id)
-    '<@' + id.to_s + '>'
-  end
 
   def get_place_emoji(n)
     (%w/:first_place: :second_place: :third_place: :four: :five: :six: :seven:

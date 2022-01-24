@@ -12,7 +12,7 @@ RSpec.describe '#scrims' do
   }
 
   before(:each) do
-    rom = Scrims::Storage.rom
+    rom = Scrims::Storage.instance.rom
     @party_repo = Scrims::PartyRepo.new(rom)
   end
 

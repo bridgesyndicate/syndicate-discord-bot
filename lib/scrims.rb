@@ -3,11 +3,19 @@ require 'securerandom'
 
 require 'scrims/party_repo'
 require 'scrims/member_repo'
+require 'scrims/invites'
+require 'scrims/list_party'
+
+require 'singleton'
 
 class Scrims
   class Storage
-    def self.rom
-      ROM.container(:sql, 'sqlite::memory') do |conf|
+    include Singleton
+
+    attr_accessor :rom
+
+    def initialize
+      @rom = ROM.container(:sql, 'sqlite::memory') do |conf|
         conf.default.create_table(:parties) do
           primary_key :id
           column :party_uuid, String, null: false
