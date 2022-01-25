@@ -1,10 +1,20 @@
 class Scrims
   class Invites
-    attr_accessor :party_repo, :member_repo
+
+    class TooManyMembersError < StandardError
+      def initialize(n)
+        msg="Too many members in party: #{n}"
+        super
+      end
+    end
+
+    attr_accessor :party_repo, :member_repo, :max_members
+    DEFAULT_MAX_PARTY_MEMBERS = 4
 
     def initialize(rom)
       @party_repo = Scrims::PartyRepo.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
+      @max_members = DEFAULT_MAX_PARTY_MEMBERS
     end
 
     def add_users_to_new_party(discord_id_1, discord_id_2)
@@ -20,9 +30,14 @@ class Scrims
     end
 
     def add_user_to_existing_party(discord_id, existing_party)
-      party = party_repo.by_uuid(existing_party);
-      member_repo.create({ party_id: party.id, discord_id: discord_id })
-      return party
+      party_repo.transaction do |t|
+        if party_repo.member_count(existing_party) >= max_members
+          raise TooManyMembersError.new(max_members)
+        end
+        party = party_repo.by_uuid(existing_party);
+        member_repo.create({ party_id: party.id, discord_id: discord_id })
+        return party
+      end
     end
 
     def accept(invitor, invitee)

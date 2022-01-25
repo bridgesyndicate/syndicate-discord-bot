@@ -4,6 +4,9 @@ require 'scrims'
 RSpec.describe '#invite accept' do
   let(:discord_id_1) { rand(2**32) }
   let(:discord_id_2) { rand(2**32) }
+  let(:discord_id_3) { rand(2**32) }
+  let(:discord_id_4) { rand(2**32) }
+  let(:discord_id_5) { rand(2**32) }
 
   before(:each) do
     rom = Scrims::Storage.new.rom
@@ -13,9 +16,6 @@ RSpec.describe '#invite accept' do
   end
 
   describe 'when members are already in a party' do
-    let(:discord_id_3) { rand(2**32) }
-    let(:discord_id_4) { rand(2**32) }
-
     describe 'when the invitor is in a party' do
       it 'adds the invitee to the invitor\'s party, so there is one party' do
         other_party = @invites.accept(discord_id_1, discord_id_2)
@@ -61,6 +61,29 @@ RSpec.describe '#invite accept' do
           }.to raise_error ROM::SQL::UniqueConstraintError
         end
       end
+    end
+  end
+
+  describe 'for the default value of 4' do
+    describe 'when there are too many members in a party' do
+      it 'raises an exception with the default (4)' do
+        @invites.accept(discord_id_1, discord_id_2)
+        @invites.accept(discord_id_1, discord_id_3)
+        @invites.accept(discord_id_1, discord_id_4)
+        expect {
+          @invites.accept(discord_id_1, discord_id_5)
+        }.to raise_error Scrims::Invites::TooManyMembersError
+      end
+    end
+  end
+
+  describe 'for a non-default value (5)' do
+    it 'works with 5 when the default is raised' do
+      @invites.max_members = 5
+      @invites.accept(discord_id_1, discord_id_2)
+      @invites.accept(discord_id_1, discord_id_3)
+      @invites.accept(discord_id_1, discord_id_4)
+      expect(@invites.accept(discord_id_1, discord_id_5)).to be_a ROM::Struct::Party
     end
   end
 end
