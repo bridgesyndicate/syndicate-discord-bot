@@ -6,6 +6,9 @@ class Bot
 
     def self.init(bot)
       bot.application_command(:party).group(nil) do |group|
+        group.subcommand(:leave) do |event|
+          event.respond(content: "You want to leave.")
+        end
         group.subcommand(:invite) do |event|
           party_target = event.options['player']
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
@@ -33,7 +36,10 @@ class Bot
         invitee_discord_id = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         invites.accept(event.user.id, invitee_discord_id)
-        event.update_message(content: "You #{event.user.id} accepted an invite, #{event.interaction.button.custom_id}.")
+        list_party = Scrims::ListParty.new($scrims_storage_rom)
+        party_list = list_party.list(event.user.id)
+        event.update_message(content: "You accepted an invite. Your party: #{format_discord_id_mention_list(party_list)}")
+        bot.user(invitee_discord_id).pm("You're invite to #{format_discord_mention(event.user.id)} was accepted.")
       end
     end
   end
