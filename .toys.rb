@@ -151,29 +151,29 @@ tool 'create-party-command' do
       name: "party",
       description: "Party commands",
       options: [
-        name: "actions",
-        description: "Get or edit permissions for a user",
-        type: 2, #2 is type SUB_COMMAND_GROUP
-        options: [
-          {
-            name: "invite",
-            description: "Invite players to your party",
-            type: 1, # 1 is type SUB_COMMAND
-            options: [
-              {
-                name: 'player',
-                description: 'The player to invite to your party',
-                type: 6, # 6 is type USER
-                required: true
-              },
-            ]
-          },
-          {
-            name: "list",
-            description: "Edit permissions for a user",
-            type: 1,
-          }
-        ]
+        {
+          name: "invite",
+          description: "Invite a player to your party",
+          type: 1, # 1 is type SUB_COMMAND
+          options: [
+            {
+              name: 'player',
+              description: 'The player to invite to your party',
+              type: 6, # 6 is type USER
+              required: true
+            },
+          ]
+        },
+        {
+          name: 'list',
+          description: 'List the players in your party',
+          type: 1,
+        },
+        {
+          name: 'leave',
+          description: 'Leave your party',
+          type: 1,
+        }
       ]
     }
     client.create_guild_command(definition)

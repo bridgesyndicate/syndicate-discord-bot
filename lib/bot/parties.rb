@@ -5,7 +5,7 @@ class Bot
     PARTY_INVITE_KEY = 'party_invite'
 
     def self.init(bot)
-      bot.application_command(:party).group(:actions) do |group|
+      bot.application_command(:party).group(nil) do |group|
         group.subcommand(:invite) do |event|
           party_target = event.options['player']
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
