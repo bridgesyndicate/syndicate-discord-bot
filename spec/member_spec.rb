@@ -47,6 +47,7 @@ RSpec.describe '#scrims members' do
       end
       it 'has the right members' do
         expect(@party_repo.members(party_uuid)
+                 .members
                  .map {|member| member.discord_id } )
           .to eq @members
       end
