@@ -19,24 +19,23 @@ class Scrims
       if member_repo.get_party(discord_id).nil?
         raise MemberNotInParty.new
       else
-        party_uuid = remove_user_from_party(discord_id)
-        if party_repo.member_count(party_uuid) == 1
-          remove_single_member_party(party_uuid)
+        party_id = remove_user_from_party(discord_id)
+        if party_repo.member_count(party_id) == 1
+          remove_single_member_party(party_id)
         end
       end
     end
 
-    def remove_single_member_party(party_uuid)
-      discord_id = party_repo.members(party_uuid).members.first.discord_id
-      remove_user_from_party(discord_id)
-      party_repo.by_uuid(party_uuid).delete # TODO: put an index on party_uuid
+    def remove_single_member_party(party_id)
+      party_with_members = party_repo.with_members(party_id)
+      party_with_members.members.delete
+      party_with_members.delete
     end
 
     def remove_user_from_party(discord_id)
-      member = member_repo.find_by_discord_id(discord_id)
-      party_uuid = member.first.parties.party_uuid
-      member.delete
-      return party_uuid
+      party_id = member_repo.find_by_discord_id(discord_id).party_id
+      member_repo.delete_by_discord_id(discord_id)
+      return party_id
     end
   end
 end

@@ -16,13 +16,14 @@ class Scrims
       @rom = ROM.container(:sql, 'sqlite::memory') do |conf|
         conf.default.create_table(:parties) do
           primary_key :id
-          column :party_uuid, String, null: false
+          column :created_at, DateTime, null: false
         end
 
         conf.default.create_table(:members) do
           primary_key :id
           foreign_key :party_id, :parties
-          column :discord_id, Integer, null: false, unique: true
+          column :discord_id, String, null: false, unique: true
+          column :created_at, DateTime, null: false
         end
 
         conf.relation(:parties) do

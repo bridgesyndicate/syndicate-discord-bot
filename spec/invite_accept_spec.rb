@@ -45,13 +45,13 @@ RSpec.describe '#invite accept' do
     describe 'accepting an invite' do
       describe 'non exceptions' do
         before(:each) do
-          @party = @invites.accept(discord_id_1, discord_id_2)
+          @party_id = @invites.accept(discord_id_1, discord_id_2)
         end
         it 'creates a party' do
-          expect(@party_repo.party_uuid_exists?(@party.party_uuid)).to eq true
+          expect(@party_repo.exists?(@party_id)).to eq true
         end
         it 'creates a party with two members' do
-          expect(@party_repo.member_count(@party.party_uuid)).to eq 2
+          expect(@party_repo.member_count(@party_id)).to eq 2
         end
       end
       describe 'exceptions' do
@@ -83,7 +83,7 @@ RSpec.describe '#invite accept' do
       @invites.accept(discord_id_1, discord_id_2)
       @invites.accept(discord_id_1, discord_id_3)
       @invites.accept(discord_id_1, discord_id_4)
-      expect(@invites.accept(discord_id_1, discord_id_5)).to be_a ROM::Struct::Party
+      expect(@invites.accept(discord_id_1, discord_id_5)).to be_a Integer
     end
   end
 end

@@ -2,41 +2,33 @@ class Scrims
   class PartyRepo < ROM::Repository[:parties]
     commands :create, update: :by_pk, delete: :by_pk
 
-    def members(party_uuid)
-      parties.where(party_uuid: party_uuid)
-        .combine(:members).to_a
-        .first
+    def by_pk(party_id)
+      parties.by_pk(party_id)
     end
 
-    def empty?(party_uuid)
-      members(party_uuid).nil?
+    def exists?(party_id)
+      by_pk(party_id)
+        .count == 1
     end
 
-    def member_count(party_uuid)
-      parties.where(party_uuid: party_uuid)
-        .combine(:members).to_a
-        .first.members.size
+    def with_members(party_id)
+      parties.by_pk(party_id)
+        .combine(:members)
     end
 
-    def has_members?(party_uuid)
-      parties.where(party_uuid: party_uuid)
-        .combine(:members).to_a
-        .first.members.any?
+    def member_count(party_id)
+      parties.by_pk(party_id)
+        .combine(:members)
+        .members
+        .count
     end
 
-    def find_id_by_party_uuid(party_uuid)
-      parties.where(party_uuid: party_uuid)
-        .to_a
-        .first[:id]
+    def has_members?(party_id)
+      member_count(party_id) > 0
     end
 
-    def by_uuid(party_uuid)
-      parties.where(party_uuid: party_uuid)
-    end
-
-    def party_uuid_exists?(party_uuid)
-      !parties.where(party_uuid: party_uuid)
-        .to_a.empty?
+    def empty?(party_id)
+      member_count(party_id) == 0
     end
   end
 end
