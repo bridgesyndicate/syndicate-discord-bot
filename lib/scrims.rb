@@ -3,9 +3,9 @@ require 'securerandom'
 
 require 'scrims/party_repo'
 require 'scrims/member_repo'
-require 'scrims/invites'
-require 'scrims/list_party'
-require 'scrims/leave'
+require 'scrims/party/invite'
+require 'scrims/party/list'
+require 'scrims/party/leave'
 
 class Scrims
   class Storage

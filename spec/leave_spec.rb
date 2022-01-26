@@ -8,7 +8,7 @@ RSpec.describe '#leave' do
 
   before(:each) do
     rom = Scrims::Storage.new.rom
-    @invites = Scrims::Invites.new(rom)
+    @invites = Scrims::Invite.new(rom)
     @leave = Scrims::Leave.new(rom)
     @party_repo = Scrims::PartyRepo.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)

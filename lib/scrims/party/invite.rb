@@ -1,5 +1,5 @@
 class Scrims
-  class Invites
+  class Invite
 
     class TooManyMembersError < StandardError
       def initialize(n)

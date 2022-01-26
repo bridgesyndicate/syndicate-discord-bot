@@ -10,7 +10,7 @@ RSpec.describe '#invite accept' do
 
   before(:each) do
     rom = Scrims::Storage.new.rom
-    @invites = Scrims::Invites.new(rom)
+    @invites = Scrims::Invite.new(rom)
     @party_repo = Scrims::PartyRepo.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
   end
@@ -72,7 +72,7 @@ RSpec.describe '#invite accept' do
         @invites.accept(discord_id_1, discord_id_4)
         expect {
           @invites.accept(discord_id_1, discord_id_5)
-        }.to raise_error Scrims::Invites::TooManyMembersError
+        }.to raise_error Scrims::Invite::TooManyMembersError
       end
     end
   end
