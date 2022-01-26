@@ -5,7 +5,11 @@ class Scrims
     def members(party_uuid)
       parties.where(party_uuid: party_uuid)
         .combine(:members).to_a
-        .first.members
+        .first
+    end
+
+    def empty?(party_uuid)
+      members(party_uuid).nil?
     end
 
     def member_count(party_uuid)
@@ -28,7 +32,6 @@ class Scrims
 
     def by_uuid(party_uuid)
       parties.where(party_uuid: party_uuid)
-        .first
     end
 
     def party_uuid_exists?(party_uuid)

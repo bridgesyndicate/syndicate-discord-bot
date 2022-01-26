@@ -5,6 +5,7 @@ require 'scrims/party_repo'
 require 'scrims/member_repo'
 require 'scrims/invites'
 require 'scrims/list_party'
+require 'scrims/leave'
 
 class Scrims
   class Storage

@@ -34,7 +34,7 @@ class Scrims
         if party_repo.member_count(existing_party) >= max_members
           raise TooManyMembersError.new(max_members)
         end
-        party = party_repo.by_uuid(existing_party);
+        party = party_repo.by_uuid(existing_party).first
         member_repo.create({ party_id: party.id, discord_id: discord_id })
         return party
       end
