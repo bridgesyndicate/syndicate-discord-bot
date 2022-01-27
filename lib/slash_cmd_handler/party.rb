@@ -7,7 +7,9 @@ class SlashCmdHandler
     def self.init(bot)
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|
-          event.respond(content: "You want to leave.")
+          leave = Scrims::Leave.new($scrims_storage_rom)
+          leave.leave(event.user.id)
+          event.respond(content: "You have left the party.")
         end
         group.subcommand(:invite) do |event|
           party_target = event.options['player']
