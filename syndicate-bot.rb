@@ -20,7 +20,7 @@ require 'ranked'
 require 'sqs_poller'
 require 'syndicate_web_service'
 
-require 'bot/parties'
+require 'slash_cmd_handler/party'
 
 bot = Discordrb::Bot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'])
 #                         log_mode: :debug)
