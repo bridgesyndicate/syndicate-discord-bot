@@ -1,4 +1,61 @@
 class GameMaker
+  def self.make_game(blue_team_discord_ids:,
+                     blue_team_discord_names:,
+                     red_team_discord_ids:,
+                     red_team_discord_names:,
+                     goals:,
+                     length:,
+                     via:
+                    )
+    {
+      uuid: SecureRandom.uuid,
+      blue_team_discord_ids: blue_team_discord_ids,
+      blue_team_discord_names: blue_team_discord_names,
+      red_team_discord_ids: red_team_discord_ids,
+      red_team_discord_names: red_team_discord_names,
+      required_players: blue_team_discord_ids.size + red_team_discord_ids.size,
+      goals_to_win: goals,
+      game_length_in_seconds: length,
+      queued_at: Time.now.utc.iso8601,
+      accepted_by_discord_ids: blue_team_discord_ids.map{ |id|
+        {
+          discord_id: id,
+          accepted_at: Time.now.utc.iso8601
+        }
+      },
+      queued_via: via
+    }
+  end
+
+  def self.add_acceptance(game, discord_id)
+    game[:accepted_by_discord_ids].push(
+      {
+        discord_id: discord_id,
+        accepted_at: Time.now.utc.iso8601
+      }
+    )
+    return game
+  end
+
+  def self.make_team_duel(party1, party2)
+    blue_team_discord_ids = party1
+    red_team_discord_ids = party2
+    blue_team_discord_names = blue_team_discord_ids.map {|id| event.server.member(id).username}
+    red_team_discord_names = red_team_discord_ids.map {|id| event.server.member(id).username}
+    goals = event.options['goals'] || 5
+    length = event.options['length'] || 900
+    game = GameMaker.make_game(
+      via: 'discord duel slash command',
+      blue_team_discord_ids: blue_team_discord_ids,
+      red_team_discord_ids: red_team_discord_ids,
+      blue_team_discord_names: blue_team_discord_names,
+      red_team_discord_names: red_team_discord_names,
+      goals: goals,
+      length: length
+    )
+    JSON.pretty_generate(game)
+  end
+
   def self.from_match(match)
     unless match.nil?
       puts "Making match player A: #{match.playerA.discord_id}, #{match.playerA.discord_username}"
@@ -9,7 +66,7 @@ class GameMaker
       red_team_discord_names = [match.playerB.discord_username]
       goals = 5
       length = 900
-      game = SyndicateWebService.make_game(
+      game = make_game(
         via: 'queue match',
         blue_team_discord_ids: blue_team_discord_ids,
         red_team_discord_ids: red_team_discord_ids,
@@ -40,4 +97,8 @@ class GameMaker
       end
     end
   end
+
+
+
+  
 end

@@ -35,24 +35,15 @@ Thread.abort_on_exception = true
 $scrims_storage_rom = Scrims::Storage.new.rom
 
 bot.application_command(:duel) do |event|
-  blue_team_discord_ids = [event.user.id.to_s]
-  red_team_discord_ids = [event.options['opponent']]
-  blue_team_discord_names = blue_team_discord_ids.map {|id| event.server.member(id).username}
-  red_team_discord_names = red_team_discord_ids.map {|id| event.server.member(id).username}
-  goals = event.options['goals'] || 5
-  length = event.options['length'] || 900
-  game = SyndicateWebService.make_game(
-    via: 'discord duel slash command',
-    blue_team_discord_ids: blue_team_discord_ids,
-    red_team_discord_ids: red_team_discord_ids,
-    blue_team_discord_names: blue_team_discord_names,
-    red_team_discord_names: red_team_discord_names,
-    goals: goals,
-    length: length
-  )
-  game_json = JSON.pretty_generate(game)
-  status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
-
+  begin
+    duel = Duel.new($scrims_storage_rom)
+    game_json = duel.duel(event.user.id,
+                          event.options['opponent'])
+    status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
+  rescue
+    # deal with exceptions
+  end
+    
   if status.class == Net::HTTPOK
     custom_id = "duel_accept_uuid_" + JSON.parse(game_json)['uuid']
     event.server.member(red_team_discord_ids.first).pm.send_embed() do |embed, view|

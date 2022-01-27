@@ -1,5 +1,5 @@
 class Scrims
-  class Invites
+  class Invite
 
     class TooManyMembersError < StandardError
       def initialize(n)
@@ -19,13 +19,16 @@ class Scrims
 
     def add_users_to_new_party(discord_id_1, discord_id_2)
       party_repo.transaction do |t|
-        party = party_repo.create({
-                                    party_uuid: SecureRandom.uuid,
-                                    created_at: Time.now.to_i
-                                  })
-        member_repo.create({ party_id: party.id, discord_id: discord_id_1 })
-        member_repo.create({ party_id: party.id, discord_id: discord_id_2 })
-        return party
+        party = party_repo.create({ created_at: Time.now.to_i })
+        member_repo.create({ party_id: party.id,
+                             discord_id: discord_id_1,
+                             created_at: Time.now
+                           })
+        member_repo.create({ party_id: party.id,
+                             discord_id: discord_id_2,
+                             created_at: Time.now
+                           })
+      return party.id
       end
     end
 
@@ -34,9 +37,13 @@ class Scrims
         if party_repo.member_count(existing_party) >= max_members
           raise TooManyMembersError.new(max_members)
         end
-        party = party_repo.by_uuid(existing_party).first
-        member_repo.create({ party_id: party.id, discord_id: discord_id })
-        return party
+        party_id = party_repo.by_pk(existing_party).first.id
+        member_repo.create({
+                             party_id: party_id,
+                             discord_id: discord_id,
+                             created_at: Time.now
+                           })
+        return party_id
       end
     end
 

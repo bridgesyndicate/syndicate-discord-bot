@@ -4,14 +4,18 @@ class Scrims
 
     def get_party(discord_id)
       result = find_by_discord_id(discord_id)
-      unless result.first.nil?
-        party_uuid = result.first.parties.party_uuid
+      unless result.nil?
+        result.party_id
       end
     end
 
     def find_by_discord_id(discord_id)
       members.where(discord_id: discord_id)
-        .combine(:parties)
+        .first rescue nil
+    end
+
+    def delete_by_discord_id(discord_id)
+      members.where(discord_id: discord_id).delete
     end
   end
 end

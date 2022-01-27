@@ -8,7 +8,7 @@ RSpec.describe '#leave' do
 
   before(:each) do
     rom = Scrims::Storage.new.rom
-    @invites = Scrims::Invites.new(rom)
+    @invites = Scrims::Invite.new(rom)
     @leave = Scrims::Leave.new(rom)
     @party_repo = Scrims::PartyRepo.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
@@ -32,10 +32,10 @@ RSpec.describe '#leave' do
         @leave.leave(discord_id_1)
       end
       it 'deletes both members' do
-        expect(@party_repo.empty?(@party.party_uuid)).to be true
+        expect(@party_repo.empty?(@party)).to be true
       end
       it 'deletes the party' do
-        expect(@party_repo.party_uuid_exists?(@party.party_uuid)).to eq false
+        expect(@party_repo.exists?(@party)).to eq false
       end
     end
   end
@@ -48,13 +48,13 @@ RSpec.describe '#leave' do
         @leave.leave(discord_id_1)
       end
       it 'deletes the member' do
-        expect(@party_repo.members(@party.party_uuid)
+        expect(@party_repo.with_members(@party)
+                 .first
                  .members
                  .map { |member| member.discord_id } ).not_to include discord_id_1
       end
       it 'keeps the party with two members' do
-        expect(@party_repo.members(@party.party_uuid)
-                 .members.size).to eq 2
+        expect(@party_repo.member_count(@party)).to eq 2
       end
     end
   end
