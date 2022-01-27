@@ -186,7 +186,7 @@ bot.application_command(:lb) do |event|
   DiscordWebhookClient.instance.send_leaderboard(leaderboard)
 end
 
-Bot::Parties.init(bot)
+SlashCmdHandler::Party.init(bot)
 
 poller = SqsPoller.new
 poller.run

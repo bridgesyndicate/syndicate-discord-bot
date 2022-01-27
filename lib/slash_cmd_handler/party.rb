@@ -13,7 +13,7 @@ class SlashCmdHandler
           response = PLAYER_LEFT_PARTY
           begin
             leave.leave(event.user.id)
-          rescue e => Scrims::Leave::MemberNotInParty
+          rescue Scrims::Leave::MemberNotInParty => e
             response = PLAYER_NOT_IN_PARTY
           end
           event.respond(content: response)
