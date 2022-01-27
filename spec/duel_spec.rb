@@ -1,5 +1,8 @@
 load 'spec_helper.rb'
 require 'scrims'
+require 'mock_discord_resolver'
+require 'mock_elo_resolver'
+require 'schema/game_post'
 
 RSpec.describe '#duel' do
 
@@ -14,6 +17,8 @@ RSpec.describe '#duel' do
       rom = Scrims::Storage.new.rom
       @invite_cmd = Scrims::Invite.new(rom)
       @duel_cmd = Scrims::Duel.new(rom)
+      @duel_cmd.discord_resolver = MockDiscordResolver.new
+      @duel_cmd.elo_resolver = MockEloResolver.new
     }
 
     describe 'when the party sizes are not equal' do
@@ -25,7 +30,7 @@ RSpec.describe '#duel' do
 
       it 'throws an exception' do
         expect {
-          @duel_cmd.duel(discord_id_1, discord_id_4)
+          @duel_cmd.create_duel(discord_id_1, discord_id_4)
         }.to raise_error Scrims::Duel::PartySizesUnequal
       end
     end
@@ -46,8 +51,11 @@ RSpec.describe '#duel' do
           end
         end
         describe 'when all players are verified' do
-          it 'calls syndicate web service' do
-            
+          it 'creates a game' do
+            @duel_cmd.create_duel(discord_id_1, discord_id_3)
+            expect(JSON::Validator.validate(GamePostSchema.schema, 
+                                            @duel_cmd.to_json))
+              .to be true
           end
         end
       end

@@ -20,9 +20,10 @@ gem 'toys'
 
 group :test do
   gem 'faker'
-  gem 'simplecov', require: false, group: :test
+  gem 'json-schema'
   gem 'rspec'
   gem 'rspec_junit_formatter'
+  gem 'simplecov', require: false, group: :test
   gem 'timecop'
   gem 'webmock'
 end
