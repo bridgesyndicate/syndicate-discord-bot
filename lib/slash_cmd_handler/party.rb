@@ -3,13 +3,20 @@ require 'scrims'
 class SlashCmdHandler
   class Party
     PARTY_INVITE_KEY = 'party_invite'
+    PLAYER_LEFT_PARTY = "You have left the party."
+    PLAYER_NOT_IN_PARTY = "You are not in a party."
 
     def self.init(bot)
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|
           leave = Scrims::Leave.new($scrims_storage_rom)
-          leave.leave(event.user.id)
-          event.respond(content: "You have left the party.")
+          response = PLAYER_LEFT_PARTY
+          begin
+            leave.leave(event.user.id)
+          rescue e => Scrims::Leave::MemberNotInParty
+            response = PLAYER_NOT_IN_PARTY
+          end
+          event.respond(content: response)
         end
         group.subcommand(:invite) do |event|
           party_target = event.options['player']
