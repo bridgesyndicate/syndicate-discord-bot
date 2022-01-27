@@ -8,10 +8,11 @@ class Scrims
     end
 
     def list(discord_id)
-      result = member_repo.find_by_discord_id(discord_id)
-      unless result.first.nil?
-        party_uuid = result.first.parties.party_uuid
-        party_repo.members(party_uuid).map { |member| member.discord_id }
+      member = member_repo.find_by_discord_id(discord_id)
+      unless member.nil?
+        party_repo.with_members(member.party_id).first
+          .members
+          .map { |member| member.discord_id }
       else
         []
       end
