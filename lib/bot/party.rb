@@ -1,7 +1,7 @@
 require 'scrims'
 
 class Bot
-  class Parties
+  class Party
     PARTY_INVITE_KEY = 'party_invite'
 
     def self.init(bot)
