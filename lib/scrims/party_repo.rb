@@ -19,8 +19,9 @@ class Scrims
     def member_count(party_id)
       parties.by_pk(party_id)
         .combine(:members)
+        .one
         .members
-        .count
+        .count rescue 0
     end
 
     def has_members?(party_id)

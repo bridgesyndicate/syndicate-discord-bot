@@ -9,44 +9,6 @@ class SyndicateWebService
     end
   end
 
-  def self.add_acceptance(game, discord_id)
-    game[:accepted_by_discord_ids].push(
-      {
-        discord_id: discord_id,
-        accepted_at: Time.now.utc.iso8601
-      }
-    )
-    return game
-  end
-
-  def self.make_game(blue_team_discord_ids:,
-                     blue_team_discord_names:,
-                     red_team_discord_ids:,
-                     red_team_discord_names:,
-                     goals:,
-                     length:,
-                     via:
-                    )
-    {
-      uuid: SecureRandom.uuid,
-      blue_team_discord_ids: blue_team_discord_ids,
-      blue_team_discord_names: blue_team_discord_names,
-      red_team_discord_ids: red_team_discord_ids,
-      red_team_discord_names: red_team_discord_names,
-      required_players: blue_team_discord_ids.size + red_team_discord_ids.size,
-      goals_to_win: goals,
-      game_length_in_seconds: length,
-      queued_at: Time.now.utc.iso8601,
-      accepted_by_discord_ids: blue_team_discord_ids.map{ |id|
-        {
-          discord_id: id,
-          accepted_at: Time.now.utc.iso8601
-        }
-      },
-      queued_via: via
-    }
-  end
-
   def self.get_sigv4_signer
     Aws::Sigv4::Signer.new(
       service: 'execute-api',
