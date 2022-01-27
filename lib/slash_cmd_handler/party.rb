@@ -41,7 +41,7 @@ class SlashCmdHandler
       end
 
       bot.button(custom_id: /^#{PARTY_INVITE_KEY}/) do |event|
-        invites = Scrims::Invites.new($scrims_storage_rom)
+        invites = Scrims::Invite.new($scrims_storage_rom)
         invitee_discord_id = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         invites.accept(event.user.id, invitee_discord_id)
