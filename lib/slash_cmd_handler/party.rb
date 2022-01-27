@@ -1,6 +1,6 @@
 require 'scrims'
 
-class Bot
+class SlashCmdHandler
   class Party
     PARTY_INVITE_KEY = 'party_invite'
 
