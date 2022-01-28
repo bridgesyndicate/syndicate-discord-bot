@@ -19,7 +19,6 @@ class Scrims
     end
 
     def create_duel(red_discord_id, blue_discord_id)
-      binding.pry;1
       red_party_id = member_repo.find_by_discord_id(red_discord_id)
                   .party_id
       blue_party_id = member_repo.find_by_discord_id(blue_discord_id)
@@ -33,11 +32,11 @@ class Scrims
     end
 
     def resolve_party_names
-      @red_names = red_party.map do |id| 
-          discord_resolver.resolve_name_from_discord_id(id)
+      @red_names = red_party.map do |member|
+          discord_resolver.resolve_name_from_discord_id(member.discord_id)
       end
-      @blue_names = blue_party.map do |id| 
-          discord_resolver.resolve_name_from_discord_id(id)
+      @blue_names = blue_party.map do |member|
+          discord_resolver.resolve_name_from_discord_id(member.discord_id)
       end
     end
 

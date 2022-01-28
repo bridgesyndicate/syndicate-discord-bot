@@ -1,17 +1,30 @@
 require 'scrims'
-require 'mock_discord_resolver'
+require 'discord_resolver'
 require 'mock_elo_resolver'
 
 class SlashCmdHandler
   class Duel
 
+    DUEL_CREATED = 'Your duel has been created'
+    DUEL_FAILED_UNEQUAL_PARTY_SIZES = 'You cannot duel a team with a different party size'
+
     def self.init(bot)
       bot.application_command(:duel) do |event|
         duel = Scrims::Duel.new($scrims_storage_rom)
-        duel.discord_resolver = MockDiscordResolver.new
+        duel.discord_resolver = DiscordResolver.new(bot, event.server.id)
         duel.elo_resolver = MockEloResolver.new
-        game_json = duel.create_duel(event.user.id,
-                    event.options['opponent'])
+        response = DUEL_CREATED
+        begin
+          duel.create_duel(event.user.id,
+                           event.options['opponent'])
+        rescue Scrims::Duel::PartySizesUnequal => e
+          event.respond(content: DUEL_FAILED_UNEQUAL_PARTY_SIZES)
+          return
+        end
+
+        game_json = duel.to_json
+        puts game_json
+        
         status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
 
         if status.class == Net::HTTPOK
