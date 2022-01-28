@@ -1,18 +1,18 @@
 require 'scrims'
+require 'mock_discord_resolver'
+require 'mock_elo_resolver'
 
 class SlashCmdHandler
   class Duel
 
     def self.init(bot)
       bot.application_command(:duel) do |event|
-        begin
-          duel = Duel.new($scrims_storage_rom)
-          game_json = duel.duel(event.user.id,
-                                event.options['opponent'])
-          status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
-        rescue
-          # deal with exceptions
-        end
+        duel = Scrims::Duel.new($scrims_storage_rom)
+        duel.discord_resolver = MockDiscordResolver.new
+        duel.elo_resolver = MockEloResolver.new
+        game_json = duel.create_duel(event.user.id,
+                    event.options['opponent'])
+        status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
 
         if status.class == Net::HTTPOK
           custom_id = "duel_accept_uuid_" + JSON.parse(game_json)['uuid']

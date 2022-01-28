@@ -19,6 +19,7 @@ class Scrims
     end
 
     def create_duel(red_discord_id, blue_discord_id)
+      binding.pry;1
       red_party_id = member_repo.find_by_discord_id(red_discord_id)
                   .party_id
       blue_party_id = member_repo.find_by_discord_id(blue_discord_id)
