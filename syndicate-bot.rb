@@ -21,6 +21,7 @@ require 'sqs_poller'
 require 'syndicate_web_service'
 
 require 'slash_cmd_handler/party'
+require 'slash_cmd_handler/duel'
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 
@@ -34,37 +35,6 @@ queue = Ranked::Queue.new
 Thread.abort_on_exception = true
 
 $scrims_storage_rom = Scrims::Storage.new.rom
-
-bot.application_command(:duel) do |event|
-  begin
-    duel = Duel.new($scrims_storage_rom)
-    game_json = duel.duel(event.user.id,
-                          event.options['opponent'])
-    status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
-  rescue
-    # deal with exceptions
-  end
-    
-  if status.class == Net::HTTPOK
-    custom_id = "duel_accept_uuid_" + JSON.parse(game_json)['uuid']
-    event.server.member(red_team_discord_ids.first).pm.send_embed() do |embed, view|
-      embed.description = "Duel Request from <@#{event.user.id}>"
-      view.row do |r|
-        r.button(
-          label: 'Accept',
-          style: :primary,
-          custom_id: custom_id
-        )
-      end
-    end
-    event.respond(
-      content: "Your duel request has been sent. #{blue_team_discord_names.join(', ')} vs. #{red_team_discord_names.join(', ')}"
-    )
-  else
-    puts "Could not send_game_to_syndicate_web_service. Status was: #{status}"
-    event.respond(content: "Something went wrong")
-  end
-end
 
 bot.button(custom_id: /^duel_accept_uuid_/) do |event|
   uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
@@ -179,6 +149,7 @@ bot.application_command(:lb) do |event|
 end
 
 SlashCmdHandler::Party.init(bot)
+SlashCmdHandler::Duel.init(bot)
 
 poller = SqsPoller.new
 poller.run

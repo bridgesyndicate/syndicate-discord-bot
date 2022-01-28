@@ -9,7 +9,7 @@ class Scrims
     end
 
     attr_accessor :party_repo, :member_repo, :discord_resolver, :goals, :length,
-    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver
+    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier
 
     def initialize(rom)
       @party_repo = Scrims::PartyRepo.new(rom)
@@ -19,24 +19,29 @@ class Scrims
     end
 
     def create_duel(red_discord_id, blue_discord_id)
-      red_party_id = member_repo.find_by_discord_id(red_discord_id)
-                  .party_id
-      blue_party_id = member_repo.find_by_discord_id(blue_discord_id)
-                  .party_id
+      red = member_repo.find_by_discord_id(red_discord_id)
+      blue = member_repo.find_by_discord_id(blue_discord_id)
 
-      @red_party = party_repo.with_members(red_party_id).first.members
-      @blue_party = party_repo.with_members(blue_party_id).first.members
-      if (red_party.size != blue_party.size)
-        raise PartySizesUnequal.new("#{red_party.size}, #{blue_party.size}")
+      if red and blue # both are in parties
+        @red_party = party_repo.with_members(red.party_id).first.members
+        @blue_party = party_repo.with_members(blue.party_id).first.members
+        if (red_party.size != blue_party.size)
+          raise PartySizesUnequal.new("#{red_party.size}, #{blue_party.size}")
+        end
+      elsif red or blue # one in a party
+        raise PartySizesUnequal.new('Both members must be in a party')
+      else # neither in a party
+        @red_party = [OpenStruct.new(discord_id: red_discord_id.to_s)]
+        @blue_party = [OpenStruct.new(discord_id: blue_discord_id.to_s)]
       end
     end
 
     def resolve_party_names
-      @red_names = red_party.map do |id| 
-          discord_resolver.resolve_name_from_discord_id(id)
+      @red_names = red_party.map do |member|
+          discord_resolver.resolve_name_from_discord_id(member.discord_id)
       end
-      @blue_names = blue_party.map do |id| 
-          discord_resolver.resolve_name_from_discord_id(id)
+      @blue_names = blue_party.map do |member|
+          discord_resolver.resolve_name_from_discord_id(member.discord_id)
       end
     end
 
