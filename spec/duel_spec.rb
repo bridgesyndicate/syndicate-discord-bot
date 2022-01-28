@@ -35,6 +35,27 @@ RSpec.describe '#duel' do
       end
     end
 
+    describe 'when one player is in a party and one is not' do
+      before(:each) do
+        @invite_cmd.accept(discord_id_1, discord_id_2)
+      end
+
+      it 'throws an exception' do
+        expect {
+          @duel_cmd.create_duel(discord_id_1, discord_id_3)
+        }.to raise_error Scrims::Duel::PartySizesUnequal
+      end
+    end
+
+    describe 'when neither player is in a party' do
+      it 'creates a game' do
+        @duel_cmd.create_duel(discord_id_1, discord_id_2)
+        expect(JSON::Validator.validate(GamePostSchema.schema,
+                                        @duel_cmd.to_json))
+          .to be true
+      end
+    end
+
     describe 'when the party sizes are equal' do
       before(:each) {
         @invite_cmd.accept(discord_id_1, discord_id_2)

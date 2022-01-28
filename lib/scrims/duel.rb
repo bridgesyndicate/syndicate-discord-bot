@@ -19,15 +19,20 @@ class Scrims
     end
 
     def create_duel(red_discord_id, blue_discord_id)
-      red_party_id = member_repo.find_by_discord_id(red_discord_id)
-                  .party_id
-      blue_party_id = member_repo.find_by_discord_id(blue_discord_id)
-                  .party_id
+      red = member_repo.find_by_discord_id(red_discord_id)
+      blue = member_repo.find_by_discord_id(blue_discord_id)
 
-      @red_party = party_repo.with_members(red_party_id).first.members
-      @blue_party = party_repo.with_members(blue_party_id).first.members
-      if (red_party.size != blue_party.size)
-        raise PartySizesUnequal.new("#{red_party.size}, #{blue_party.size}")
+      if red and blue # both are in parties
+        @red_party = party_repo.with_members(red.party_id).first.members
+        @blue_party = party_repo.with_members(blue.party_id).first.members
+        if (red_party.size != blue_party.size)
+          raise PartySizesUnequal.new("#{red_party.size}, #{blue_party.size}")
+        end
+      elsif red or blue # one in a party
+        raise PartySizesUnequal.new('Both members must be in a party')
+      else # neither in a party
+        @red_party = [OpenStruct.new(discord_id: red_discord_id.to_s)]
+        @blue_party = [OpenStruct.new(discord_id: blue_discord_id.to_s)]
       end
     end
 
