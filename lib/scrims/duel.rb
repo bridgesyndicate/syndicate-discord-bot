@@ -9,7 +9,7 @@ class Scrims
     end
 
     attr_accessor :party_repo, :member_repo, :discord_resolver, :goals, :length,
-    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver
+    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier
 
     def initialize(rom)
       @party_repo = Scrims::PartyRepo.new(rom)
