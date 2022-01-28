@@ -13,20 +13,17 @@ class Scrims
 
     attr_accessor :rom
 
+    def uri
+      "postgres://AmazonPgUsername:AmazonPgPassword@#{ENV['POSTGRES_HOST']}/postgres"
+    end
+
+    def container_type
+      ENV['POSTGRES_HOST'].nil? ? 'sqlite::memory' : uri
+    end
+
     def initialize
-      @rom = ROM.container(:sql, 'sqlite::memory') do |conf|
-        conf.default.create_table(:parties) do
-          primary_key :id
-          column :created_at, DateTime, null: false
-        end
-
-        conf.default.create_table(:members) do
-          primary_key :id
-          foreign_key :party_id, :parties
-          column :discord_id, String, null: false, unique: true
-          column :created_at, DateTime, null: false
-        end
-
+      @rom = ROM.container(:sql, container_type) do |conf|
+        create_tables(conf)
         conf.relation(:parties) do
           schema(infer: true) do
             associations do
@@ -43,6 +40,20 @@ class Scrims
           end
         end
       end
+    end
+
+    def create_tables(conf)
+      conf.default.create_table(:parties) do
+          primary_key :id
+          column :created_at, DateTime, null: false
+        end
+
+        conf.default.create_table(:members) do
+          primary_key :id
+          foreign_key :party_id, :parties
+          column :discord_id, String, null: false, unique: true
+          column :created_at, DateTime, null: false
+        end
     end
   end
 end

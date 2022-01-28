@@ -1,5 +1,14 @@
 # syn-bot
 
+run local postgres like:
+```
+docker run -d -p5432:5432 -e POSTGRES_USER=AmazonPgUsername -e POSTGRES_PASSWORD=AmazonPgPassword -e POSTGRES_HOST_AUTH_METHOD=trust postgres:12.8
+```
+
+connect like:
+```
+psql postgres://AmazonPgUsername:AmazonPgPassword@localhost/postgres
+```
 
 create test queue tables like:
 ```

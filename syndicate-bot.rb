@@ -22,11 +22,12 @@ require 'syndicate_web_service'
 
 require 'slash_cmd_handler/party'
 
-bot = Discordrb::Bot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'])
-#                         log_mode: :debug)
-DiscordWebhookClient.instance.set_bot(bot)
-
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
+
+opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
+opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'
+bot = Discordrb::Bot.new(opts)
+DiscordWebhookClient.instance.set_bot(bot)
 
 queue = Ranked::Queue.new
 
