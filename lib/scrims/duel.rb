@@ -9,7 +9,7 @@ class Scrims
     end
 
     attr_accessor :party_repo, :member_repo, :discord_resolver, :goals, :length,
-    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier
+    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier, :game_uuid
 
     def initialize(rom)
       @party_repo = Scrims::PartyRepo.new(rom)
@@ -47,7 +47,7 @@ class Scrims
 
     def duel_hash
       {
-        uuid: SecureRandom.uuid,
+        uuid: game_uuid
         red_team_discord_ids: red_party.map{ |member| member.discord_id },
         red_team_discord_names: red_names,
         blue_team_discord_ids: blue_party.map{ |member| member.discord_id },

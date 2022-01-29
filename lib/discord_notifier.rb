@@ -1,26 +1,26 @@
 class Notifier
-  attr_accessor :bot, :game_json, :event
+  attr_accessor :bot, :server_id, :game_uuid
 
-  def initialize(bot, event)
+  def initialize(bot, server_id)
     @bot = bot
-    @game_json = game_json
-    @event = event
+    @server_id = server_id
+    @game_uuid = SecureRandom.uuid
   end
 
-  def notify_opponents(discord_ids, custom_id)
-    discord_ids.each do |discord_id|
-      send_embed(discord_id, custom_id)
+  def notify(to_discord_id_list, from_discord_id)
+    to_discord_id_list.each do |discord_id|
+      send_embed(discord_id, from_discord_id)
     end
   end
 
-  def send_embed(discord_id, custom_id)
-    event.server.member(discord_id).pm.send_embed() do |embed, view|
-      embed.description = "Duel Request from <@#{event.user.id}>"
+  def send_embed(discord_id, from_discord_id)
+    bot.server(server_id).member(discord_id).pm.send_embed() do |embed, view|
+      embed.description = "Duel Request from <@#{from_discord_id}>"
       view.row do |r|
         r.button(
           label: 'Accept',
           style: :primary,
-          custom_id: custom_id
+          custom_id: game_uuid
           )
       end
     end
