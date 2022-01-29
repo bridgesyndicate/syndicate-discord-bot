@@ -17,13 +17,17 @@ class Scrims
       "postgres://AmazonPgUsername:AmazonPgPassword@#{ENV['POSTGRES_HOST']}/postgres"
     end
 
+    def use_postgres?
+      !ENV['POSTGRES_HOST'].nil?
+    end
+
     def container_type
-      ENV['POSTGRES_HOST'].nil? ? 'sqlite::memory' : uri
+      use_postgres? ? uri : 'sqlite::memory'
     end
 
     def initialize
       @rom = ROM.container(:sql, container_type) do |conf|
-        create_tables(conf)
+        create_tables(conf) unless use_postgres?
         conf.relation(:parties) do
           schema(infer: true) do
             associations do

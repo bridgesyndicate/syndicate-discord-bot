@@ -12,7 +12,7 @@ class SlashCmdHandler
           leave = Scrims::Leave.new($scrims_storage_rom)
           response = PLAYER_LEFT_PARTY
           begin
-            leave.leave(event.user.id)
+            leave.leave(event.user.id.to_s)
           rescue Scrims::Leave::MemberNotInParty => e
             response = PLAYER_NOT_IN_PARTY
           end
@@ -35,7 +35,7 @@ class SlashCmdHandler
         end
         group.subcommand(:list) do |event|
           list_party = Scrims::ListParty.new($scrims_storage_rom)
-          party_list = list_party.list(event.user.id)
+          party_list = list_party.list(event.user.id.to_s)
           event.respond(content: "Your party: #{format_discord_id_mention_list(party_list)}")
         end
       end
@@ -46,7 +46,7 @@ class SlashCmdHandler
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         invites.accept(event.user.id, invitee_discord_id)
         list_party = Scrims::ListParty.new($scrims_storage_rom)
-        party_list = list_party.list(event.user.id)
+        party_list = list_party.list(event.user.id.to_s)
         event.update_message(content: "You accepted an invite. Your party: #{format_discord_id_mention_list(party_list)}")
         bot.user(invitee_discord_id).pm("Your invite to #{format_discord_mention(event.user.id)} was accepted.")
       end

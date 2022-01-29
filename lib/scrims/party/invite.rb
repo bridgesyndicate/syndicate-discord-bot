@@ -1,3 +1,5 @@
+require 'time'
+
 class Scrims
   class Invite
 
@@ -19,14 +21,14 @@ class Scrims
 
     def add_users_to_new_party(discord_id_1, discord_id_2)
       party_repo.transaction do |t|
-        party = party_repo.create({ created_at: Time.now.to_i })
+        party = party_repo.create({ created_at: Time.now.utc.iso8601 })
         member_repo.create({ party_id: party.id,
                              discord_id: discord_id_1,
-                             created_at: Time.now
+                             created_at: Time.now.utc.iso8601
                            })
         member_repo.create({ party_id: party.id,
                              discord_id: discord_id_2,
-                             created_at: Time.now
+                             created_at: Time.now.utc.iso8601
                            })
       return party.id
       end
@@ -41,7 +43,7 @@ class Scrims
         member_repo.create({
                              party_id: party_id,
                              discord_id: discord_id,
-                             created_at: Time.now
+                             created_at: Time.now.utc.iso8601
                            })
         return party_id
       end

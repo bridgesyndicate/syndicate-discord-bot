@@ -9,16 +9,31 @@ class Scrims
     end
 
     attr_accessor :party_repo, :member_repo, :discord_resolver, :goals, :length,
-    :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier, :game_uuid
+                  :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier,
+                  :game_uuid, :from_discord_id
 
     def initialize(rom)
       @party_repo = Scrims::PartyRepo.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
       @goals = 5
       @length = 900
+      @game_uuid = SecureRandom.uuid
     end
 
-    def create_duel(red_discord_id, blue_discord_id)
+    def blue_party_discord_id_list
+      blue_party.map{ |p| p.discord_id }
+    end
+
+    def red_party_discord_id_list
+      red_party.map{ |p| p.discord_id }
+    end
+
+    def to_discord_id_list
+      blue_party_discord_id_list
+    end
+
+    def create_duel(red_discord_id, blue_discord_id) # red initiates the duel
+      @from_discord_id = red_discord_id
       red = member_repo.find_by_discord_id(red_discord_id)
       blue = member_repo.find_by_discord_id(blue_discord_id)
 
