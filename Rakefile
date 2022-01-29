@@ -8,20 +8,25 @@ dotpath = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(dotpath) unless $LOAD_PATH.include?(dotpath)
 
 require 'ranked/storage'
+require 'scrims'
 require 'helpers'
 
 task default: %w/create_tables/
 
 task :create_tables do
-  %w/discord_user_queue parties/.each do |table|
-    Rake::Task["create_#{table}_table"].execute
+  %w/discord_user_queue scrims/.each do |table|
+    Rake::Task["create_#{table}_tables"].execute
   end
 end
 
-task :create_discord_user_queue_table do
+task :create_discord_user_queue_tables do
   Ranked::SqlTables.create_table
 end
 
-task :create_parties_table do
-  Scrims::SqlTables.create_table
+task :create_scrims_tables do
+  if ENV['POSTGRES_HOST']
+    Scrims::Storage.new
+  else
+    puts 'ERROR: You should set POSTGRES_HOST'
+  end
 end
