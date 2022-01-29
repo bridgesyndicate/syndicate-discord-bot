@@ -47,7 +47,7 @@ class Scrims
 
     def duel_hash
       {
-        uuid: game_uuid
+        uuid: game_uuid,
         red_team_discord_ids: red_party.map{ |member| member.discord_id },
         red_team_discord_names: red_names,
         blue_team_discord_ids: blue_party.map{ |member| member.discord_id },

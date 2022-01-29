@@ -9,18 +9,18 @@ class Notifier
 
   def notify(to_discord_id_list, from_discord_id)
     to_discord_id_list.each do |discord_id|
-      send_embed(discord_id, from_discord_id)
+      send_embed_to(discord_id, from_discord_id)
     end
   end
 
-  def send_embed(discord_id, from_discord_id)
+  def send_embed_to(discord_id, from_discord_id)
     bot.server(server_id).member(discord_id).pm.send_embed() do |embed, view|
       embed.description = "Duel Request from <@#{from_discord_id}>"
       view.row do |r|
         r.button(
           label: 'Accept',
           style: :primary,
-          custom_id: game_uuid
+          custom_id: "duel_accept_uuid_" + game_uuid
           )
       end
     end
