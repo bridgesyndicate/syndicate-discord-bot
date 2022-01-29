@@ -2,6 +2,7 @@ require 'scrims'
 require 'discord_resolver'
 require 'mock_elo_resolver'
 require 'mock_discord_resolver'
+require 'discord_notifier'
 
 class SlashCmdHandler
   class Duel
@@ -14,7 +15,7 @@ class SlashCmdHandler
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot, event.server.id)
         duel.elo_resolver = MockEloResolver.new
-        duel.notify = Notifier.new(bot, event.server.id)
+        duel.notifier = Notifier.new(bot, event.server.id)
         response = DUEL_CREATED
         begin
           duel.create_duel(event.user.id,
@@ -27,7 +28,7 @@ class SlashCmdHandler
         status = SyndicateWebService.send_game_to_syndicate_web_service(duel.to_json)
 
         if status.class == Net::HTTPOK
-          duel.notify(duel.red_party.to_a)
+          duel.notifier.notify(duel.red_party.to_a)
 
           event.respond(
             content: "Your duel request has been sent. #{blue_team_discord_names.join(', ')} vs. #{red_team_discord_names.join(', ')}"
