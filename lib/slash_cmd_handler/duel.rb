@@ -14,7 +14,7 @@ class SlashCmdHandler
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot, event.server.id)
         duel.elo_resolver = MockEloResolver.new
-        duel.notify_opponents = Notifier.new(bot)
+        duel.notify_opponents = Notifier.new(bot, event)
         response = DUEL_CREATED
         begin
           duel.create_duel(event.user.id,
@@ -27,7 +27,8 @@ class SlashCmdHandler
         status = SyndicateWebService.send_game_to_syndicate_web_service(duel.to_json)
 
         if status.class == Net::HTTPOK
-          duel.notify_opponents(event)
+          custom_id = "duel_accept_uuid_" + JSON.parse(duel.to_json)['uuid']
+          duel.notify_opponents(duel.red_party, custom_id)
 
           event.respond(
             content: "Your duel request has been sent. #{blue_team_discord_names.join(', ')} vs. #{red_team_discord_names.join(', ')}"
