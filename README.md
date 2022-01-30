@@ -15,6 +15,18 @@ create test queue tables like:
 POSTGRES_HOST=localhost rake
 ```
 
+connect to a docker container
+```
+aws ecs execute-command --cluster SyndicateECSCluster --task 921bcfd8299644f2a71681d6a2726db3 --command "/bin/bash" --interactive
+```
+
+to get psql to do work there:
+```
+apt-get update
+apt-get postgresql-client-common
+apt-get postgresql-client-11
+``
+
 and then
 
 `ALTER TABLE discord_user_queue ALTER COLUMN discord_id SET DATA TYPE bigint;`

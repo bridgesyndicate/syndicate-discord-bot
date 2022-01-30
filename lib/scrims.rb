@@ -11,8 +11,6 @@ require 'scrims/duel'
 class Scrims
   class Storage
 
-    attr_accessor :rom
-
     def uri
       "postgres://AmazonPgUsername:AmazonPgPassword@#{ENV['POSTGRES_HOST']}/postgres"
     end
@@ -25,8 +23,8 @@ class Scrims
       use_postgres? ? uri : 'sqlite::memory'
     end
 
-    def initialize
-      @rom = ROM.container(:sql, container_type) do |conf|
+    def rom
+      ROM.container(:sql, container_type) do |conf|
         create_tables(conf) unless use_postgres?
         conf.relation(:parties) do
           schema(infer: true) do
@@ -46,18 +44,23 @@ class Scrims
       end
     end
 
+    def create_pg_tables
+      ROM.container(:sql, container_type) do |conf|
+        create_tables(conf)
+      end
+    end
+
     def create_tables(conf)
       conf.default.create_table(:parties) do
-          primary_key :id
-          column :created_at, DateTime, null: false
-        end
-
-        conf.default.create_table(:members) do
-          primary_key :id
-          foreign_key :party_id, :parties
-          column :discord_id, String, null: false, unique: true
-          column :created_at, DateTime, null: false
-        end
+        primary_key :id
+        column :created_at, DateTime, null: false
+      end
+      conf.default.create_table(:members) do
+        primary_key :id
+        foreign_key :party_id, :parties
+        column :discord_id, String, null: false, unique: true
+        column :created_at, DateTime, null: false
+      end
     end
   end
 end

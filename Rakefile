@@ -25,7 +25,8 @@ end
 
 task :create_scrims_tables do
   if ENV['POSTGRES_HOST']
-    Scrims::Storage.new
+    storage = Scrims::Storage.new
+    storage.create_pg_tables
   else
     puts 'ERROR: You should set POSTGRES_HOST'
   end
