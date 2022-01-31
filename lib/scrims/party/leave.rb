@@ -27,9 +27,7 @@ class Scrims
     end
 
     def remove_single_member_party(party_id)
-      party_with_members = party_repo.with_members(party_id)
-      party_with_members.members.delete
-      party_with_members.delete
+      party_repo.destroy(party_id)
     end
 
     def remove_user_from_party(discord_id)

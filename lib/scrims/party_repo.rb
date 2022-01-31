@@ -31,5 +31,10 @@ class Scrims
     def empty?(party_id)
       member_count(party_id) == 0
     end
+
+    def destroy(pk)
+      parties.members.where(party_id: pk).delete
+      delete(pk)
+    end
   end
 end

@@ -5,6 +5,7 @@ RSpec.describe '#leave' do
   let(:discord_id_1) { rand(2**32) }
   let(:discord_id_2) { rand(2**32) }
   let(:discord_id_3) { rand(2**32) }
+  let(:discord_id_4) { rand(2**32) }
 
   before(:each) do
     rom = Scrims::Storage.new.rom
@@ -55,6 +56,36 @@ RSpec.describe '#leave' do
       end
       it 'keeps the party with two members' do
         expect(@party_repo.member_count(@party)).to eq 2
+      end
+    end
+  end
+
+  describe 'when there are two parties' do
+    before(:each) do
+      @party_1 = @invites.accept(discord_id_1, discord_id_2)
+      @party_2 = @invites.accept(discord_id_3, discord_id_4)
+    end
+    it 'there are two parties' do
+      expect(@party_repo.parties.to_a.size).to eq 2
+    end
+    describe 'and one player leaves one of the parties' do
+      before(:each) do
+        @leave.leave(discord_id_1)
+      end
+      it 'there is one party' do
+        expect(@party_repo.parties.to_a.size).to eq 1
+      end
+      it 'the single member party is deleted' do
+        expect(@party_repo.exists?(@party_1)).to eq false
+      end
+      it 'the other party is kept' do
+        expect(@party_repo.exists?(@party_2)).to eq true
+      end
+      it 'there are a total of 2 members' do
+        expect(@member_repo.members.to_a.size).to eq 2
+      end
+      it 'they are both in party_2' do
+        expect(@party_repo.member_count(@party_2)).to eq 2
       end
     end
   end
