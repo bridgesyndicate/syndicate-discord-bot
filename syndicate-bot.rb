@@ -45,7 +45,7 @@ bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
   if ret.class == Net::HTTPOK
     event.respond(content: "<@#{event.user.id}> Adding you as a spectator to #{game_uuid}")
   elsif ret.class == Net::HTTPNotFound
-    event.respond(content: "#{ret.body}")
+    event.respond(content: JSON.parse(ret.body)['reason'])
   else
     event.respond(content: "Something went wrong.")
     puts ret.inspect
