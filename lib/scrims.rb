@@ -1,5 +1,6 @@
 require 'rom'
 require 'securerandom'
+require 'rom-helpers'
 
 require 'scrims/party_repo'
 require 'scrims/member_repo'
