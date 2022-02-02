@@ -36,13 +36,13 @@ RSpec.describe '#lock' do
         end
         it 'the player cannot be locked' do
           expect{
-            @lock_repo.lock(discord_id_1, rand(30).minutes)
+            @lock_repo.lock(discord_id_1, 1.minutes)
           }.to raise_error DoubleLockError
         end
       end
       describe 'when n minutes has elapsed' do
         it 'the player is not locked' do
-          Timecop.freeze(random_minutes) do
+          Timecop.freeze(random_minutes.minutes) do
             expect(@lock_repo.locked?(discord_id_1)).to be false
           end
         end

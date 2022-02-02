@@ -7,12 +7,19 @@ end
 class Locks < ROM::Repository[:locks]
   commands :create, update: :by_pk, delete: :by_pk
 
+  def now
+     Time.now.utc
+  end
+
   def by_pk(discord_id)
     locks.by_pk(discord_id)
   end
 
   def locked?(discord_id)
-    locks.where(discord_id: discord_id)
+    now1 = now
+    locks
+      .where(discord_id: discord_id)
+      .where{ (expires_at > now1 ) } # no idea why now does not work
       .count == 1
   end
 
@@ -21,7 +28,6 @@ class Locks < ROM::Repository[:locks]
   end
 
   def lock(discord_id, duration_seconds)
-    now = Time.now.utc
     expires_at = now + duration_seconds
     begin
       self.create({ discord_id: discord_id,
