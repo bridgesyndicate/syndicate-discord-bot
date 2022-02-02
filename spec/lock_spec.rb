@@ -1,11 +1,11 @@
 load 'spec_helper.rb'
-require 'lock'
-require 'lock_repo'
+require 'integer'
+require 'locks'
 
 RSpec.describe '#lock' do
   before(:each) do
     rom = LockStorage.new.rom
-    @lock_repo = LockRepo.new(rom)
+    @lock_repo = Locks.new(rom)
   end
 
   describe 'when the local target is a player' do
@@ -14,13 +14,13 @@ RSpec.describe '#lock' do
     describe 'when the player is not locked' do
       describe 'when the lock status is checked' do
         it 'the player is not locked' do
-          expect(@lock_repo.is_locked?(discord_id_1)).to be false
+          expect(@lock_repo.locked?(discord_id_1)).to be false
         end
         it 'the player can be locked for thirty minutes' do
-          expect(@lock_repo.lock(discord_id_1, 30)).to match /\d+/
+          expect(@lock_repo.lock(discord_id_1, 30.minutes).class).to be Integer
         end
         it 'the player can be locked for one minute' do
-          expect(@lock_repo.lock(discord_id_1, 1.minutes)).to match /\d+/
+          expect(@lock_repo.lock(discord_id_1, 1.minutes).class).to be Integer
         end
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe '#lock' do
       end
       describe 'when the lock status is checked' do
         it 'the player is locked' do
-          expect(@lock_repo.is_locked?(discord_id_1)).to be true
+          expect(@lock_repo.locked?(discord_id_1)).to be true
         end
         it 'the player cannot be locked' do
           expect{
@@ -43,7 +43,7 @@ RSpec.describe '#lock' do
       describe 'when n minutes has elapsed' do
         it 'the player is not locked' do
           Timecop.freeze(random_minutes) do
-            expect(@lock_repo.is_locked?(discord_id_1)).to be false
+            expect(@lock_repo.locked?(discord_id_1)).to be false
           end
         end
       end

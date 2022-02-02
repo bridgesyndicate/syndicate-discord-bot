@@ -1,8 +1,40 @@
 require 'rom'
 require 'securerandom'
 
-class LockStorage
+class DoubleLockError < StandardError
+end
 
+class Locks < ROM::Repository[:locks]
+  commands :create, update: :by_pk, delete: :by_pk
+
+  def by_pk(discord_id)
+    locks.by_pk(discord_id)
+  end
+
+  def locked?(discord_id)
+    locks.where(discord_id: discord_id)
+      .count == 1
+  end
+
+  def lock_id(discord_id)
+    locks.where(discord_id: discord_id).id
+  end
+
+  def lock(discord_id, duration_seconds)
+    now = Time.now.utc
+    expires_at = now + duration_seconds
+    begin
+      self.create({ discord_id: discord_id,
+                    expires_at: expires_at,
+                    created_at: now
+                  }).id
+    rescue
+      raise DoubleLockError
+    end
+  end
+end
+
+class LockStorage
     def uri
       "postgres://AmazonPgUsername:AmazonPgPassword@#{ENV['POSTGRES_HOST']}/postgres"
     end
