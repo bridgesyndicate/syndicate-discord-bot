@@ -10,19 +10,6 @@ require 'scrims/duel'
 
 class Scrims
   class Storage
-
-    def uri
-      "postgres://AmazonPgUsername:AmazonPgPassword@#{ENV['POSTGRES_HOST']}/postgres"
-    end
-
-    def use_postgres?
-      !ENV['POSTGRES_HOST'].nil?
-    end
-
-    def container_type
-      use_postgres? ? uri : 'sqlite::memory'
-    end
-
     def rom
       ROM.container(:sql, container_type) do |conf|
         create_tables(conf) unless use_postgres?
