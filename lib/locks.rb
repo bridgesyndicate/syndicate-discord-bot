@@ -27,7 +27,7 @@ class Locks < ROM::Repository[:locks]
                     expires_at: expires_at,
                     created_at: now
                   }).id
-    rescue
+    rescue ROM::SQL::UniqueConstraintError => e
       raise DoubleLockError
     end
   end
