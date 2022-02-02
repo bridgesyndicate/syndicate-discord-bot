@@ -19,8 +19,6 @@ RSpec.describe '#duel' do
       @invite_cmd = Scrims::Invite.new(rom)
       @duel_cmd = Scrims::Duel.new(rom)
       @list = Scrims::ListParty.new(rom)
-      # @lock_repo = Scrims::LockRepo.new(rom)
-      # @lock = Scrims::Lock.new(rom)
       @duel_cmd.discord_resolver = MockDiscordResolver.new
       @duel_cmd.elo_resolver = MockEloResolver.new
       @duel_cmd.notifier = MockNotifier.new
@@ -68,13 +66,7 @@ RSpec.describe '#duel' do
       }
 
       describe 'when any of the players are locked' do
-        before(:each){
-          # @lock.lock_player(discord_id_1)
-        }
-        it 'throws a locked exception' do
-          #expect {
-          #  @duel_cmd.create_duel(discord_id_1, discord_id_3)
-          #}.to raise_error Scrims::Duel::LockedPlayer
+        it 'throws a locked exception' do          
         end
       end
       describe 'when all of the players are not locked' do
