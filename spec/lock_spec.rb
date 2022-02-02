@@ -1,8 +1,10 @@
 load 'spec_helper.rb'
+require 'lock'
+require 'lock_repo'
 
 RSpec.describe '#lock' do
   before(:each) do
-    rom = Scrims::Storage.new.rom
+    rom = LockStorage.new.rom
     @lock_repo = LockRepo.new(rom)
   end
 
@@ -15,7 +17,7 @@ RSpec.describe '#lock' do
           expect(@lock_repo.is_locked?(discord_id_1)).to be false
         end
         it 'the player can be locked for thirty minutes' do
-          expect(@lock_repo.lock(discord_id_1, 30.minutes)).to match /\d+/
+          expect(@lock_repo.lock(discord_id_1, 30)).to match /\d+/
         end
         it 'the player can be locked for one minute' do
           expect(@lock_repo.lock(discord_id_1, 1.minutes)).to match /\d+/

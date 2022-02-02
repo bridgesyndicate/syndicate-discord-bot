@@ -1,25 +1,43 @@
-class Lock
+require 'rom'
+require 'securerandom'
 
-  class LockedPlayer < StandardError
-    def initialize(n)
-      msg="One or more players are locked"
-      super
+class LockStorage
+
+    def uri
+      "postgres://AmazonPgUsername:AmazonPgPassword@#{ENV['POSTGRES_HOST']}/postgres"
     end
-  end
 
-  attr_accessor :lock_repo
-
-  def initialize(rom)
-    @lock_repo = Scrims::LockRepo.new(rom)
-  end
-
-  def lock_player(discord_id)
-    lock_repo.transaction do |t|
-    lock_repo.create({ discord_id: discord_id,
-                       created_at: Time.now.utc.iso8601
-                     }
-    return discord_id
+    def use_postgres?
+      !ENV['POSTGRES_HOST'].nil?
     end
-  end
+
+    def container_type
+      use_postgres? ? uri : 'sqlite::memory'
+    end
+
+    def rom
+      ROM.container(:sql, container_type) do |conf|
+        create_table(conf) unless use_postgres?
+        conf.relation(:locks) do
+          schema(infer: true)
+        end
+      end
+    end
+
+    def create_pg_table
+      ROM.container(:sql, container_type) do |conf|
+        create_table(conf)
+      end
+    end
+
+    def create_table(conf)
+      conf.default.create_table(:locks) do
+        primary_key :id
+        column :discord_id, String, null: false, unique: true
+        column :expires_at, DateTime, null: false
+        column :created_at, DateTime, null: false
+      end
+    end
+
 end
 
