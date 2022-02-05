@@ -19,8 +19,6 @@ phases:
       - ./apply-patches.sh
       - tar --exclude .git -cf syn-bot.tar .
       - echo running docker build
-      - DOCKER_ID=$(aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_ID')
-      - aws secretsmanager get-secret-value --secret-id arn:aws:secretsmanager:us-west-2:595508394202:secret:docker-credentials-X0hFW8 | jq -r '.SecretString' | jq -r '.DOCKER_PASSWORD' | docker login --username $DOCKER_ID --password-stdin
       - docker build -t $REPOSITORY_URI:latest .
       - echo not docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
       - echo not tagging with $REPOSITORY_URI:$IMAGE_TAG so ECR lifecycle can eventually delete
