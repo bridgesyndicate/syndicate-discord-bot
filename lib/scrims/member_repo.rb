@@ -11,7 +11,7 @@ class Scrims
 
     def find_by_discord_id(discord_id)
       members.where(discord_id: discord_id)
-        .first rescue nil
+        .first
     end
 
     def delete_by_discord_id(discord_id)

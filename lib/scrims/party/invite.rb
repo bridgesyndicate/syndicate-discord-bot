@@ -30,7 +30,7 @@ class Scrims
                              discord_id: discord_id_2,
                              created_at: Time.now.utc.iso8601
                            })
-      return party.id
+        return party.id
       end
     end
 
@@ -50,6 +50,7 @@ class Scrims
     end
 
     def accept(invitor, invitee)
+      raise 'Inputs must be strings' if invitor.class != String or invitee.class != String
       party_for_invitor = member_repo.get_party(invitor)
       party_for_invitee = member_repo.get_party(invitee)
 

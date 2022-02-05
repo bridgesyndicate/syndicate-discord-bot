@@ -1,11 +1,11 @@
 load 'spec_helper.rb'
 require 'integer'
-require 'locks'
+require 'scrims'
 
 RSpec.describe '#lock' do
   before(:each) do
-    rom = LockStorage.new.rom
-    @lock_repo = Locks.new(rom)
+    rom = Scrims::Storage.new.rom
+    @lock_repo = Scrims::Locks.new(rom)
   end
 
   describe 'when the local target is a player' do
@@ -37,7 +37,7 @@ RSpec.describe '#lock' do
         it 'the player cannot be locked' do
           expect{
             @lock_repo.lock(discord_id_1, 1.minutes)
-          }.to raise_error DoubleLockError
+          }.to raise_error Scrims::DoubleLockError
         end
       end
       describe 'when n minutes has elapsed' do

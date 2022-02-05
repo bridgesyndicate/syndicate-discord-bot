@@ -2,10 +2,10 @@ load 'spec_helper.rb'
 require 'scrims'
 
 RSpec.describe '#leave' do
-  let(:discord_id_1) { rand(2**32) }
-  let(:discord_id_2) { rand(2**32) }
-  let(:discord_id_3) { rand(2**32) }
-  let(:discord_id_4) { rand(2**32) }
+  let(:discord_id_1) { rand(2**32).to_s }
+  let(:discord_id_2) { rand(2**32).to_s }
+  let(:discord_id_3) { rand(2**32).to_s }
+  let(:discord_id_4) { rand(2**32).to_s }
 
   before(:each) do
     rom = Scrims::Storage.new.rom

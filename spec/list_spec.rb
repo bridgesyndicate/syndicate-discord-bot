@@ -2,8 +2,8 @@ load 'spec_helper.rb'
 require 'scrims'
 
 RSpec.describe '#list' do
-  let(:discord_id_1) { rand(2**32) }
-  let(:discord_id_2) { rand(2**32) }
+  let(:discord_id_1) { rand(2**32).to_s }
+  let(:discord_id_2) { rand(2**32).to_s }
 
   before(:each) do
     rom = Scrims::Storage.new.rom
@@ -23,7 +23,7 @@ RSpec.describe '#list' do
       @party.push(discord_id_1.to_s)
       @party_size = rand(3) + 1
       @party_size.times do
-        random_discord_id = rand(2**32)
+        random_discord_id = rand(2**32).to_s
         @party.push(random_discord_id.to_s)
         @invites.accept(discord_id_1, random_discord_id)
       end

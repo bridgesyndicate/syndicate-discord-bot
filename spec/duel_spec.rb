@@ -1,26 +1,21 @@
 load 'spec_helper.rb'
 require 'scrims'
-require 'mock_discord_resolver'
-require 'mock_elo_resolver'
-require 'schema/game_post'
 require 'mock_discord_notifier'
 
 RSpec.describe '#duel' do
 
   describe 'when the target is in a party' do
-    let(:discord_id_1) { rand(2**32) }
-    let(:discord_id_2) { rand(2**32) }
-    let(:discord_id_3) { rand(2**32) }
-    let(:discord_id_4) { rand(2**32) }
-    let(:discord_id_5) { rand(2**32) }
+    let(:discord_id_1) { rand(2**32).to_s }
+    let(:discord_id_2) { rand(2**32).to_s }
+    let(:discord_id_3) { rand(2**32).to_s }
+    let(:discord_id_4) { rand(2**32).to_s }
+    let(:discord_id_5) { rand(2**32).to_s }
 
     before(:each) {
       rom = Scrims::Storage.new.rom
       @invite_cmd = Scrims::Invite.new(rom)
       @duel_cmd = Scrims::Duel.new(rom)
       @list = Scrims::ListParty.new(rom)
-      @duel_cmd.discord_resolver = MockDiscordResolver.new
-      @duel_cmd.elo_resolver = MockEloResolver.new
       @duel_cmd.notifier = MockNotifier.new
     }
 
@@ -34,7 +29,7 @@ RSpec.describe '#duel' do
       it 'throws an exception' do
         expect {
           @duel_cmd.create_duel(discord_id_1, discord_id_4)
-        }.to raise_error Scrims::Duel::PartySizesUnequal
+        }.to raise_error Scrims::Duel::PartySizesUnequalError
       end
     end
 
@@ -43,77 +38,71 @@ RSpec.describe '#duel' do
         @invite_cmd.accept(discord_id_1, discord_id_2)
       end
 
-      it 'throws an exception' do
+      it 'throws an exception and does not make a duel request' do
         expect {
           @duel_cmd.create_duel(discord_id_1, discord_id_3)
-        }.to raise_error Scrims::Duel::PartySizesUnequal
+        }.to raise_error Scrims::Duel::PartySizesUnequalError
+        expect(@duel_cmd.duel_request.duels.count)
+          .to eq 0
       end
     end
 
     describe 'when neither player is in a party' do
-      it 'creates a game' do
+      before (:each) do
         @duel_cmd.create_duel(discord_id_1, discord_id_2)
-        expect(JSON::Validator.validate(GamePostSchema.schema,
-                                        @duel_cmd.to_json))
-          .to be true
+      end
+
+      it 'creates a duel request' do
+        expect(@duel_cmd.duel_request.duels.count)
+          .to eq 1
+      end
+      it 'the duel request participants are a hash' do
+        expect(JSON.parse(@duel_cmd.duel_request.duels.first.participants))
+          .to be_a Hash
+      end
+      it 'creates a duel request with two players' do
+        expect(JSON.parse(@duel_cmd.duel_request.duels
+                            .first
+                            .participants)['red'].size).to eq 1
+        expect(JSON.parse(@duel_cmd.duel_request.duels
+                            .first
+                            .participants)['blue'].size).to eq 1
       end
     end
 
     describe 'when the party sizes are equal' do
-      before(:each) {
+      before(:each) do
         party1 = @invite_cmd.accept(discord_id_1, discord_id_2)
         party2 = @invite_cmd.accept(discord_id_3, discord_id_4)
-      }
+        @duel_cmd.create_duel(discord_id_1, discord_id_3)
+      end
 
-      describe 'when any of the players are locked' do
-        it 'throws a locked exception' do          
-        end
+      it 'creates a duel request' do
+        expect(@duel_cmd.duel_request.duels.count)
+          .to eq 1
       end
-      describe 'when all of the players are not locked' do
-        describe 'when any party member is not verified' do
-          it 'throws' do
-          end
-        end
-        describe 'when all players are verified' do
-          it 'creates a game' do
-            @duel_cmd.create_duel(discord_id_1, discord_id_3)
-            expect(JSON::Validator.validate(GamePostSchema.schema, 
-                                            @duel_cmd.to_json))
-              .to be true
-          end
-        end
-        describe 'when the game has been created' do
-          before(:each) do
-            @duel_cmd.create_duel(discord_id_1, discord_id_3)
-            discord_ids = @list.list(discord_id_3)
-            @duel_cmd.notifier.notify(discord_ids)
-          end
-          it 'notifies the opposing players' do
-            expect(@duel_cmd.notifier.receipts.size).to eq 2
-          end
-        end
+      it 'the duel request participants are a hash' do
+        expect(JSON.parse(@duel_cmd.duel_request.duels.first.participants))
+          .to be_a Hash
       end
-    end
-  end
-  
-  describe 'when the target is not in a party' do
-    describe 'when either player is in a party' do
-      it 'throws an exception' do
+      it 'creates a duel request with two v. two players' do
+        expect(JSON.parse(@duel_cmd.duel_request.duels
+                            .first
+                            .participants)['red'].size).to eq 2
+        expect(JSON.parse(@duel_cmd.duel_request.duels
+                            .first
+                            .participants)['blue'].size).to eq 2
+
       end
-    end
-    describe 'when neither player is in a party' do
-      describe 'when either of the players are locked' do
-        it 'throws a locked exception' do
+
+      describe 'when the duel request has been created' do
+        before(:each) do
+          @duel_cmd.create_duel(discord_id_1, discord_id_3)
+          discord_ids = @list.list(discord_id_3)
+          @duel_cmd.notifier.notify(discord_ids)
         end
-      end
-      describe 'when both of the players are not locked' do
-        describe 'when either player is not verified' do
-          it 'throws' do
-          end
-        end
-        describe 'when both players are verified' do
-          it 'calls syndicate web service' do
-          end
+        it 'notifies the opposing players' do
+          expect(@duel_cmd.notifier.receipts.size).to eq 2
         end
       end
     end

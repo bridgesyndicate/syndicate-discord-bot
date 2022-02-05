@@ -8,6 +8,7 @@ require 'scrims/party/invite'
 require 'scrims/party/list'
 require 'scrims/party/leave'
 require 'scrims/duel'
+require 'scrims/locks'
 
 class Scrims
   class Storage
@@ -21,13 +22,22 @@ class Scrims
             end
           end
         end
-
         conf.relation(:members) do
           schema(infer: true) do
             associations do
               belongs_to :parties
             end
           end
+        end
+        conf.relation(:duels) do
+          schema(infer: true) do
+            associations do
+              belongs_to :parties
+            end
+          end
+        end
+        conf.relation(:locks) do
+          schema(infer: true)
         end
       end
     end
@@ -47,6 +57,18 @@ class Scrims
         primary_key :id
         foreign_key :party_id, :parties
         column :discord_id, String, null: false, unique: true
+        column :created_at, DateTime, null: false
+      end
+      conf.default.create_table(:duels) do
+        primary_key :id
+        column :uuid, String, null: false, unique: true
+        column :participants, String, null: false
+        column :created_at, DateTime, null: false
+      end
+      conf.default.create_table(:locks) do
+        primary_key :id
+        column :discord_id, String, null: false, unique: true
+        column :expires_at, DateTime, null: false
         column :created_at, DateTime, null: false
       end
     end

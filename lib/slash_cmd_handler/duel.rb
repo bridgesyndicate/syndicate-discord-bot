@@ -22,7 +22,7 @@ class SlashCmdHandler
         begin
           duel.create_duel(event.user.id.to_s,
                            event.options['opponent'])
-        rescue Scrims::Duel::PartySizesUnequal => e
+        rescue Scrims::Duel::PartySizesUnequalError => e
           event.respond(content: DUEL_FAILED_UNEQUAL_PARTY_SIZES)
           return
         end

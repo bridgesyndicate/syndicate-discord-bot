@@ -9,13 +9,12 @@ $LOAD_PATH.unshift(dotpath) unless $LOAD_PATH.include?(dotpath)
 
 require 'ranked/storage'
 require 'scrims'
-require 'locks'
 require 'helpers'
 
 task default: %w/create_tables/
 
 task :create_tables do
-  %w/discord_user_queue scrims lock/.each do |table|
+  %w/discord_user_queue scrims/.each do |table|
     Rake::Task["create_#{table}_tables"].execute
   end
 end
@@ -28,15 +27,6 @@ task :create_scrims_tables do
   if ENV['POSTGRES_HOST']
     storage = Scrims::Storage.new
     storage.create_pg_tables
-  else
-    puts 'ERROR: You should set POSTGRES_HOST'
-  end
-end
-
-task :create_lock_tables do
-  if ENV['POSTGRES_HOST']
-    storage = LockStorage.new
-    storage.create_pg_table
   else
     puts 'ERROR: You should set POSTGRES_HOST'
   end
