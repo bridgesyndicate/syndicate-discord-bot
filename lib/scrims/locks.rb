@@ -21,7 +21,7 @@ class Scrims
       now1 = now
       locks
         .where(discord_id: discord_ids)
-        .update(expires_at: now1)
+        .delete
     end
 
     def lock(discord_id, duration_seconds)

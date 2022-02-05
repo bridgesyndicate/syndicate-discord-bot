@@ -39,6 +39,11 @@ RSpec.describe '#lock' do
             @lock_repo.lock(discord_id_1, 1.minutes)
           }.to raise_error Scrims::DoubleLockError
         end
+        it 'can be unlocked' do
+          @lock_repo.unlock(discord_id_1)
+          expect(@lock_repo.locks.where(discord_id: discord_id_1)
+                   .count).to eq 0
+        end
       end
       describe 'when n minutes has elapsed' do
         it 'the player is not locked' do
