@@ -12,6 +12,12 @@ class SqsPoller
     @discord_webhook_client = DiscordWebhookClient.instance
   end
 
+  def unlock_players(game)
+    lock_repo = Scrims::Locks.new($scrims_storage_rom)
+    ids = game.blue_team_discord_ids + game.red_team_discord_ids
+    lock_repo.unlock(ids)
+  end
+
   def poll_sqs
     $stdout.sync = true
     while true
@@ -24,6 +30,7 @@ class SqsPoller
         if game_stream.process?
           if game_stream.game_score?
             discord_webhook_client.send_game_score(game_stream.new_image)
+            unlock_players(game_stream.new_image.game)
           elsif game_stream.new_game?
             discord_webhook_client.send_new_game_alert(game_stream.new_image)
           end

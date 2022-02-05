@@ -17,6 +17,13 @@ class Scrims
         .count == 1
     end
 
+    def unlock(discord_ids)
+      now1 = now
+      locks
+        .where(discord_id: discord_ids)
+        .update(expires_at: now1)
+    end
+
     def lock(discord_id, duration_seconds)
       expires_at = now + duration_seconds
       begin
