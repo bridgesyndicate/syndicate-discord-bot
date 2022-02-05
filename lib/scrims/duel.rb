@@ -49,10 +49,8 @@ class Scrims
     end
 
     def is_locked?(duel)
-      duel_request
-        .locks
-        .where(discord_id: get_participants(duel.first.participants))
-        .count > 0
+      locks
+        .locked?(get_participants(duel.first.participants))
     end
 
     def lock_all_players(duel)

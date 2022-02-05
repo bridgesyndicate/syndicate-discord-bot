@@ -14,7 +14,7 @@ class Scrims
       locks
         .where(discord_id: discord_id)
         .where{ (expires_at > now1 ) } # no idea why now does not work
-        .count == 1
+        .count > 0
     end
 
     def unlock(discord_ids)
