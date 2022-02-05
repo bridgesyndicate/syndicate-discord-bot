@@ -12,7 +12,7 @@ RSpec.describe '#ranked' do
     let(:now) { Time.now.to_i }
     let(:p1)  {
       {
-        discord_id: rand(100),
+        discord_id: rand(2**32),
         discord_username: 'harry',
         queue_time: now,
         elo: 600
@@ -20,14 +20,14 @@ RSpec.describe '#ranked' do
     }
     let(:p2) {
       {
-        discord_id: rand(100),
+        discord_id: rand(2**32),
         discord_username: 'ken',
         queue_time: now
       }
     }
     let(:p3) {
       {
-        discord_id: rand(100),
+        discord_id: rand(2**32),
         discord_username: 'joe',
         queue_time: now,
         elo: 750
@@ -35,7 +35,7 @@ RSpec.describe '#ranked' do
     }
     let(:p4) {
       {
-        discord_id: rand(100),
+        discord_id: rand(2**32),
         discord_username: 'ellis',
         queue_time: now,
         elo: 550

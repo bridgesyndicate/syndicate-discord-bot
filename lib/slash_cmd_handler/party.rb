@@ -44,7 +44,7 @@ class SlashCmdHandler
         invites = Scrims::Invite.new($scrims_storage_rom)
         invitee_discord_id = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
-        invites.accept(event.user.id, invitee_discord_id)
+        invites.accept(event.user.id.to_s, invitee_discord_id.to_s)
         list_party = Scrims::ListParty.new($scrims_storage_rom)
         party_list = list_party.list(event.user.id.to_s)
         event.update_message(content: "You accepted an invite. Your party: #{format_discord_id_mention_list(party_list)}")

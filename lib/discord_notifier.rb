@@ -1,9 +1,9 @@
-class Notifier
+class DiscordNotifier
   attr_accessor :bot, :server_id, :game_uuid
 
-  def initialize(bot, server_id, game_uuid)
+  def initialize(bot, game_uuid)
     @bot = bot
-    @server_id = server_id
+    @server_id = DISCORD_SERVER_ID
     @game_uuid = game_uuid
   end
 

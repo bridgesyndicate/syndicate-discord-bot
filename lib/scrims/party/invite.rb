@@ -9,6 +9,8 @@ class Scrims
         super
       end
     end
+    class MembersInDifferentPartiesError < StandardError
+    end
 
     attr_accessor :party_repo, :member_repo, :max_members
     DEFAULT_MAX_PARTY_MEMBERS = 4
@@ -56,7 +58,7 @@ class Scrims
 
       if party_for_invitor and party_for_invitee
         member_repo.get_party(invitee)
-        raise 'Cannot party when both members are in different parties'
+        raise MembersInDifferentPartiesError
       elsif party_for_invitor or party_for_invitee
         if party_for_invitor
           return add_user_to_existing_party(invitee, party_for_invitor)

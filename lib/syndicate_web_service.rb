@@ -109,4 +109,22 @@ class SyndicateWebService
     req.body = ''
     return https.request(req)
   end
+
+  def self.user_by_discord_id_post(discord_ids)
+    url = generate_knopfnsxoh_url(
+      "auth/user/by-discord-id")
+    signer = get_sigv4_signer
+    body = discord_ids.to_json
+    signature = sign_request(signer, 'POST', url, body)
+    uri = URI.parse(url)
+    https = Net::HTTP.new(uri.host,uri.port)
+    https.use_ssl = true unless SYNDICATE_ENV == 'development'
+    req = Net::HTTP::Post.new(uri.path)
+    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
+    header_list.each do |header|
+      req[header] = signature.headers[header]
+    end
+    req.body = body
+    return https.request(req)
+  end
 end

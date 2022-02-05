@@ -26,6 +26,8 @@ bot = Discordrb::Bot.new token: Secrets.instance.get_secret('discord-bot-token')
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 
+#SyndicateWebService.user_by_discord_id_post([1])
+
 binding.pry;1
 puts 'foo'
 exit

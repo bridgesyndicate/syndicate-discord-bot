@@ -29,8 +29,9 @@ class Scrims
     end
 
     attr_accessor :party_repo, :member_repo, :discord_resolver, :goals, :length,
-                  :red_party, :blue_party, :red_names, :blue_names, :elo_resolver, :notifier,
-                  :from_discord_id, :duel_request, :locks, :uuid
+                  :red_party, :blue_party, :red_names, :blue_names, :elo_resolver,
+                  :notifier, :from_discord_id, :duel_request, :locks, :uuid,
+                  :elo_hash
 
     def initialize(rom)
       @party_repo = Scrims::PartyRepo.new(rom)
@@ -39,6 +40,7 @@ class Scrims
       @goals = 5
       @length = 900
       @locks = Locks.new(rom)
+      @elo_hash = {}
     end
 
     def get_participants(participant_json)
@@ -64,6 +66,12 @@ class Scrims
         .include?(discord_id)
     end
 
+    def reconstitue_party_lists(duel)
+      participants = JSON.parse(duel.first.participants)
+      @red_party = participants['red'].map{ |p| MockRom.new(p) }
+      @blue_party = participants['blue'].map{ |p| MockRom.new(p) }
+    end
+
     def accept(uuid, discord_id)
       duel_request.transaction do |t|
         duel = duel_request.duels.where(uuid: uuid)
@@ -77,6 +85,7 @@ class Scrims
         end
         raise Scrims::Duel::LockedPlayerError if is_locked?(duel)
         raise Scrims::Duel::InvalidAcceptorError unless is_blue_team?(duel, discord_id)
+        reconstitue_party_lists(duel)
         lock_all_players(duel)
       end
       @uuid = uuid
@@ -95,7 +104,7 @@ class Scrims
     end
 
     def make_duel_request
-      uuid = SecureRandom.uuid
+      @uuid = SecureRandom.uuid
       participants = {
         red: red_party_discord_id_list,
         blue: blue_party_discord_id_list
@@ -138,6 +147,12 @@ class Scrims
       end
     end
 
+    def resolve_elo
+      elo_resolver
+        .discord_ids = red_party_discord_id_list + blue_party_discord_id_list
+    end
+
+
     def duel_hash
       {
         uuid: uuid,
@@ -156,14 +171,13 @@ class Scrims
           }
         },
         queued_via: self.class,
-        elo_before_game: elo_resolver
-          .resolve_elo_from_discord_ids(red_party.map{ |member| member.discord_id } +
-                                        blue_party.map{ |member| member.discord_id })
+        elo_before_game: elo_resolver.resolve_elo_from_discord_ids
       }
     end
 
     def to_json
       resolve_party_names
+      resolve_elo
       JSON.pretty_generate(duel_hash)
     end
   end
