@@ -9,6 +9,7 @@ phases:
       - REPOSITORY_URI=$REPOSITORY_HOST/syn-bot
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - aws ecr get-login-password  | docker login --username AWS --password-stdin $REPOSITORY_HOST
       - rbenv versions | cut -c3- | grep '2.7' > .ruby-version
       - bundle config set without development
       - bundle config set path vendor/bundle
@@ -20,14 +21,9 @@ phases:
       - tar --exclude .git -cf syn-bot.tar .
       - echo running docker build
       - docker build -t $REPOSITORY_URI:latest .
-      - echo not docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
-      - echo not tagging with $REPOSITORY_URI:$IMAGE_TAG so ECR lifecycle can eventually delete
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Pushing the Docker images...
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password  | docker login --username AWS --password-stdin $REPOSITORY_HOST
       - docker push $REPOSITORY_URI:latest
 reports:
     rspec_reports:
