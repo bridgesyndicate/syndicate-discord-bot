@@ -36,7 +36,7 @@ RSpec.describe '#invite accept' do
         other_party2 = @invites.accept(discord_id_3, discord_id_4)
         expect {
           @invites.accept(discord_id_1, discord_id_3)
-        }.to raise_error 'Cannot party when both members are in different parties'
+        }.to raise_error Scrims::Invite::MembersInDifferentPartiesError
       end
     end
   end
