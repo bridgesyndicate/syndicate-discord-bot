@@ -33,7 +33,7 @@ RSpec.describe '#duel_accept' do
       it 'throws an exception' do
         expect {
           Timecop.freeze(1.minutes) do
-            @duel_cmd.accept(@uuid)
+            @duel_cmd.accept(@uuid, rand(2**32).to_s)
           end
         }.to raise_error Scrims::Duel::ExpiredDuelError
       end
@@ -46,7 +46,7 @@ RSpec.describe '#duel_accept' do
 
       it 'throws an exception' do
         expect {
-          @duel_cmd.accept(@uuid)
+          @duel_cmd.accept(@uuid, rand(2**32).to_s)
         }.to raise_error Scrims::Duel::MissingDuelError
       end
     end
@@ -55,14 +55,28 @@ RSpec.describe '#duel_accept' do
       it 'throws an exception' do
         @lock_repo.lock(discord_id_1, 30.minutes)
         expect {
-          @duel_cmd.accept(@uuid)
+          @duel_cmd.accept(@uuid, rand(2**32).to_s)
         }.to raise_error Scrims::Duel::LockedPlayerError
+      end
+    end
+
+    describe 'when the acceptance is by the wrong player' do
+      it 'throws an exception when the red team accepts' do
+        expect {
+          @duel_cmd.accept(@uuid, rand(2**32).to_s)
+        }.to raise_error Scrims::Duel::InvalidAcceptorError
+      end
+
+      it 'throws an exception when a random player accepts' do
+        expect {
+          @duel_cmd.accept(@uuid, rand(2**32).to_s)
+        }.to raise_error Scrims::Duel::InvalidAcceptorError
       end
     end
 
     describe 'when it is accepted' do
       before(:each) do
-        @duel_cmd.accept(@uuid)
+        @duel_cmd.accept(@uuid, discord_id_3)
       end
 
       it 'locks all the players' do
@@ -80,7 +94,7 @@ RSpec.describe '#duel_accept' do
       describe 'when it is accepted again' do
         it 'throws an exception' do
           expect {
-            @duel_cmd.accept(@uuid)
+            @duel_cmd.accept(@uuid, rand(2**32).to_s)
           }.to raise_error Scrims::Duel::LockedPlayerError
         end
       end

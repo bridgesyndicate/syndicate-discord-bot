@@ -14,6 +14,8 @@ class Scrims
     end
     class MissingDuelError < StandardError
     end
+    class InvalidAcceptorError < StandardError
+    end
 
     class MockRom
       attr_accessor :discord_id
@@ -57,7 +59,12 @@ class Scrims
       end
     end
 
-    def accept(uuid)
+    def is_blue_team?(duel, discord_id)
+      JSON.parse(duel.first.participants)['blue']
+        .include?(discord_id)
+    end
+
+    def accept(uuid, discord_id)
       duel_request.transaction do |t|
         duel = duel_request.duels.where(uuid: uuid)
         if duel.count == 1
@@ -69,6 +76,7 @@ class Scrims
           raise MissingDuelError
         end
         raise Scrims::Duel::LockedPlayerError if is_locked?(duel)
+        raise Scrims::Duel::InvalidAcceptorError unless is_blue_team?(duel, discord_id)
         lock_all_players(duel)
       end
       @uuid = uuid
@@ -141,7 +149,7 @@ class Scrims
         goals_to_win: goals,
         game_length_in_seconds: length,
         queued_at: Time.now.utc.iso8601,
-        accepted_by_discord_ids: red_party.map{ |member|
+        accepted_by_discord_ids: (red_party + blue_party).map{ |member|
           {
             discord_id: member.discord_id,
             accepted_at: Time.now.utc.iso8601
