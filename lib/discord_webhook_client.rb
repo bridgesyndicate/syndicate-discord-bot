@@ -11,7 +11,7 @@ class DiscordWebhookClient
   BRIDGE_ICON_THUMB = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'
   BRIDGE_FQDN = 'bridgesyndicate.gg'
   BRIDGE_HOME_URL = "https://#{BRIDGE_FQDN}/"
-  CHANNEL = 939678246969155644
+  CHANNEL = 908846821114277888
   HOOK = 908851939649925150
   CUSTOM_EMOJI_WIN = '<:win:907177703810170891>'
   CUSTOM_EMOJI_LOSS = '<:loss:907177703751450674>'
