@@ -55,14 +55,14 @@ class SlashCmdHandler
         end
 
         game_json = duel.to_json
+        puts "game json: #{game_json}"
         status = SyndicateWebService
                    .send_game_to_syndicate_web_service(game_json)
         if status.class == Net::HTTPOK
+          puts "status OK"
           event.update_message(content: "Accepted duel #{uuid}")
-          puts "game json: #{game_json}"
         else
           event.respond(content: "Something went wrong.")
-          puts "game json: #{game_json}"
           puts status.inspect
           puts status.body
           puts status.to_hash.inspect
