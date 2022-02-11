@@ -1,0 +1,87 @@
+{
+  "event_id": "7b348c27f877a5cb2feca840422d5295",
+  "event_name": "MODIFY",
+  "event_version": "1.1",
+  "event_source": "aws:dynamodb",
+  "aws_region": "us-west-2",
+  "dynamodb": {
+    "approximate_creation_date_time": "2021-10-08 18:37:59 -0700",
+    "keys": {
+      "game_uuid": "47d23b54-1d16-4c91-ba24-67fb56bc3e61"
+    },
+    "new_image": {
+      "game": {
+        "game_started_at": 0,
+        "required_players": 2,
+        "game_score": {
+          "red": 0,
+          "blue": 0
+        },
+        "queued_via": "Scrims::Duel",
+        "uuid": "67bed3d6-9ace-47aa-91cf-75fbc7cc1d83",
+        "blue_team_discord_ids": [
+          "246107858712788993"
+        ],
+        "player_map": {
+          "ep1cpr0gamer": "9bf95247-d0ed-4c22-877e-0ac31532ade7"
+        },
+        "final_game_length_formatted": "",
+        "state": "ABORTED",
+        "joined_players": [
+          "ep1cpr0gamer"
+        ],
+        "goals_to_win": "3",
+        "red_team_discord_names": [
+          "ken"
+        ],
+        "goals_scored": [
+        ],
+        "blue_team_minecraft_uuids": [
+          "2b7fa93b-f690-46b8-bfe6-a07b2ec42563"
+        ],
+        "queued_at": "2021-10-03T17:41:20Z",
+        "red_team_minecraft_uuids": [
+	  "9bf95247-d0ed-4c22-877e-0ac31532ade7"
+        ],
+	"map_name": "sorcery",
+        "game_ended_at": 0,
+        "kills_registered": [
+        ],
+        "number_of_joined_players": 1,
+        "remaining_time_in_seconds": -1,
+        "blue_team_discord_names": [
+          "bdamja"
+        ],
+        "accepted_by_discord_ids": [
+          {
+            "accepted_at": "2021-10-03T17:41:32Z",
+            "discord_id": "240177490906054658"
+          },
+          {
+            "accepted_at": "2021-10-03T17:41:20Z",
+            "discord_id": "246107858712788993"
+          }
+        ],
+        "dequeued_at": "2021-10-03T17:41:33.090Z",
+        "remaining_time_formatted": "",
+        "red_team_discord_ids": [
+          "240177490906054658"
+        ],
+        "game_length_in_seconds": 900,
+        "task_ip": "10.0.15.99",
+        "elo_before_game": {
+          "246107858712788993": "2000",
+          "240177490906054658": "1839"
+        }
+      },
+      "updated_at": "2019-10-08T19:55:19Z",
+      "game_uuid": "47d23b54-1d16-4c91-ba24-67fb56bc3e61",
+      "created_at": "2019-10-08T19:55:19Z"
+    },
+    "sequence_number": "9689000000000016739044563",
+    "size_bytes": 5397,
+    "stream_view_type": "NEW_IMAGE"
+  }
+}
+
+

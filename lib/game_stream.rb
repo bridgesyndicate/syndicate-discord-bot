@@ -12,6 +12,10 @@ class GameStream
     body.event_name
   end
 
+  def state
+    body.dynamodb.new_image.game.state
+  end
+
   def game_score
     !!body.dynamodb.new_image.game.game_score
   end
@@ -22,6 +26,10 @@ class GameStream
 
   def new_game?
     modified? and !game_score
+  end
+
+  def aborted?
+    modified? and state == 'ABORTED'
   end
 
   def game_score?

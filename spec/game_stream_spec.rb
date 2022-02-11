@@ -27,6 +27,17 @@ describe 'GameStream' do
     end
   end
 
+  context 'abort' do
+    let(:json) { File.read('./spec/mocks/aborted.json') }
+    it 'processess it' do
+      expect(game_stream.process?).to eq true
+    end
+
+    it 'parses as aborted' do
+      expect(game_stream.aborted?).to eq true
+    end
+  end
+
   context 'game score' do
     let(:json) { File.read('./spec/mocks/game-score-sqs.json') }
 

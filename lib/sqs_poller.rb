@@ -31,6 +31,8 @@ class SqsPoller
           if game_stream.game_score?
             discord_webhook_client.send_game_score(game_stream.new_image)
             unlock_players(game_stream.new_image.game)
+          elsif game_stream.aborted?
+            unlock_players(game_stream.new_image.game)
           elsif game_stream.new_game?
             discord_webhook_client.send_new_game_alert(game_stream.new_image)
           end

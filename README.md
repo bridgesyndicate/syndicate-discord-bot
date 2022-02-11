@@ -23,8 +23,8 @@ aws ecs execute-command --cluster SyndicateECSCluster --task 921bcfd8299644f2a71
 to get psql to do work there:
 ```
 apt-get update
-apt-get postgresql-client-common
-apt-get postgresql-client-11
+apt-get install -y postgresql-client-common postgresql-client-11
+psql postgres://AmazonPgUsername:AmazonPgPassword@${POSTGRES_HOST}/postgres
 ``
 
 and then
