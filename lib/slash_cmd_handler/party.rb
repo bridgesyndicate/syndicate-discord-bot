@@ -52,6 +52,9 @@ class SlashCmdHandler
         rescue Scrims::Invite::TooManyMembersError => e
           event.update_message(content: "Maximum party size is #{Scrims::Invite::DEFAULT_MAX_PARTY_MEMBERS}")
           next
+        rescue ROM::SQL::UniqueConstraintError => e
+          event.update_message(content: "You cannot party yourself. You'll go blind.")
+          next
         end
         list_party = Scrims::ListParty.new($scrims_storage_rom)
         party_list = list_party.list(event.user.id.to_s)

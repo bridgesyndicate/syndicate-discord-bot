@@ -34,7 +34,7 @@ class SlashCmdHandler
 
       bot.button(custom_id: /^duel_accept_uuid_/) do |event|
         event.update_message(content: 'Processing Duel...')
-        puts "#{Time.now.inspect.to_s} duel accept button hit"
+        puts "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
         discord_id = event.user.id.to_s
         duel = Scrims::Duel.new($scrims_storage_rom)
@@ -42,6 +42,9 @@ class SlashCmdHandler
         duel.elo_resolver = EloResolver.new
         begin
           duel.accept(uuid, discord_id)
+        rescue Scrims::DoubleLockError => e
+          event.interaction.edit_response(content: 'This duel has duplicate players.')
+          next
         rescue Scrims::Duel::ExpiredDuelError => e
           event.interaction.edit_response(content: 'This duel has expired.')
           next
