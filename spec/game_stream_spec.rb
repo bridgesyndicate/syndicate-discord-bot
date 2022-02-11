@@ -36,6 +36,11 @@ describe 'GameStream' do
     it 'parses as aborted' do
       expect(game_stream.aborted?).to eq true
     end
+
+    it 'is is not a game score' do
+      expect(game_stream.game_score?).to eq false
+    end
+
   end
 
   context 'game score' do

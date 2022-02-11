@@ -33,11 +33,11 @@ class GameStream
   end
 
   def game_score?
-    modified? and game_score
+    modified? and game_score and !aborted?
   end
 
   def process?
-    new_game? || game_score?
+    new_game? || game_score? || aborted?
   end
 
   def new_image
