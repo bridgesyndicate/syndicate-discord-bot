@@ -26,7 +26,7 @@ RSpec.describe '#lock' do
     end
 
     describe 'when the player is locked for n minutes' do
-      let(:random_minutes) { rand(30) + 1 }
+      let(:random_minutes) { rand(15) + 15 }
       before(:each) do
         @lock_repo.lock(discord_id_1, random_minutes.minutes)
       end
@@ -49,6 +49,21 @@ RSpec.describe '#lock' do
         it 'the player is not locked' do
           Timecop.freeze(random_minutes.minutes) do
             expect(@lock_repo.locked?(discord_id_1)).to be false
+          end
+        end
+        it 'the player can be locked' do
+          Timecop.freeze(random_minutes.minutes) do
+            @lock_repo.lock(discord_id_1, 30.minutes)
+            expect(@lock_repo.locked?(discord_id_1)).to be true
+          end
+        end
+        it 'the player cannot be locked twice' do
+          Timecop.freeze(random_minutes.minutes) do
+            @lock_repo.lock(discord_id_1, 30.minutes)
+            expect(@lock_repo.locked?(discord_id_1)).to be true
+            expect{
+              @lock_repo.lock(discord_id_1, 30.minutes)
+            }.to raise_error Scrims::DoubleLockError
           end
         end
       end
