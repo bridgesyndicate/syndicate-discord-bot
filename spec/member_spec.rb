@@ -1,4 +1,4 @@
-load 'spec_helper.rb'
+require 'spec_helper'
 require 'scrims'
 
 RSpec.describe '#scrims members' do

@@ -1,4 +1,4 @@
-load 'spec_helper.rb'
+require 'spec_helper'
 require 'scrims'
 require 'schema/game_post'
 require 'mock_discord_resolver'

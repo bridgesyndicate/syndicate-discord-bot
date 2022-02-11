@@ -1,4 +1,4 @@
-load 'spec_helper.rb'
+require 'spec_helper'
 require 'ranked'
 require 'timecop'
 require 'ranked/player'
