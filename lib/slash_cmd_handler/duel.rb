@@ -33,6 +33,8 @@ class SlashCmdHandler
       end
 
       bot.button(custom_id: /^duel_accept_uuid_/) do |event|
+        event.update_message(content: 'Processing Duel...')
+        puts "#{Time.now.inspect.to_s} duel accept button hit"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
         discord_id = event.user.id.to_s
         duel = Scrims::Duel.new($scrims_storage_rom)
@@ -41,28 +43,28 @@ class SlashCmdHandler
         begin
           duel.accept(uuid, discord_id)
         rescue Scrims::Duel::ExpiredDuelError => e
-          event.update_message(content: 'This duel has expired.')
+          event.interaction.edit_response(content: 'This duel has expired.')
           next
         rescue Scrims::Duel::LockedPlayerError => e
-          event.update_message(content: 'A player from this duel is in another game.')
+          event.interaction.edit_response(content: 'A player from this duel is in another game.')
           next
         rescue Scrims::Duel::MissingDuelError => e
-          event.update_message(content: 'No such duel exists.')
+          event.interaction.edit_response(content: 'No such duel exists.')
           next
         rescue Scrims::Duel::InvalidAcceptorError => e
-          event.update_message(content: 'You are not a valid acceptor of this duel.')
+          event.interaction.edit_response(content: 'You are not a valid acceptor of this duel.')
           next
         end
 
         game_json = duel.to_json
-        puts "game json: #{game_json}"
+        puts "#{Time.now.inspect.to_s} game json: #{game_json}"
         status = SyndicateWebService
                    .send_game_to_syndicate_web_service(game_json)
         if status.class == Net::HTTPOK
-          puts "status OK"
-          event.update_message(content: "Accepted duel #{uuid}")
+          puts "#{Time.now.inspect.to_s} status OK"
+          event.interaction.edit_response(content: "Duel Accepted!")
         else
-          event.respond(content: "Something went wrong.")
+          event.interaction.edit_response(content: "Something went wrong.")
           puts status.inspect
           puts status.body
           puts status.to_hash.inspect
