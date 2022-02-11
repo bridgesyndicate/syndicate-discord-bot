@@ -9,7 +9,7 @@ class DiscordWebhookClient
 
   SPECTATE_KEY = 'spectate-'
   BRIDGE_ICON_THUMB = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'
-  BRIDGE_FQDN = 'bridgesyndicate.gg'
+  BRIDGE_FQDN = 'buckytour.com'
   BRIDGE_HOME_URL = "https://#{BRIDGE_FQDN}/"
   CHANNEL = 941539084474671166
   HOOK = 941567023618621470
