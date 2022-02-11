@@ -12,7 +12,6 @@ describe 'GameStream' do
   context 'abort' do
     let(:event) { JSON.parse(File.read('./spec/mocks/aborted.json')) }
     it 'parses as aborted' do
-      binding.pry;1
       expect(game_stream.aborted?).to eq true
     end
   end
