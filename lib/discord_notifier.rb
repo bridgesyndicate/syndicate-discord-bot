@@ -14,15 +14,19 @@ class DiscordNotifier
   end
 
   def send_embed_to(to_discord_id, from_discord_id)
-    bot.server(server_id).member(to_discord_id).pm.send_embed() do |embed, view|
-      embed.description = "Duel Request from <@#{from_discord_id}>"
-      view.row do |r|
-        r.button(
-          label: 'Accept',
-          style: :primary,
-          custom_id: "duel_accept_uuid_#{game_uuid}"
+    begin
+      bot.server(server_id).member(to_discord_id).pm.send_embed() do |embed, view|
+        embed.description = "Duel Request from <@#{from_discord_id}>"
+        view.row do |r|
+          r.button(
+            label: 'Accept',
+            style: :primary,
+            custom_id: "duel_accept_uuid_#{game_uuid}"
           )
+        end
       end
-     end
+    rescue Discordrb::Errors::NoPermission => e
+      puts "We didn't have permission to send_embed_to #{to_discord_id}"
+    end
   end
 end
