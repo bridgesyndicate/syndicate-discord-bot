@@ -20,6 +20,8 @@ RSpec.describe '#elo resolver' do
                .values
                .include?(nil))
         .to eq false
+      expect(elo_resolver.resolve_elo_from_discord_ids
+             .values).to eq [STARTING_ELO, 1030, STARTING_ELO, STARTING_ELO, 1991, 1404]
     end
   end
 end
