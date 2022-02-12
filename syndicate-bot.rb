@@ -11,6 +11,9 @@ require 'rom-repository'
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
+require 'bot_config'
+BotConfig.load(File.read('./config.yml'), :buckytour)
+
 require 'delayed_worker'
 require 'discord_response_helper'
 require 'game_maker'
@@ -23,10 +26,7 @@ require 'syndicate_web_service'
 require 'slash_cmd_handler/party'
 require 'slash_cmd_handler/duel'
 
-require 'bot_config'
-
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
-BotConfig.load('./config.yml', :buckytour)
 
 opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
 opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'
