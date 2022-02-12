@@ -21,7 +21,7 @@ class SlashCmdHandler
         group.subcommand(:invite) do |event|
           party_target = event.options['player']
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
-          event.server.member(party_target).pm.send_embed() do |embed, view|
+          bot.user(party_target).pm.send_embed() do |embed, view|
             embed.description = "Party Request from <@#{event.user.id}>"
             view.row do |r|
               r.button(
