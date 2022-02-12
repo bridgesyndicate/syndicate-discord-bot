@@ -14,6 +14,9 @@ class SlashCmdHandler
 
     def self.init(bot)
       bot.application_command(:duel) do |event|
+        puts "#{event.user.id}, #{event.user.username} using duel command"
+        next unless ensure_verified_user(event)
+
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
         begin
