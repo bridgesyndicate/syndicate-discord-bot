@@ -26,6 +26,8 @@ require 'syndicate_web_service'
 require 'slash_cmd_handler/party'
 require 'slash_cmd_handler/duel'
 
+require 'discord_access'
+
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 
 opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
@@ -69,21 +71,17 @@ bot.application_command(:verify) do |event|
   when Net::HTTPNotFound
     event.respond(content: "Your kick code was not found or is invalid.")
   when Net::HTTPOK
-    role = event.server.roles.select {|e| e.name == 'verified'}
-    event.user.add_role(role)
+    event.user.add_role(
+      DiscordAccess.get_verified_role(event.server.roles)
+    )
     event.respond(content: "You are now verified!")
   end
 end
 
 bot.application_command(:q) do |event|
-  unless event.user.roles.map { |v|
-           v.name.downcase }
-           .include?("verified")
-    event.respond(content: "You must be verified to queue.")
-    break
-  end
-
   puts "Request to queue from #{event.user.id}, #{event.user.username}"
+
+  next unless ensure_verified_user(event)
 
   response = SyndicateWebService.get_user_record(event.user.id)
   unless response.class == Net::HTTPOK
