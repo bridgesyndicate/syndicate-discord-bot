@@ -1,0 +1,67 @@
+[
+  {
+    "id": "941567998718771230",
+    "application_id": "856369764729618432",
+    "version": "941567998718771231",
+    "default_permission": true,
+    "default_member_permissions": null,
+    "type": 1,
+    "name": "duel",
+    "description": "Challenge a verified player to a game of Bridge",
+    "guild_id": "903122113924317184",
+    "options": [
+      {
+        "type": 6,
+        "name": "opponent",
+        "description": "Your opponent",
+        "required": true
+      },
+      {
+        "type": 4,
+        "name": "goals",
+        "description": "Number of goals to win",
+        "choices": [
+          {
+            "name": "1",
+            "value": 1
+          },
+          {
+            "name": "2",
+            "value": 2
+          },
+          {
+            "name": "3",
+            "value": 3
+          },
+          {
+            "name": "4",
+            "value": 4
+          },
+          {
+            "name": "5",
+            "value": 5
+          }
+        ]
+      },
+      {
+        "type": 4,
+        "name": "length",
+        "description": "Length of game in minutes",
+        "choices": [
+          {
+            "name": "5",
+            "value": 300
+          },
+          {
+            "name": "10",
+            "value": 600
+          },
+          {
+            "name": "15",
+            "value": 900
+          }
+        ]
+      }
+    ]
+  }
+]

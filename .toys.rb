@@ -34,12 +34,12 @@ tool 'list-guild-commands' do
   end
 end
 
-tool 'delete-command' do
+tool 'delete-application-command' do
   flag :command_id, '--command-id ID'
   def run
     require_relative 'discord_api'
     client = DiscordApi.new(bot_token: $token)
-    result = client.delete_command(command_id)
+    result = client.delete_application_command(command_id)
     puts JSON.pretty_generate(result)
   end
 end
@@ -69,9 +69,11 @@ tool 'create-duel-command' do
           type: 6,
           required: true,
         }
-      ].concat(game_options)
+      ]
     }
-    client.create_application_and_guild_command(definition)
+    definition[:options] =
+      definition[:options].concat(game_options) if BotConfig.config.include_duel_options
+    client.create_guild_command(definition)
   end
 end
 
