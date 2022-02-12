@@ -1,9 +1,12 @@
 require "faraday"
 require "json"
+require 'bot_config'
+BotConfig.load(File.read('./config.yml'), :buckytour_test)
 
 class DiscordApi
-    DISCORD_APPLICATION_ID = "856369764729618432"
-    DISCORD_GUILD_ID = "903122113924317184"
+
+    DISCORD_APPLICATION_ID = BotConfig.config.discord_application_id # the bots id
+    DISCORD_GUILD_ID = BotConfig.config.discord_guild_id # the server's id
 
     def initialize(bot_token:)
       @client_id = DISCORD_APPLICATION_ID
@@ -15,7 +18,7 @@ class DiscordApi
       call_api("/applications/#{@client_id}/guilds/#{@guild_id}/commands")
     end
 
-    def list_commands
+    def list_application_commands
       call_api("/applications/#{@client_id}/commands")
     end
 
@@ -24,7 +27,7 @@ class DiscordApi
                 method: :delete)
     end
 
-    def delete_command(command_id)
+    def delete_application_command(command_id)
           call_api("/applications/#{@client_id}/commands/#{command_id}",
                     method: :delete)
         end
@@ -40,7 +43,7 @@ class DiscordApi
            )
     end
 
-    def create_command(command_definition)
+    def create_application_command(command_definition)
       definition_json = JSON.dump(command_definition)
       headers = {"Content-Type" => "application/json"}
       puts JSON.pretty_generate(
@@ -53,7 +56,7 @@ class DiscordApi
 
     def create_application_and_guild_command(command_definition)
       puts JSON.pretty_generate(create_guild_command(command_definition))
-      puts JSON.pretty_generate(create_command(command_definition))
+      puts JSON.pretty_generate(create_application_command(command_definition))
     end
 
     private

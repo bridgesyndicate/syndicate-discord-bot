@@ -1,4 +1,6 @@
-buckytour:
+buckytour_test:
+  discord_application_id: 856369764729618432
+  discord_guild_id: 903122113924317184
   discord_channel: 941539084474671166
   discord_hook: 941567023618621470
   fqdn: buckytour.com

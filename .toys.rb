@@ -16,11 +16,11 @@ tool 'hello' do
   end
 end
 
-tool 'list-commands' do
+tool 'list-application-commands' do
   def run
     require_relative 'discord_api'
     client = DiscordApi.new(bot_token: $token)
-    result = client.list_commands
+    result = client.list_application_commands
     puts JSON.pretty_generate(result)
   end
 end
@@ -176,6 +176,6 @@ tool 'create-party-command' do
         }
       ]
     }
-    client.create_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
