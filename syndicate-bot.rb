@@ -23,7 +23,10 @@ require 'syndicate_web_service'
 require 'slash_cmd_handler/party'
 require 'slash_cmd_handler/duel'
 
+require 'bot_config'
+
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
+BotConfig.load('./config.yml', :buckytour)
 
 opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
 opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'

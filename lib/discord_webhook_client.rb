@@ -3,16 +3,17 @@ require 'time'
 require 'game'
 require 'singleton'
 require 'helpers'
+require 'bot_config'
 
 class DiscordWebhookClient
   include Singleton
 
-  SPECTATE_KEY = 'spectate-'
-  BRIDGE_ICON_THUMB = 'https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png'
-  BRIDGE_FQDN = 'buckytour.com'
+  BRIDGE_ICON_THUMB = BotConfig.config.icon_thumb
+  BRIDGE_FQDN = BotConfig.config.fqdn
+  CHANNEL = BotConfig.config.discord_channel
+  HOOK = BotConfig.config.discord_hook
   BRIDGE_HOME_URL = "https://#{BRIDGE_FQDN}/"
-  CHANNEL = 941539084474671166
-  HOOK = 941567023618621470
+  SPECTATE_KEY = 'spectate-'
   CUSTOM_EMOJI_WIN = '<:win:907177703810170891>'
   CUSTOM_EMOJI_LOSS = '<:loss:907177703751450674>'
   CUSTOM_EMOJI_TIE = '<:tie:907177703642394634>'

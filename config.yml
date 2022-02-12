@@ -1,0 +1,12 @@
+buckytour:
+  discord_channel: 941539084474671166
+  discord_hook: 941567023618621470
+  fqdn: buckytour.com
+  icon_thumb: "https://buckytour-assets.s3.us-west-2.amazonaws.com/buckytour-icon-128x128.png"
+  show_elo: false
+syndicate:
+  discord_channel: 903122113924317187
+  discord_hook: 908851939649925150
+  fqdn: bridgesyndicate.gg
+  icon_thumb: "https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png"
+  show_elo: true
