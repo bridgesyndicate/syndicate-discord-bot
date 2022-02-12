@@ -8,7 +8,7 @@ RSpec.describe '#config' do
 
   before(:each) do
     config_string = File.read(config_file)
-    BotConfig.load(config_string, :buckytour)
+    BotConfig.load(config_string, :buckytour_test)
   end
 
   describe 'when the config file exists' do
