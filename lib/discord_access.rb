@@ -6,6 +6,14 @@ def ensure_verified_user(event)
   end
 end
 
+def ensure_verified_acceptor(bot, event, acceptor_id)
+  unless DiscordAccess.is_verified?(bot.server(event.server).member(acceptor_id).roles)
+    event.respond(content: "The person you invited must be verified to accept.")
+  else
+    true
+  end
+end
+
 class DiscordAccess
   VERIFIED_ROLE_NAME = 'verified'
 

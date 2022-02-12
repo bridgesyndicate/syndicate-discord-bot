@@ -21,10 +21,9 @@ class SlashCmdHandler
         end
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
-
-          next unless ensure_verified_user(event)
-
           party_target = event.options['player']
+          next unless ensure_verified_user(event)
+          next unless ensure_verified_acceptor(bot, event, party_target)
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
           bot.user(party_target).pm.send_embed() do |embed, view|
             embed.description = "Party Request from <@#{event.user.id}>"
