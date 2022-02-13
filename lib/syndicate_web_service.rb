@@ -127,4 +127,20 @@ class SyndicateWebService
     req.body = body
     return https.request(req)
   end
+
+  def self.get_player_by_minecraft_name(minecraft_name)
+    url = generate_knopfnsxoh_url("auth/user/by-minecraft-name/#{minecraft_name}")
+    signer = get_sigv4_signer
+    signature = sign_request(signer, 'GET', url, '')
+    uri = URI.parse(url)
+    https = Net::HTTP.new(uri.host,uri.port)
+    https.use_ssl = true unless SYNDICATE_ENV == 'development'
+    req = Net::HTTP::Get.new(uri.path)
+    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
+    header_list.each do |header|
+      req[header] = signature.headers[header]
+    end
+    req.body = ''
+    return https.request(req)
+  end
 end

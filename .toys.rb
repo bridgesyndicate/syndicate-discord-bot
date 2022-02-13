@@ -93,7 +93,7 @@ tool 'create-register-command' do
         }
       ]
     }
-    client.create_application_and_guild_command(definition)
+    client.create_guild_command(definition)
   end
 end
 
@@ -179,5 +179,25 @@ tool 'create-party-command' do
       ]
     }
     client.create_application_command(definition)
+  end
+end
+
+tool 'create-barr-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'barr',
+      description: 'Barr (ban) a player',
+      options: [
+        {
+          name: 'ign',
+          description: 'The Minecraft IGN of the player to ban',
+          type: 3,
+          required: true,
+        }
+      ]
+    }
+    client.create_guild_command(definition)
   end
 end

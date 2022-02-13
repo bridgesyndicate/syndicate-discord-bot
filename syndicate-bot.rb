@@ -25,6 +25,7 @@ require 'syndicate_web_service'
 
 require 'slash_cmd_handler/party'
 require 'slash_cmd_handler/duel'
+require 'slash_cmd_handler/barr'
 
 require 'discord_access'
 
@@ -139,6 +140,7 @@ end
 
 SlashCmdHandler::Party.init(bot)
 SlashCmdHandler::Duel.init(bot)
+SlashCmdHandler::Barr.init(bot)
 
 poller = SqsPoller.new
 poller.run
