@@ -72,10 +72,10 @@ bot.application_command(:verify) do |event|
   when Net::HTTPNotFound
     event.respond(content: "Your kick code was not found or is invalid.")
   when Net::HTTPOK
+    event.respond(content: "You are now verified!")
     event.user.add_role(
       DiscordAccess.get_verified_role(event.server.roles)
     )
-    event.respond(content: "You are now verified!")
   end
 end
 
