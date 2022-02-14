@@ -46,6 +46,9 @@ describe '#game model' do
   end
   context 'game score' do
     let(:game_json) { File.read('./spec/mocks/game-score-sqs.json') }
+    before(:each) do
+      BotConfig.load(File.read('./config.yml'), :syndicate)
+    end
     it_behaves_like 'base class'
     it_behaves_like 'finished games'
     it 'has a red team' do
