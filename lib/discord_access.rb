@@ -11,6 +11,15 @@ def ensure_verified_user(event)
   end
 end
 
+def ensure_ordinary_user(bot, event, duel_target, type)
+  if !DiscordAccess.is_famous?(event.user.roles) and DiscordAccess.is_famous?(bot.server(event.server).member(duel_target).roles)
+    event.respond(content: "This player cannot be #{type.to_s}.")
+    return false
+  else
+    true
+  end
+end
+
 def ensure_moderator(event)
   if DiscordAccess.is_moderator?(event.user.roles)
     true
@@ -31,6 +40,13 @@ class DiscordAccess
   VERIFIED_ROLE_NAME = 'verified'
   BANNED_ROLE_NAME = 'banned'
   MODERATOR_ROLE_NAME = 'moderator'
+  FAMOUS_ROLE_NAME = '*'
+
+  def self.is_famous?(roles)
+    roles.map { |role|
+      role.name.downcase }
+      .include?(FAMOUS_ROLE_NAME)
+  end
 
   def self.is_banned?(roles)
     roles.map { |role|
