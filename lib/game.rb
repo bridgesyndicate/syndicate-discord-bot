@@ -65,7 +65,7 @@ class Game
   end
 
   def loser_names(*opts)
-    if (opts.first == :with_elo_changes)
+    if (opts.first == :with_elo_changes and BotConfig.config.show_elo)
       (winner == -1) ? profiles_and_elo_from_ids(game.red_team_discord_ids) : profiles_and_elo_from_ids(game.blue_team_discord_ids)
     else
       (winner == -1) ? profiles_from_ids(game.red_team_discord_ids) : profiles_from_ids(game.blue_team_discord_ids)
