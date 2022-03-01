@@ -18,7 +18,6 @@ class SyndicateEmbeds
   DUEL_REQUEST_COMMAND = '`/duel:`'
 
   # misc:
-  GENERIC_INVITE = '`[invite]:`'
   MAX_MEMBERS = Scrims::Invite::DEFAULT_MAX_PARTY_MEMBERS.to_s
 
   def self.wrap_strong(msg)
@@ -57,27 +56,17 @@ class SyndicateEmbeds
         color: INVISIBLE
       },
       banned_sender: {
-        content: GENERIC_INVITE,
+        content: PARTY_INVITE_COMMAND,
         description: wrap_strong('You are banned.'),
         color: RED
       },
       unverified_sender: {
-        content: GENERIC_INVITE,
+        content: PARTY_INVITE_COMMAND,
         description: wrap_strong('You must be verified to use this command.'),
         color: RED
       },
-      banned_recipient: {
-        content: GENERIC_INVITE,
-        description: wrap_strong('The user you tried to invite is banned.'),
-        color: RED
-      },
-      unverified_recipient: {
-        content: GENERIC_INVITE,
-        description: wrap_strong('The user you tried to invite is unverified.'),
-        color: RED
-      },
       famous_recipient: {
-        content: GENERIC_INVITE,
+        content: PARTY_INVITE_COMMAND,
         description: wrap_strong('You cannot party this player.'),
         color: RED
       }
@@ -99,6 +88,14 @@ class SyndicateEmbeds
       no_error: {
         description: wrap_strong('You have accepted an invite. Your party:') + "\n",
         color: INVISIBLE
+      },
+      banned_recipient: {
+        description: wrap_strong('You are banned.'),
+        color: RED
+      },
+      unverified_recipient: {
+        description: wrap_strong('You must be verified to accept this invite.'),
+        color: RED
       },
       members_in_different_parties_error: {
         description: wrap_strong('This player is in a different party.'),
@@ -127,8 +124,15 @@ class SyndicateEmbeds
         description: wrap_strong('The party sizes are unequal.'),
         color: RED
       },
+      banned_sender: {
+        description: wrap_strong('You are banned.'),
+        color: RED
+      },
+      unverified_sender: {
+        description: wrap_strong('You must be verified to use this command.'),
+        color: RED
+      },
       famous_recipient: {
-        content: GENERIC_INVITE,
         description: wrap_strong('You cannot duel this player.'),
         color: RED
       }
@@ -152,6 +156,14 @@ class SyndicateEmbeds
         },
         title: wrap_strong('You have accepted this duel request.'),
         color: INVISIBLE
+      },
+      banned_recipient: {
+        description: wrap_strong('You are banned.'),
+        color: RED
+      },
+      unverified_recipient: {
+        description: wrap_strong('You must be verified to accept this invite.'),
+        color: RED
       },
       double_lock_error: {
         description: wrap_strong('You cannot duel yourself. You will go blind.'),

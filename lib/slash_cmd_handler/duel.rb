@@ -3,6 +3,7 @@ require 'discord_resolver'
 require 'elo_resolver'
 require 'mock_discord_resolver'
 require 'discord_notifier'
+require 'discord_access'
 require 'syndicate_embeds'
 
 class SlashCmdHandler
@@ -11,15 +12,15 @@ class SlashCmdHandler
     def self.init(bot)
       bot.application_command(:duel) do |event|
         puts "#{event.user.id}, #{event.user.username} using duel command"
-        next unless ensure_verified_user(embed_builder, event)
-        next unless ensure_verified_recipient(embed_builder, bot, event, event.options['opponent'])
-        next unless ensure_ordinary_recipient(embed_builder, bot, event, event.options['opponent'], :duel_request_sent)
+        duel_target = event.options['opponent']
+        next unless ensure_verified_user(event, event.user.roles)
+        next unless ensure_ordinary_recipient(event, bot.server(event.server).member(duel_target).roles)
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
         begin
           duel.create_duel(event.user.id.to_s,
-                           event.options['opponent'])
+                           duel_target.to_s)
         rescue Scrims::Duel::PartySizesUnequalError => e
         end
         discord_id_list = {red: duel.red_party_discord_id_list, blue: duel.blue_party_discord_id_list}
@@ -37,12 +38,14 @@ class SlashCmdHandler
         event.update_message(content: 'Processing Duel...')
         puts "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
-        acceptor_id = event.user.id.to_s
+        acceptor_id = event.user.id
+        next unless ensure_verified_recipient(event, bot.server(event.server).member(acceptor_id).roles)
+
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
         duel.elo_resolver = EloResolver.new
         begin
-          duel.accept(uuid, acceptor_id)
+          duel.accept(uuid, acceptor_id.to_s)
         rescue Scrims::DoubleLockError => e
         rescue Scrims::Duel::ExpiredDuelError => e
         rescue Scrims::Duel::LockedPlayerError => e
@@ -72,5 +75,32 @@ class SlashCmdHandler
         end
       end
     end
+
+    def ensure_verified_user(event, roles)
+      error = :unverified_sender if !DiscordAccess.is_verified?(roles)
+      error = :banned_sender if DiscordAccess.is_banned?(roles)
+      EmbedBuilder.send(:duel_request_sent,
+                         event: event,
+                         error: error) if error.nil?
+      error.nil?
+    end
+
+    def ensure_ordinary_recipient(event, roles)
+      error = :famous_recipient if DiscordAccess.is_famous?(roles)
+      EmbedBuilder.send(:duel_request_sent,
+                         event: event,
+                         error: error) unless error.nil?
+      error.nil?
+    end
+
+    def ensure_verified_recipient(event, roles)
+      error = :unverified_recipient if !DiscordAccess.is_verified?(roles)
+      error = :banned_recipient if DiscordAccess.is_banned?(roles)
+      EmbedBuilder.update(:accept_duel_request,
+                         event: event,
+                         error: error) unless error.nil?
+      error.nil?
+    end
+
   end
 end

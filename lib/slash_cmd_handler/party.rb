@@ -22,9 +22,8 @@ class SlashCmdHandler
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
           party_target = event.options['player']
-          next unless ensure_verified_user(embed_builder, event)
-          next unless ensure_verified_recipient(embed_builder, bot, event, party_target)
-          next unless ensure_ordinary_recipient(embed_builder, bot, event, party_target, :party_invite_sent)
+          next unless ensure_verified_user(event, event.user.roles)
+          next unless ensure_ordinary_recipient(event, bot.server(event.server).member(party_target).roles)
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
           invitor = event.user.id.to_s
           invitee_channel = event.server.member(party_target).pm
@@ -54,6 +53,7 @@ class SlashCmdHandler
         invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         event.update_message(content: 'Processing Party...')
+        next unless ensure_verified_recipient(event, bot.server(event.server).member(event.user.id).roles)
         begin
           invites.accept(event.user.id.to_s, invitor.to_s)
         rescue Scrims::Invite::MembersInDifferentPartiesError => e
@@ -79,5 +79,32 @@ class SlashCmdHandler
         end
       end
     end
+
+    def ensure_verified_user(event, roles)
+      error = :unverified_sender if !DiscordAccess.is_verified?(roles)
+      error = :banned_sender if DiscordAccess.is_banned?(roles)
+      EmbedBuilder.send(:party_invite_sent,
+                         event: event,
+                         error: error) unless error.nil?
+      error.nil?
+    end
+
+    def ensure_ordinary_recipient(event, roles)
+      error = :famous_recipient if DiscordAccess.is_famous?(roles)
+      EmbedBuilder.send(:party_invite_sent,
+                         event: event,
+                         error: error) unless error.nil?
+      error.nil?
+    end
+
+    def ensure_verified_recipient(event, roles)
+      error = :unverified_recipient if !DiscordAccess.is_verified?(roles)
+      error = :banned_recipient if DiscordAccess.is_banned?(roles)
+      EmbedBuilder.update(:accept_party_invite,
+                         event: event,
+                         error: error) unless error.nil?
+      error.nil?
+    end
+
   end
 end
