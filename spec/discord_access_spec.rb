@@ -10,7 +10,7 @@ RSpec.describe '#discord_access' do
 
   it 'ensure_verified_user is false for a non verified user' do
     roles = []
-    expect(DiscordAccess.ensure_verified_user(roles)).to be false    
+    expect(DiscordAccess.ensure_verified_user(roles)).to be false
   end
 
   it 'ensure_verified_user is true for a verified user' do
