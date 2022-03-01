@@ -17,7 +17,7 @@ RSpec.describe '#embeds' do
 
   describe 'party list' do
     before(:each) do
-      SyndicateEmbeds::Builder.new
+      SyndicateEmbeds::Builder
         .send(:party_list,
               event: @event,
               error: error,
@@ -65,7 +65,7 @@ RSpec.describe '#embeds' do
   describe 'duel requests' do
     before(:each) do
       discord_id_list = {red: red, blue: blue}
-      SyndicateEmbeds::Builder.new
+      SyndicateEmbeds::Builder
         .send(:duel_request,
               event: @event,
               error: error,
@@ -99,7 +99,7 @@ RSpec.describe '#embeds' do
   describe 'accept duel request' do
     before(:each) do
       discord_id_list = {red: red, blue: blue}
-      SyndicateEmbeds::Builder.new
+      SyndicateEmbeds::Builder
         .update(:accept_duel_request,
                 event: @event,
                 error: error,
@@ -126,7 +126,7 @@ RSpec.describe '#embeds' do
   describe 'duel request sent acknowledge' do
     before(:each) do
       discord_id_list = {red: red, blue: blue}
-      SyndicateEmbeds::Builder.new
+      SyndicateEmbeds::Builder
         .send(:duel_request_sent,
               event: @event,
               error: error,
@@ -155,7 +155,7 @@ RSpec.describe '#embeds' do
     describe 'with no error' do
       let(:discord_id_list) { rand(2**32).to_s }
       before(:each) do
-        SyndicateEmbeds::Builder.new
+        SyndicateEmbeds::Builder
           .send(:party_invite_sent,
                 event: @event,
                 discord_id_list: discord_id_list)
@@ -171,7 +171,7 @@ RSpec.describe '#embeds' do
 
     describe 'with an error' do
       before(:each) do
-        SyndicateEmbeds::Builder.new
+        SyndicateEmbeds::Builder
           .send(:party_invite_sent,
                 event: @event,
                 error: :banned_sender)

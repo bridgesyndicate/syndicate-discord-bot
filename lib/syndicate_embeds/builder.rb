@@ -3,12 +3,9 @@ require 'string'
 class SyndicateEmbeds
 
   class Builder
-    def initialize()
-      @@embed_db ||= JSON.parse(EmbedsHash.to_json, object_class:OpenStruct)
-    end
-
+    class << self
     def embed_db
-      @@embed_db
+      @@embed_db ||= JSON.parse(EmbedsHash.to_json, object_class:OpenStruct)
     end
 
     def convert_error(error)
@@ -129,5 +126,6 @@ class SyndicateEmbeds
       end
     end
 
+  end
   end
 end

@@ -7,7 +7,6 @@ class SlashCmdHandler
     PARTY_INVITE_KEY = 'party_invite'
 
     def self.init(bot)
-      embed_builder = SyndicateEmbeds::Builder.new
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|
           leave = Scrims::Leave.new($scrims_storage_rom)
@@ -15,7 +14,7 @@ class SlashCmdHandler
             leave.leave(event.user.id.to_s)
           rescue Scrims::Leave::MemberNotInPartyError => e
           end
-          embed_builder.send(:party_leave, event: event, error: e)
+          EmbedBuilder.send(:party_leave, event: event, error: e)
         end
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
@@ -26,11 +25,11 @@ class SlashCmdHandler
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
           invitor = event.user.id.to_s
           invitee_channel = event.server.member(party_target).pm
-          embed_builder.send(:party_invite_received,
+          EmbedBuilder.send(:party_invite_received,
                              channel: invitee_channel,
                              discord_id_list: invitor,
                              custom_id: custom_id)
-          embed_builder.send(:party_invite_sent,
+          EmbedBuilder.send(:party_invite_sent,
                              event: event,
                              discord_id_list: party_target)
         end
@@ -40,7 +39,7 @@ class SlashCmdHandler
             discord_id_list = list_party.list(event.user.id.to_s)
           rescue Scrims::ListParty::EmptyPartyError => e
           end
-          embed_builder.send(:party_list,
+          EmbedBuilder.send(:party_list,
                             event: event,
                             error: e,
                             discord_id_list: discord_id_list)
@@ -65,12 +64,12 @@ class SlashCmdHandler
           discord_id_list = list_party.list(invitor.to_s)
         end
         channel = bot.user(invitor).pm
-        embed_builder.update(:accept_party_invite,
+        EmbedBuilder.update(:accept_party_invite,
                             event: event,
                             error: e,
                             discord_id_list: discord_id_list)
         if e.nil?
-          embed_builder.send(:party_invite_accepted_acknowledged,
+          EmbedBuilder.send(:party_invite_accepted_acknowledged,
                              event: event,
                              channel: channel,
                              discord_id_list: discord_id_list)

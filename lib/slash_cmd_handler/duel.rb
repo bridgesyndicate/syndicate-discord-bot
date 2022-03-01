@@ -9,7 +9,6 @@ class SlashCmdHandler
   class Duel
 
     def self.init(bot)
-      embed_builder = SyndicateEmbeds::Builder.new
       bot.application_command(:duel) do |event|
         puts "#{event.user.id}, #{event.user.username} using duel command"
         next unless ensure_verified_user(embed_builder, event)
@@ -24,7 +23,7 @@ class SlashCmdHandler
         rescue Scrims::Duel::PartySizesUnequalError => e
         end
         discord_id_list = {red: duel.red_party_discord_id_list, blue: duel.blue_party_discord_id_list}
-        embed_builder.send(:duel_request_sent,
+        EmbedBuilder.send(:duel_request_sent,
                            event: event,
                            error: e,
                            discord_id_list: discord_id_list)
@@ -61,7 +60,7 @@ class SlashCmdHandler
 
         if ( status.class == Net::HTTPOK || status.nil? )
           puts "status OK"
-          embed_builder.update(:accept_duel_request,
+          EmbedBuilder.update(:accept_duel_request,
                                event: event,
                                error: e,
                                discord_id_list: discord_id_list)
