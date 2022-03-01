@@ -1,11 +1,10 @@
 require 'syndicate_embeds'
 
 class DiscordNotifier
-  attr_accessor :bot, :embed_builder, :server_id, :game_uuid
+  attr_accessor :bot, :server_id, :game_uuid
 
-  def initialize(bot, embed_builder, game_uuid)
+  def initialize(bot, game_uuid)
     @bot = bot
-    @embed_builder = embed_builder
     @server_id = DISCORD_SERVER_ID
     @game_uuid = game_uuid
   end
@@ -16,7 +15,7 @@ class DiscordNotifier
       channel = server.member(discord_id).pm
       custom_id = "duel_accept_uuid_#{game_uuid}"
       begin
-      embed_builder.send(:duel_request,
+      SyndicateEmbeds::Builder.send(:duel_request,
                          channel: channel,
                          discord_id_list: embed_discord_id_list,
                          custom_id: custom_id)

@@ -121,18 +121,22 @@ class SyndicateEmbeds
         color: INVISIBLE
       },
       party_sizes_unequal_error: {
+        content: DUEL_REQUEST_COMMAND,
         description: wrap_strong('The party sizes are unequal.'),
         color: RED
       },
       banned_sender: {
+        content: DUEL_REQUEST_COMMAND,
         description: wrap_strong('You are banned.'),
         color: RED
       },
       unverified_sender: {
+        content: DUEL_REQUEST_COMMAND,
         description: wrap_strong('You must be verified to use this command.'),
         color: RED
       },
       famous_recipient: {
+        content: DUEL_REQUEST_COMMAND,
         description: wrap_strong('You cannot duel this player.'),
         color: RED
       }

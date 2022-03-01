@@ -11,7 +11,7 @@ class SlashCmdHandler
       error = :unverified_sender if !DiscordAccess.is_verified?(sender_roles)
       error = :banned_sender if DiscordAccess.is_banned?(sender_roles)
       error = :famous_recipient if DiscordAccess.is_famous?(recipient_roles) && !DiscordAccess.is_famous?(sender_roles)
-      EmbedBuilder.send(type,
+      SyndicateEmbeds::Builder.send(type,
                         event: event,
                         error: error) unless error.nil?
       error.nil?
@@ -19,8 +19,8 @@ class SlashCmdHandler
 
     def ensure_recipient_roles(event, recipient_roles, type)
       error = :unverified_recipient if !DiscordAccess.is_verified?(recipient_roles)
-      error = :banned_recipient if DiscordAccess.is_banned?(recipient_roles) && !DiscordAccess.is_famous?(sender_roles)
-      EmbedBuilder.update(type,
+      error = :banned_recipient if DiscordAccess.is_banned?(recipient_roles)
+      SyndicateEmbeds::Builder.update(type,
                           event: event,
                           error: error) unless error.nil?
       error.nil?

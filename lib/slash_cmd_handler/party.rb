@@ -22,7 +22,7 @@ class SlashCmdHandler
             leave.leave(event.user.id.to_s)
           rescue Scrims::Leave::MemberNotInPartyError => e
           end
-          EmbedBuilder.send(:party_leave, event: event, error: e)
+         SyndicateEmbeds::Builder.send(:party_leave, event: event, error: e)
         end
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
@@ -31,11 +31,11 @@ class SlashCmdHandler
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
           invitor = event.user.id.to_s
           invitee_channel = event.server.member(party_target).pm
-          EmbedBuilder.send(:party_invite_received,
+          SyndicateEmbeds::Builder.send(:party_invite_received,
                              channel: invitee_channel,
                              discord_id_list: invitor,
                              custom_id: custom_id)
-          EmbedBuilder.send(:party_invite_sent,
+          SyndicateEmbeds::Builder.send(:party_invite_sent,
                              event: event,
                              discord_id_list: party_target)
         end
@@ -45,7 +45,7 @@ class SlashCmdHandler
             discord_id_list = list_party.list(event.user.id.to_s)
           rescue Scrims::ListParty::EmptyPartyError => e
           end
-          EmbedBuilder.send(:party_list,
+          SyndicateEmbeds::Builder.send(:party_list,
                             event: event,
                             error: e,
                             discord_id_list: discord_id_list)
@@ -57,7 +57,8 @@ class SlashCmdHandler
         invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         event.update_message(content: 'Processing Party...')
-        next unless ensure_recipient_roles(event, event.user.roles, :accept_party_invite)
+        binding.pry;1
+        next unless ensure_recipient_roles(event, roles_for_member(event.user), :accept_party_invite)
         begin
           invites.accept(event.user.id.to_s, invitor.to_s)
         rescue Scrims::Invite::MembersInDifferentPartiesError => e
@@ -71,12 +72,12 @@ class SlashCmdHandler
           discord_id_list = list_party.list(invitor.to_s)
         end
         channel = bot.user(invitor).pm
-        EmbedBuilder.update(:accept_party_invite,
+        SyndicateEmbeds::Builder.update(:accept_party_invite,
                             event: event,
                             error: e,
                             discord_id_list: discord_id_list)
         if e.nil?
-          EmbedBuilder.send(:party_invite_accepted_acknowledged,
+          SyndicateEmbeds::Builder.send(:party_invite_accepted_acknowledged,
                              event: event,
                              channel: channel,
                              discord_id_list: discord_id_list)

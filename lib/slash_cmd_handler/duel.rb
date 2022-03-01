@@ -33,12 +33,12 @@ class SlashCmdHandler
         discord_id_list = { red: duel.red_party_discord_id_list,
                             blue: duel.blue_party_discord_id_list
                           }
-        EmbedBuilder.send(:duel_request_sent,
+        SyndicateEmbeds::Builder.send(:duel_request_sent,
                            event: event,
                            error: e,
                            discord_id_list: discord_id_list)
         if e.nil?
-          duel.notifier = DiscordNotifier.new(bot, embed_builder, duel.uuid)
+          duel.notifier = DiscordNotifier.new(bot, duel.uuid)
           duel.notifier.notify(duel.from_discord_id,
                                duel.to_discord_id_list,
                                discord_id_list)
@@ -49,7 +49,7 @@ class SlashCmdHandler
         event.update_message(content: 'Processing Duel...')
         puts "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
-        next unless ensure_recipient_roles(event, event.user.roles, :accept_duel_request)
+        next unless ensure_recipient_roles(event, roles_for_member(event.user), :accept_duel_request)
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
@@ -75,7 +75,7 @@ class SlashCmdHandler
 
         if ( status.class == Net::HTTPOK || status.nil? )
           puts "status OK"
-          EmbedBuilder.update(:accept_duel_request,
+          SyndicateEmbeds::Builder.update(:accept_duel_request,
                                event: event,
                                error: e,
                                discord_id_list: discord_id_list)
