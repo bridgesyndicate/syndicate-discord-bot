@@ -21,7 +21,7 @@ class SlashCmdHandler
       bot.application_command(:duel) do |event|
         puts "#{event.user.id}, #{event.user.username} using duel command"
         duel_target = event.options['opponent']
-        next unless ensure_roles(event, event.user.roles, roles_for_member(duel_target))
+        next unless ensure_sender_roles(event, event.user.roles, roles_for_member(duel_target), :duel_request_sent)
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
@@ -49,7 +49,7 @@ class SlashCmdHandler
         event.update_message(content: 'Processing Duel...')
         puts "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
-        next unless ensure_duel_accept_roles(event, event.user.roles)
+        next unless ensure_recipient_roles(event, event.user.roles, :accept_duel_request)
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
