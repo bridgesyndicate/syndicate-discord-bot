@@ -39,8 +39,16 @@ class DiscordAccess
         .select {|e| e.name == BANNED_ROLE_NAME}
     end
 
-    def ensure_verified_user(roles)
+    def ensure_verified_user(roles, type)
       !DiscordAccess.is_banned?(roles) and DiscordAccess.is_verified?(roles)
+    end
+
+    def ensure_verified_recipient(roles, type)
+      !DiscordAccess.is_banned?(roles) and DiscordAccess.is_verified?(roles)
+    end
+
+    def ensure_ordinary_recipient(roles, type)
+      !DiscordAccess.is_famous?(roles)
     end
   end
 end
