@@ -5,18 +5,19 @@ require 'discord_access'
 RSpec.describe '#discord_access' do
   it 'ensure_verified_user is false for a banned user' do
     roles = [DiscordMock::Role.new('banned')]
-    expect(DiscordAccess.ensure_verified_user(roles)).to be false
+    expect(DiscordAccess.is_verified?(roles)).to be false
   end
 
   it 'ensure_verified_user is false for a non verified user' do
     roles = []
-    expect(DiscordAccess.ensure_verified_user(roles)).to be false
+    expect(DiscordAccess.is_verified?(roles)).to be false
   end
 
   it 'ensure_verified_user is true for a verified user' do
     roles = [DiscordMock::Role.new('verified')]
-    expect(DiscordAccess.ensure_verified_user(roles)).to be true
+    expect(DiscordAccess.is_verified?(roles)).to be true
   end
+
   it 'knows a famous user when it sees one' do
     roles = [DiscordMock::Role.new('verified'),
              DiscordMock::Role.new('*')]

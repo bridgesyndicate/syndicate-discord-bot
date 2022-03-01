@@ -22,13 +22,7 @@ require 'leaderboard'
 require 'ranked'
 require 'sqs_poller'
 require 'syndicate_web_service'
-
-require 'slash_cmd_handler/party'
-require 'slash_cmd_handler/duel'
-require 'slash_cmd_handler/barr'
-
-require 'discord_access'
-
+require 'slash_cmd_handler'
 require 'discord_access'
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
@@ -140,8 +134,8 @@ bot.application_command(:lb) do |event|
   DiscordWebhookClient.instance.send_leaderboard(leaderboard)
 end
 
-SlashCmdHandler::Party.init(bot)
-SlashCmdHandler::Duel.init(bot)
+SlashCmdHandler::Party.new(bot).add_handlers
+SlashCmdHandler::Duel.new(bot).add_handlers
 SlashCmdHandler::Barr.init(bot)
 
 poller = SqsPoller.new

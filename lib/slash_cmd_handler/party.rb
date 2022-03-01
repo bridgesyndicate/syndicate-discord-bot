@@ -6,10 +6,15 @@ class SlashCmdHandler
   class Party
     PARTY_INVITE_KEY = 'party_invite'
 
-    def self.ensure_verified_user(whatever)
+    include Helpers
+
+        attr_accessor :bot
+
+    def initialize(bot)
+      @bot = bot
     end
 
-    def self.init(bot)
+    def add_handlers
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|
           leave = Scrims::Leave.new($scrims_storage_rom)
@@ -79,32 +84,5 @@ class SlashCmdHandler
         end
       end
     end
-
-    def ensure_verified_user(event, roles)
-      error = :unverified_sender if !DiscordAccess.is_verified?(roles)
-      error = :banned_sender if DiscordAccess.is_banned?(roles)
-      EmbedBuilder.send(:party_invite_sent,
-                         event: event,
-                         error: error) unless error.nil?
-      error.nil?
-    end
-
-    def ensure_ordinary_recipient(event, roles)
-      error = :famous_recipient if DiscordAccess.is_famous?(roles)
-      EmbedBuilder.send(:party_invite_sent,
-                         event: event,
-                         error: error) unless error.nil?
-      error.nil?
-    end
-
-    def ensure_verified_recipient(event, roles)
-      error = :unverified_recipient if !DiscordAccess.is_verified?(roles)
-      error = :banned_recipient if DiscordAccess.is_banned?(roles)
-      EmbedBuilder.update(:accept_party_invite,
-                         event: event,
-                         error: error) unless error.nil?
-      error.nil?
-    end
-
   end
 end

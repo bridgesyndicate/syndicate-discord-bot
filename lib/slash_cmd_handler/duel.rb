@@ -9,12 +9,19 @@ require 'syndicate_embeds'
 class SlashCmdHandler
   class Duel
 
-    def self.init(bot)
+    include Helpers
+
+    attr_accessor :bot
+
+    def initialize(bot)
+      @bot = bot
+    end
+
+    def add_handlers
       bot.application_command(:duel) do |event|
         puts "#{event.user.id}, #{event.user.username} using duel command"
         duel_target = event.options['opponent']
-        next unless ensure_verified_user(event, event.user.roles)
-        next unless ensure_ordinary_recipient(event, bot.server(event.server).member(duel_target).roles)
+        next unless ensure_roles(event, event.user.roles, roles_for_member(duel_target))
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
@@ -23,14 +30,18 @@ class SlashCmdHandler
                            duel_target.to_s)
         rescue Scrims::Duel::PartySizesUnequalError => e
         end
-        discord_id_list = {red: duel.red_party_discord_id_list, blue: duel.blue_party_discord_id_list}
+        discord_id_list = { red: duel.red_party_discord_id_list,
+                            blue: duel.blue_party_discord_id_list
+                          }
         EmbedBuilder.send(:duel_request_sent,
                            event: event,
                            error: e,
                            discord_id_list: discord_id_list)
         if e.nil?
           duel.notifier = DiscordNotifier.new(bot, embed_builder, duel.uuid)
-          duel.notifier.notify(duel.from_discord_id, duel.to_discord_id_list, discord_id_list)
+          duel.notifier.notify(duel.from_discord_id,
+                               duel.to_discord_id_list,
+                               discord_id_list)
         end
       end
 
@@ -38,14 +49,13 @@ class SlashCmdHandler
         event.update_message(content: 'Processing Duel...')
         puts "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
-        acceptor_id = event.user.id
-        next unless ensure_verified_recipient(event, bot.server(event.server).member(acceptor_id).roles)
+        next unless ensure_duel_accept_roles(event, event.user.roles)
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)
         duel.elo_resolver = EloResolver.new
         begin
-          duel.accept(uuid, acceptor_id.to_s)
+          duel.accept(uuid, event.user.id.to_s)
         rescue Scrims::DoubleLockError => e
         rescue Scrims::Duel::ExpiredDuelError => e
         rescue Scrims::Duel::LockedPlayerError => e
@@ -54,7 +64,9 @@ class SlashCmdHandler
         end
 
         if e.nil?
-          discord_id_list = {red: duel.red_party_discord_id_list, blue: duel.blue_party_discord_id_list}
+          discord_id_list = { red: duel.red_party_discord_id_list,
+                              blue: duel.blue_party_discord_id_list
+                            }
           game_json = duel.to_json
           puts "game json: #{game_json}"
           status = SyndicateWebService
@@ -75,32 +87,5 @@ class SlashCmdHandler
         end
       end
     end
-
-    def ensure_verified_user(event, roles)
-      error = :unverified_sender if !DiscordAccess.is_verified?(roles)
-      error = :banned_sender if DiscordAccess.is_banned?(roles)
-      EmbedBuilder.send(:duel_request_sent,
-                         event: event,
-                         error: error) if error.nil?
-      error.nil?
-    end
-
-    def ensure_ordinary_recipient(event, roles)
-      error = :famous_recipient if DiscordAccess.is_famous?(roles)
-      EmbedBuilder.send(:duel_request_sent,
-                         event: event,
-                         error: error) unless error.nil?
-      error.nil?
-    end
-
-    def ensure_verified_recipient(event, roles)
-      error = :unverified_recipient if !DiscordAccess.is_verified?(roles)
-      error = :banned_recipient if DiscordAccess.is_banned?(roles)
-      EmbedBuilder.update(:accept_duel_request,
-                         event: event,
-                         error: error) unless error.nil?
-      error.nil?
-    end
-
   end
 end
