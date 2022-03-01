@@ -6,6 +6,9 @@ class SlashCmdHandler
   class Party
     PARTY_INVITE_KEY = 'party_invite'
 
+    def self.ensure_verified_user(whatever)
+    end
+
     def self.init(bot)
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|

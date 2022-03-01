@@ -7,6 +7,13 @@ class DiscordMock
     end
   end
 
+  class Role
+    attr_accessor :name
+    def initialize(name)
+      @name = name
+    end
+  end
+
   class Event
     attr_accessor :channel, :interaction
 

@@ -6,7 +6,7 @@ class SlashCmdHandler
       bot.application_command(:barr) do |event|
         puts "#{event.user.id}, #{event.user.username} using barr " +
              "command on #{event.options['ign']}"
-        next unless ensure_moderator(event)
+        next unless is_moderator?(event.user.roles)
 
         status = SyndicateWebService.get_player_by_minecraft_name(event.options['ign'])
         if status.class == Net::HTTPOK

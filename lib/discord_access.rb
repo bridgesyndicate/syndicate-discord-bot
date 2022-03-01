@@ -40,44 +40,7 @@ class DiscordAccess
     end
 
     def ensure_verified_user(roles)
-      if DiscordAccess.is_banned?(roles)
-        false
-      else
-        if
-          !DiscordAccess.is_verified?(roles)
-          false
-        else
-          true
-        end
-      end
-    end
-
-    def ensure_ordinary_recipient(roles)
-      if !DiscordAccess.is_famous?(roles) and DiscordAccess.is_famous?(roles)
-        false
-      else
-        true
-      end
-    end
-
-    def ensure_moderator(roles)
-      if DiscordAccess.is_moderator?(roles)
-        true
-      else
-        false
-      end
-    end
-
-    def ensure_verified_recipient(roles)
-      if DiscordAccess.is_banned?(roles)
-        false
-      else
-        if
-          !DiscordAccess.is_verified?(roles)
-          false
-        else
-          true
-        end
-      end
+      !DiscordAccess.is_banned?(roles) and DiscordAccess.is_verified?(roles)
     end
   end
+end
