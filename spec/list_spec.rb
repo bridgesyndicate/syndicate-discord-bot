@@ -12,8 +12,10 @@ RSpec.describe '#list' do
   end
 
   describe 'when player is not in a party' do
-    it "returns an empty list" do
-      expect(@list.list(discord_id_1) ).to eq []
+    it "raises an empty party exception" do
+      expect {
+        @list.list(discord_id_1)
+      }.to raise_error Scrims::ListParty::EmptyPartyError
     end
   end
 

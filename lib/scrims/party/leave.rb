@@ -1,7 +1,7 @@
 class Scrims
   class Leave
 
-    class MemberNotInParty < StandardError
+    class MemberNotInPartyError < StandardError
       def initialize()
         msg="Cannot leave nonexistent party"
         super
@@ -17,7 +17,7 @@ class Scrims
 
     def leave(discord_id)
       if member_repo.get_party(discord_id).nil?
-        raise MemberNotInParty.new
+        raise MemberNotInPartyError.new
       else
         party_id = remove_user_from_party(discord_id)
         if party_repo.member_count(party_id) == 1

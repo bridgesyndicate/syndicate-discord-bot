@@ -29,6 +29,8 @@ require 'slash_cmd_handler/barr'
 
 require 'discord_access'
 
+require 'discord_access'
+
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 
 opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }

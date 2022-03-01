@@ -1,71 +1,80 @@
 require 'scrims'
 require 'discord_access'
+require 'syndicate_embeds'
 
 class SlashCmdHandler
   class Party
     PARTY_INVITE_KEY = 'party_invite'
-    PLAYER_LEFT_PARTY = "You have left the party."
-    PLAYER_NOT_IN_PARTY = "You are not in a party."
 
     def self.init(bot)
+      embed_builder = SyndicateEmbeds::Builder.new
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|
           leave = Scrims::Leave.new($scrims_storage_rom)
-          response = PLAYER_LEFT_PARTY
           begin
             leave.leave(event.user.id.to_s)
-          rescue Scrims::Leave::MemberNotInParty => e
-            response = PLAYER_NOT_IN_PARTY
+          rescue Scrims::Leave::MemberNotInPartyError => e
           end
-          event.respond(content: response)
+          embed_builder.send(:party_leave, event: event, error: e)
         end
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
-          next unless ensure_ordinary_user(bot, event, event.options['player'], :partied)
-
           party_target = event.options['player']
-          next unless ensure_verified_user(event)
-          next unless ensure_verified_acceptor(bot, event, party_target)
+          next unless ensure_verified_user(embed_builder, event)
+          next unless ensure_verified_recipient(embed_builder, bot, event, party_target)
+          next unless ensure_ordinary_recipient(embed_builder, bot, event, party_target, :party_invite_sent)
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
-          bot.user(party_target).pm.send_embed() do |embed, view|
-            embed.description = "Party Request from <@#{event.user.id}>"
-            view.row do |r|
-              r.button(
-                label: 'Accept',
-                style: :primary,
-                custom_id: custom_id
-              )
-            end
-          end
-          event.respond(content: "Your party request has been sent.")
+          invitor = event.user.id.to_s
+          invitee_channel = event.server.member(party_target).pm
+          embed_builder.send(:party_invite_received,
+                             channel: invitee_channel,
+                             discord_id_list: invitor,
+                             custom_id: custom_id)
+          embed_builder.send(:party_invite_sent,
+                             event: event,
+                             discord_id_list: party_target)
         end
         group.subcommand(:list) do |event|
           list_party = Scrims::ListParty.new($scrims_storage_rom)
-          party_list = list_party.list(event.user.id.to_s)
-          event.respond(content: "Your party: #{format_discord_id_mention_list(party_list)}")
+          begin
+            discord_id_list = list_party.list(event.user.id.to_s)
+          rescue Scrims::ListParty::EmptyPartyError => e
+          end
+          embed_builder.send(:party_list,
+                            event: event,
+                            error: e,
+                            discord_id_list: discord_id_list)
         end
       end
 
       bot.button(custom_id: /^#{PARTY_INVITE_KEY}/) do |event|
         invites = Scrims::Invite.new($scrims_storage_rom)
-        invitee_discord_id = event.interaction.button.custom_id
+        invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
+        event.update_message(content: 'Processing Party...')
         begin
-          invites.accept(event.user.id.to_s, invitee_discord_id.to_s)
+          invites.accept(event.user.id.to_s, invitor.to_s)
         rescue Scrims::Invite::MembersInDifferentPartiesError => e
-          event.update_message(content: "Player is already partied")
-          next
         rescue Scrims::Invite::TooManyMembersError => e
-          event.update_message(content: "Maximum party size is #{Scrims::Invite::DEFAULT_MAX_PARTY_MEMBERS}")
-          next
+          max_members = SyndicateEmbeds.wrap_strong(Scrims::Invite::DEFAULT_MAX_PARTY_MEMBERS.to_s)
         rescue ROM::SQL::UniqueConstraintError => e
-          event.update_message(content: "You cannot party yourself. You'll go blind.")
-          next
         end
-        list_party = Scrims::ListParty.new($scrims_storage_rom)
-        party_list = list_party.list(event.user.id.to_s)
-        event.update_message(content: "You accepted an invite. Your party: #{format_discord_id_mention_list(party_list)}")
-        bot.user(invitee_discord_id).pm("Your invite to #{format_discord_mention(event.user.id)} was accepted.")
+
+        if e.nil?
+          list_party = Scrims::ListParty.new($scrims_storage_rom)
+          discord_id_list = list_party.list(invitor.to_s)
+        end
+        channel = bot.user(invitor).pm
+        embed_builder.update(:accept_party_invite,
+                            event: event,
+                            error: e,
+                            discord_id_list: discord_id_list)
+        if e.nil?
+          embed_builder.send(:party_invite_accepted_acknowledged,
+                             event: event,
+                             channel: channel,
+                             discord_id_list: discord_id_list)
+        end
       end
     end
   end

@@ -98,7 +98,7 @@ class Scrims
     end
 
     def to_discord_id_list
-      blue_party_discord_id_list
+      blue_party_discord_id_list # blue receives the duel
     end
 
     def make_duel_request

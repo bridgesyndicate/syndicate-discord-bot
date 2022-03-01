@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'game'
+require 'bot_config'
 
 describe '#game model' do
   let(:message_struct) { JSON.parse(game_json, object_class: OpenStruct) }
@@ -56,6 +57,28 @@ describe '#game model' do
     end
     it 'has a blue team' do
       expect(game.blue_team_discord_mentions).to eq "<@417766998471213061>, <@517766998471213062>"
+    end
+  end
+  context 'game score, other team wins' do
+    let(:game_json) { File.read('./spec/mocks/game-score-sqs-2.json') }
+    before(:each) do
+      BotConfig.load(File.read('./config.yml'), :syndicate)
+    end
+    it 'gives the right winner names' do
+      expect(game.loser_names)
+        .to eq "<@246107858712788993>, <@346107858712788994>"
+    end
+    it 'gives the right winner names and elos' do
+      expect(game.loser_names(:with_elo_changes))
+        .to eq "<@246107858712788993> (+16), <@346107858712788994> (+15)"
+    end
+    it 'gives the right loser names' do
+      expect(game.winner_names)
+        .to eq "<@417766998471213061>, <@517766998471213062>"
+    end
+    it 'gives the right loser names and elos' do
+      expect(game.winner_names(:with_elo_changes))
+        .to eq "<@417766998471213061> (-16), <@517766998471213062> (-15)"
     end
   end
   context 'tie game' do

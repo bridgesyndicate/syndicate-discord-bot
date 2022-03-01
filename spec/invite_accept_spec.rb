@@ -30,6 +30,13 @@ RSpec.describe '#invite accept' do
         expect(@party_repo.parties.to_a.size).to eq 1
       end
     end
+    describe 'when the invitee is in a party' do
+      it 'adds the invitor to the invitee\'s party, so there is one party' do
+        other_party = @invites.accept(discord_id_1, discord_id_2)
+        party = @invites.accept(discord_id_3, discord_id_2)
+        expect(@party_repo.parties.to_a.size).to eq 1
+      end
+    end
     describe 'when both are in a party' do
       it 'raises an exception' do
         other_party1 = @invites.accept(discord_id_1, discord_id_2)

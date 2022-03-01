@@ -21,7 +21,7 @@ RSpec.describe '#leave' do
         party = @invites.accept(discord_id_1, discord_id_2)
         expect {
           @leave.leave(discord_id_3)
-        }.to raise_error Scrims::Leave::MemberNotInParty
+        }.to raise_error Scrims::Leave::MemberNotInPartyError
       end
     end
   end

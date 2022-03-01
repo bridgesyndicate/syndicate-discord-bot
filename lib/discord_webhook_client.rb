@@ -17,8 +17,8 @@ class DiscordWebhookClient
   CUSTOM_EMOJI_WIN = '<:win:907177703810170891>'
   CUSTOM_EMOJI_LOSS = '<:loss:907177703751450674>'
   CUSTOM_EMOJI_TIE = '<:tie:907177703642394634>'
-  CUSTOM_EMOJI_RED = '<:r_for_red:908161726543982654>'
-  CUSTOM_EMOJI_BLUE = '<:b_for_blue:908161738510307368>'
+  CUMULATIVE_RED_EMOJI = '<:red_1:939769191865679872><:red_2:939769191773384706><:red_3:942565501186490449><:red_4:939769191475593228>'
+  CUMULATIVE_BLUE_EMOJI = '<:blue_1:939765626942144573><:blue_2:939765626958938122><:blue_3:939765626577256489><:blue_4:939765626958913556>'
 
   attr_accessor :webhook
 
@@ -42,10 +42,10 @@ class DiscordWebhookClient
                          .new(name: BRIDGE_FQDN,
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
-        embed.add_field(name: CUSTOM_EMOJI_BLUE,
+        embed.add_field(name: CUMULATIVE_RED_EMOJI,
                         value: "#{game.red_team_discord_mentions}",
                         inline: true)
-        embed.add_field(name: CUSTOM_EMOJI_RED,
+        embed.add_field(name: CUMULATIVE_BLUE_EMOJI,
                         value: "#{game.blue_team_discord_mentions}",
                         inline: true)
         if with_spectate_button
@@ -76,13 +76,17 @@ class DiscordWebhookClient
                               url: BRIDGE_HOME_URL,
                               icon_url: BRIDGE_ICON_THUMB)
         embed.add_field(name: game.tie ? CUSTOM_EMOJI_TIE : CUSTOM_EMOJI_WIN,
-                        value: "#{game.winner_names(:with_elo_changes)}\n#{game.winner_score}",
+                        value: "#{game.winner_names(show_elo? ? :with_elo_changes : "")}\n#{game.winner_score}",
                         inline: true)
         embed.add_field(name: game.tie ? CUSTOM_EMOJI_TIE : CUSTOM_EMOJI_LOSS,
-                        value: "#{game.loser_names(:with_elo_changes)}\n#{game.loser_score}",
+                        value: "#{game.loser_names(show_elo? ? :with_elo_changes : "")}\n#{game.loser_score}",
                         inline: true)
       end
     end
+  end
+
+  def show_elo?
+    BotConfig.config.show_elo
   end
 
   def get_place_emoji(n)
@@ -92,7 +96,7 @@ class DiscordWebhookClient
 
   def build_description(leaderboard)
     leaderboard.each_with_index.map do |leader, idx|
-      "#{get_place_emoji(idx)} #{format_discord_mention(leader.discord_id)} • #{leader.elo} (#{leader.wins}/#{leader.losses}/#{leader.ties})"
+      "#{get_place_emoji(idx)} #{format_discord_id_mention(leader.discord_id)} • #{leader.elo} (#{leader.wins}/#{leader.losses}/#{leader.ties})"
     end.join("\n")
   end
 

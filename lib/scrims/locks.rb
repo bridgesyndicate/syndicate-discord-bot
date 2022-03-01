@@ -38,14 +38,10 @@ class Scrims
             raise DoubleLockError
           end
         else
-          begin
-            self.create({ discord_id: discord_id,
-                          expires_at: expires_at,
-                          created_at: now
-                        }).id
-          rescue ROM::SQL::UniqueConstraintError => e
-            raise DoubleLockError
-          end
+          self.create({ discord_id: discord_id,
+                        expires_at: expires_at,
+                        created_at: now
+                      }).id
         end
       end
     end

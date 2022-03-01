@@ -72,15 +72,6 @@ class Game
     end
   end
 
-  def comparison_word
-    (winner == 0 ) ? 'ties' : 'defeats'
-  end
-
-  def description
-    "#{winner_names} (#{winner_score}) #{comparison_word} " +
-      "#{loser_names} (#{loser_score})"
-  end
-
   def red_team_discord_mentions
     profiles_from_ids(game.red_team_discord_ids)
   end

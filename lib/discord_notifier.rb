@@ -1,32 +1,28 @@
-class DiscordNotifier
-  attr_accessor :bot, :server_id, :game_uuid
+require 'syndicate_embeds'
 
-  def initialize(bot, game_uuid)
+class DiscordNotifier
+  attr_accessor :bot, :embed_builder, :server_id, :game_uuid
+
+  def initialize(bot, embed_builder, game_uuid)
     @bot = bot
+    @embed_builder = embed_builder
     @server_id = DISCORD_SERVER_ID
     @game_uuid = game_uuid
   end
 
-  def notify(from_discord_id, to_discord_id_list)
+  def notify(from_discord_id, to_discord_id_list, embed_discord_id_list)
+    server = bot.server(server_id)
     to_discord_id_list.each do |discord_id|
-      send_embed_to(discord_id, from_discord_id)
-    end
-  end
-
-  def send_embed_to(to_discord_id, from_discord_id)
-    begin
-      bot.server(server_id).member(to_discord_id).pm.send_embed() do |embed, view|
-        embed.description = "Duel Request from <@#{from_discord_id}>"
-        view.row do |r|
-          r.button(
-            label: 'Accept',
-            style: :primary,
-            custom_id: "duel_accept_uuid_#{game_uuid}"
-          )
-        end
+      channel = server.member(discord_id).pm
+      custom_id = "duel_accept_uuid_#{game_uuid}"
+      begin
+      embed_builder.send(:duel_request,
+                         channel: channel,
+                         discord_id_list: embed_discord_id_list,
+                         custom_id: custom_id)
+      rescue Discordrb::Errors::NoPermission => e
+        puts "We didn't have permission to embed_builder.send() to #{discord_id}"
       end
-    rescue Discordrb::Errors::NoPermission => e
-      puts "We didn't have permission to send_embed_to #{to_discord_id}"
     end
   end
 end

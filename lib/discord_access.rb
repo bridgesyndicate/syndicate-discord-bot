@@ -1,20 +1,24 @@
-def ensure_verified_user(event)
+require 'syndicate_embeds'
+
+def ensure_verified_user(embed_builder, event)
   if DiscordAccess.is_banned?(event.user.roles)
-    event.respond(content: "You are banned.")
+    embed_builder.send(:party_invite_sent, event: event, error: :banned_sender)
+    false
   else
     if
       !DiscordAccess.is_verified?(event.user.roles)
-      event.respond(content: "You must be verified to use this command.")
+      embed_builder.send(:party_invite_sent, event: event, error: :unverified_sender)
+      false
     else
       true
     end
   end
 end
 
-def ensure_ordinary_user(bot, event, duel_target, type)
-  if !DiscordAccess.is_famous?(event.user.roles) and DiscordAccess.is_famous?(bot.server(event.server).member(duel_target).roles)
-    event.respond(content: "This player cannot be #{type.to_s}.")
-    return false
+def ensure_ordinary_recipient(embed_builder, bot, event, recipient, type)
+  if !DiscordAccess.is_famous?(event.user.roles) and DiscordAccess.is_famous?(bot.server(event.server).member(recipient).roles)
+    embed_builder.send(type, event: event, error: :famous_recipient)
+    false
   else
     true
   end
@@ -28,11 +32,18 @@ def ensure_moderator(event)
   end
 end
 
-def ensure_verified_acceptor(bot, event, acceptor_id)
-  unless DiscordAccess.is_verified?(bot.server(event.server).member(acceptor_id).roles)
-    event.respond(content: "The person you invited must be verified to accept.")
+def ensure_verified_recipient(embed_builder, bot, event, recipient)
+  if DiscordAccess.is_banned?(bot.server(event.server).member(recipient).roles)
+    embed_builder.send(:party_invite_sent, event: event, error: :banned_recipient)
+    false
   else
-    true
+    if
+      !DiscordAccess.is_verified?(bot.server(event.server).member(recipient).roles)
+      embed_builder.send(:party_invite_sent, event: event, error: :unverified_recipient)
+      false
+    else
+      true
+    end
   end
 end
 

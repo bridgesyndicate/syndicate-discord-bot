@@ -17,7 +17,7 @@ class SlashCmdHandler
             DiscordAccess.get_banned_role(event.server.roles)
           )
           event.respond(content: "#{event.options['ign']} " +
-                        format_discord_mention(discord_id) +
+                        format_discord_id_mention(discord_id) +
                         " Banned")
         else
           {"reason":"Syndicate cannot find this username"}

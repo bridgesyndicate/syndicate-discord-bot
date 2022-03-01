@@ -16,10 +16,6 @@ class Ranked
       end.to_a
     end
 
-    def query(conditions)
-      discord_user_queue.where(conditions).to_a
-    end
-
     def by_id(id)
       discord_user_queue.by_pk(id)
     end

@@ -49,6 +49,15 @@ RSpec.describe '#ranked' do
         expect(@queue.size).to eq 1
       end
     end
+    describe 'with one player queued' do
+      it 'unqueues the player' do
+        @queue.queue_player(p1)
+        expect(@queue.process_queue).to eq nil
+        expect(@queue.size).to eq 1
+        @queue.dequeue_player(p1[:discord_id])
+        expect(@queue.size).to eq 0
+      end
+    end
     describe 'with two players who are elo-matchable queued' do
       it 'keeps the player queued' do
         @queue.queue_player(p1)
