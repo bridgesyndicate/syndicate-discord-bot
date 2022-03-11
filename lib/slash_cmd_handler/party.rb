@@ -57,7 +57,6 @@ class SlashCmdHandler
         invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         event.update_message(content: 'Processing Party...')
-        binding.pry;1
         next unless ensure_recipient_roles(event, roles_for_member(event.user), :accept_party_invite)
         begin
           invites.accept(event.user.id.to_s, invitor.to_s)
