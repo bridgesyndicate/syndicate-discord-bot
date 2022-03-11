@@ -12,6 +12,7 @@ class SyndicateEmbeds
   CUMULATIVE_BLUE_EMOJI = '<:blue_1:939765626942144573><:blue_2:939765626958938122><:blue_3:939765626577256489><:blue_4:939765626958913556>'
 
   # content:
+  VERIFY_COMMAND = '`/verify:`'
   PARTY_LEAVE_COMMAND = '`/party leave:`'
   PARTY_LIST_COMMAND = '`/party list:`'
   PARTY_INVITE_COMMAND = '`/party invite:`'
@@ -25,6 +26,28 @@ class SyndicateEmbeds
   end
 
   EmbedsHash = {
+    verify: {
+      no_error: {
+        content: VERIFY_COMMAND,
+        description: wrap_strong('You are now verified!'),
+        color: GREEN
+      },
+      bad_status: {
+        content: VERIFY_COMMAND,
+        description: wrap_strong('Something went wrong.'),
+        color: RED
+      },
+      invalid_format: {
+        content: VERIFY_COMMAND,
+        description: wrap_strong('Your code was not in a valid format.'),
+        color: RED
+      },
+      not_found: {
+        content: VERIFY_COMMAND,
+        description: wrap_strong('Your code was not found or invalid.'),
+        color: RED
+      }
+    },
     party_leave: {
       no_error: {
         content: PARTY_LEAVE_COMMAND,

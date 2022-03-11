@@ -56,25 +56,6 @@ bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
   end
 end
 
-bot.application_command(:verify) do |event|
-  kick_code = event.options['kick-code']
-  response = SyndicateWebService.register_with_syndicate_web_service(kick_code, event.user.id)
-  case response
-  when Net::HTTPBadGateway
-    event.respond(content: "Something went wrong.")
-    puts "error. response is #{response}"
-  when Net::HTTPBadRequest
-    event.respond(content: "Invalid kick code format.")
-  when Net::HTTPNotFound
-    event.respond(content: "Your kick code was not found or is invalid.")
-  when Net::HTTPOK
-    event.respond(content: "You are now verified!")
-    event.user.add_role(
-      DiscordAccess.get_verified_role(event.server.roles)
-    )
-  end
-end
-
 bot.application_command(:q) do |event|
   puts "Request to queue from #{event.user.id}, #{event.user.username}"
 
@@ -137,6 +118,7 @@ end
 SlashCmdHandler::Party.new(bot).add_handlers
 SlashCmdHandler::Duel.new(bot).add_handlers
 SlashCmdHandler::Barr.init(bot)
+SlashCmdHandler::Verify.init(bot)
 
 poller = SqsPoller.new
 poller.run
