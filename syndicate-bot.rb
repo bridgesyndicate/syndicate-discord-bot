@@ -117,7 +117,7 @@ end
 
 SlashCmdHandler::Party.new(bot).add_handlers
 SlashCmdHandler::Duel.new(bot).add_handlers
-SlashCmdHandler::Barr.init(bot)
+SlashCmdHandler::Barr.new(bot).add_handlers
 SlashCmdHandler::Verify.init(bot)
 
 poller = SqsPoller.new

@@ -13,6 +13,7 @@ class SyndicateEmbeds
 
   # content:
   VERIFY_COMMAND = '`/verify:`'
+  BARR_COMMAND = '`/barr:`'
   PARTY_LEAVE_COMMAND = '`/party leave:`'
   PARTY_LIST_COMMAND = '`/party list:`'
   PARTY_INVITE_COMMAND = '`/party invite:`'
@@ -46,6 +47,34 @@ class SyndicateEmbeds
         content: VERIFY_COMMAND,
         description: wrap_strong('Your code was not found or invalid.'),
         color: RED
+      }
+    },
+    barr: {
+      no_error: {
+        content: BARR_COMMAND,
+        description: wrap_strong('This user is now banned: '),
+        color: INVISIBLE
+      },
+      insufficient_permission: {
+        content: BARR_COMMAND,
+        description: wrap_strong('You do not have permission to perform this command.'),
+        color: RED
+      },
+      syndicate_cant_find_user: {
+        content: BARR_COMMAND,
+        description: wrap_strong('We could not find this user.'),
+        color: RED
+      },
+      mojang_cant_find_user: {
+        content: BARR_COMMAND,
+        description: wrap_strong('Mojang could not find this user.'),
+        color: RED
+      }
+    },
+    barr_acknowledge: {
+      no_error: {
+        description: wrap_strong('You have been banned.'),
+        color: INVISIBLE
       }
     },
     party_leave: {
