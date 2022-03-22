@@ -27,10 +27,10 @@ class SlashCmdHandler
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
           party_target = event.options['player']
-          next unless ensure_sender_roles(event, event.user.roles, roles_for_member(party_target), :party_invite_sent)
+          next unless ensure_sender_roles(event, roles_for_member(event.user), roles_for_member(party_target), :party_invite_sent)
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
           invitor = event.user.id.to_s
-          invitee_channel = event.server.member(party_target).pm
+          invitee_channel = bot.server(DISCORD_SERVER_ID).member(party_target).pm
           SyndicateEmbeds::Builder.send(:party_invite_received,
                              channel: invitee_channel,
                              discord_id_list: invitor,

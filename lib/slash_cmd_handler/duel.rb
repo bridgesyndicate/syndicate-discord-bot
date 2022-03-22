@@ -21,7 +21,7 @@ class SlashCmdHandler
       bot.application_command(:duel) do |event|
         puts "#{event.user.id}, #{event.user.username} using duel command"
         duel_target = event.options['opponent']
-        next unless ensure_sender_roles(event, event.user.roles, roles_for_member(duel_target), :duel_request_sent)
+        next unless ensure_sender_roles(event, roles_for_member(duel_target), roles_for_member(duel_target), :duel_request_sent)
 
         duel = Scrims::Duel.new($scrims_storage_rom)
         duel.discord_resolver = DiscordResolver.new(bot)

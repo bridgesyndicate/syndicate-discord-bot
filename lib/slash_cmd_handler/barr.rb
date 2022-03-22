@@ -16,14 +16,14 @@ class SlashCmdHandler
         puts "#{event.user.id}, #{event.user.username} using barr " +
              "command on #{event.options['ign']}"
 
-        next unless ensure_moderator(event, event.user.roles, :barr)
+        next unless ensure_moderator(event, roles_for_member(event.user), :barr)
         status = SyndicateWebService.get_player_by_minecraft_name(event.options['ign'])
         if status.class == Net::HTTPOK
           puts "#{Time.now.inspect.to_s} status OK"
           discord_id = JSON.parse(status.body)['user']['discord_id']
-          member = event.server.member(discord_id)
+          member = bot.server(DISCORD_SERVER_ID).member(discord_id)
           member.add_role(
-            DiscordAccess.get_banned_role(event.server.roles)
+            DiscordAccess.get_banned_role(bot.server(DISCORD_SERVER_ID).roles)
           )
           leave = Scrims::Leave.new($scrims_storage_rom)
           begin
