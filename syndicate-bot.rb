@@ -44,12 +44,13 @@ bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
            .split(DiscordWebhookClient::SPECTATE_KEY)
            .last
   ret = SyndicateWebService.warp_game_syndicate_web_service(game_uuid, discord_id)
+  puts "#{event.user.id}, #{event.user.username} clicking spectate on #{game_uuid}"
   if ret.class == Net::HTTPOK
-    event.respond(content: "<@#{event.user.id}> Adding you as a spectator to #{game_uuid}")
+    event.respond(content: "<@#{event.user.id}> Adding you as a spectator to this game", ephemeral: true)
   elsif ret.class == Net::HTTPNotFound
-    event.respond(content: JSON.parse(ret.body)['reason'])
+    event.respond(content: JSON.parse(ret.body)['reason'], ephemeral: true)
   else
-    event.respond(content: "Something went wrong.")
+    event.respond(content: "Something went wrong.", ephemeral: true)
     puts ret.inspect
     puts ret.body
     puts ret.to_hash.inspect
