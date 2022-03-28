@@ -83,11 +83,11 @@ tool 'create-register-command' do
     client = DiscordApi.new(bot_token: $token)
     definition = {
       name: 'verify',
-      description: 'Use a kick code to complete your registration',
+      description: 'Use a code to complete your registration',
       options: [
         {
           name: 'kick-code',
-          description: 'The kick code provided by our Minecraft server',
+          description: 'The code provided by our website',
           type: 3,
           required: true,
         }
