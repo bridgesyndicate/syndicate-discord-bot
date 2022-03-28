@@ -73,7 +73,7 @@ tool 'create-duel-command' do
     }
     definition[:options] =
       definition[:options].concat(game_options) if BotConfig.config.include_duel_options
-    client.create_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
 
@@ -86,14 +86,14 @@ tool 'create-register-command' do
       description: 'Use a code to complete your registration',
       options: [
         {
-          name: 'kick-code',
+          name: 'code',
           description: 'The code provided by our website',
           type: 3,
           required: true,
         }
       ]
     }
-    client.create_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
 
@@ -105,7 +105,7 @@ tool 'create-queue-command' do
       name: 'q',
       description: 'Hop into the bridge queue.',
     }
-    client.create_application_and_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
 
@@ -117,7 +117,7 @@ tool 'create-dequeue-command' do
       name: 'dq',
       description: 'Remove myself from the queue.',
     }
-    client.create_application_and_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
 
@@ -129,7 +129,7 @@ tool 'create-list-queue-command' do
       name: 'list',
       description: 'List the queue',
     }
-    client.create_application_and_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
 
