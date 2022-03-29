@@ -37,6 +37,7 @@ class SyndicateEmbeds
         add_description(embed, entry, discord_id_list) if has_description?(entry)
         add_fields(embed, entry, discord_id_list) if has_fields?(entry)
         add_button(entry, view, custom_id) if has_button?(entry)
+        add_image(embed, entry) if has_image?(entry)
         embed.colour = entry.color
         embed.timestamp = Time.now
       end
@@ -57,6 +58,7 @@ class SyndicateEmbeds
         add_title(embed, entry) if has_title?(entry)
         add_description(embed, entry, discord_id_list) if has_description?(entry)
         add_fields(embed, entry, discord_id_list) if has_fields?(entry)
+        add_image(embed, entry) if has_image?(entry)
         embed.colour = entry.color
         embed.timestamp = Time.now
       end
@@ -124,6 +126,14 @@ class SyndicateEmbeds
           custom_id: custom_id
         )
       end
+    end
+
+    def has_image?(entry)
+      !entry.image.nil?
+    end
+
+    def add_image(embed, entry)
+      embed.image = Discordrb::Webhooks::EmbedImage.new(url: entry.image)
     end
 
   end

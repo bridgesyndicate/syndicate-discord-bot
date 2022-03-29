@@ -40,6 +40,7 @@ class SyndicateEmbeds
       no_error: {
         title: BotConfig.config.welcome_message_title,
         description: BotConfig.config.how_to_verify_description,
+        image: BotConfig.config.verify_gif,
         color: BLUE
       }
     },

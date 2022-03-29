@@ -14,6 +14,7 @@ buckytour:
                                 **2) In THIS channel, do `/verify <your code>`**\n
                                 **3) You should now be verified!**\n\n
                                  *If you are still having trouble, make a ticket in the BuckyTour Discord.*"
+  verify_gif: 'https://buckytour-assets.s3.us-west-2.amazonaws.com/verify_gif.gif'
 buckytour_test:
   discord_application_id: 856369764729618432
   discord_guild_id: 903122113924317184
