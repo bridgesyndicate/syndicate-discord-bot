@@ -198,6 +198,6 @@ tool 'create-barr-command' do
         }
       ]
     }
-    client.create_guild_command(definition)
+    client.create_application_command(definition)
   end
 end
