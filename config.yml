@@ -7,10 +7,26 @@ buckytour_test:
   icon_thumb: "https://buckytour-assets.s3.us-west-2.amazonaws.com/buckytour-icon-128x128.png"
   show_elo: false
   include_duel_options: false
+  admin_discord_id: 246107858712788993
+  welcome_message_title: 'Welcome to BuckyTour Season 11'
+  how_to_verify_description: "**You must link your Minecraft and Discord accounts to verify**\n\n                                 
+                                **1) Log onto `buckytour.com` and follow the instructions to obtain your code**\n
+                                **2) In THIS channel, do `/verify <your code>`**\n
+                                **3) You should now be verified!**\n\n
+                                 *If you are still having trouble, make a ticket in the BuckyTour Discord.*"
 syndicate:
+  discord_application_id: 856369764729618432
+  discord_guild_id: 855996952348327946
   discord_channel: 903122113924317187
   discord_hook: 908851939649925150
   fqdn: bridgesyndicate.gg
   icon_thumb: "https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png"
   show_elo: true
   include_duel_options: true
+  admin_discord_id: 246107858712788993
+  welcome_message_title: 'Welcome to Bridge Syndicate'
+  how_to_verify_description: "**You must link your Minecraft and Discord accounts to verify**\n\n                                 
+                                **1) Log onto `bridgesyndicate.gg` and follow the instructions to obtain your code**\n
+                                **2) In THIS channel, do `/verify <your code>`**\n
+                                **3) You should now be verified!**\n\n
+                                 *If you are still having trouble, make a ticket in the Bridge Syndicate Discord.*"

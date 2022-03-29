@@ -24,6 +24,7 @@ require 'sqs_poller'
 require 'syndicate_web_service'
 require 'slash_cmd_handler'
 require 'discord_access'
+require 'welcome_message'
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 
@@ -120,6 +121,7 @@ SlashCmdHandler::Party.new(bot).add_handlers
 SlashCmdHandler::Duel.new(bot).add_handlers
 SlashCmdHandler::Barr.new(bot).add_handlers
 SlashCmdHandler::Verify.init(bot)
+WelcomeMessage.init(bot)
 
 poller = SqsPoller.new
 poller.run

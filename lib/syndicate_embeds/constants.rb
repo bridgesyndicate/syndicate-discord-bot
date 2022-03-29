@@ -6,6 +6,7 @@ class SyndicateEmbeds
   INVISIBLE = '0x2f3137'
   RED = '0xf34653'
   GREEN = '0x58cf5c'
+  BLUE = '0x4ec5f8'
 
   # emojis:
   CUMULATIVE_RED_EMOJI = '<:red_1:939769191865679872><:red_2:939769191773384706><:red_3:942565501186490449><:red_4:939769191475593228>'
@@ -27,6 +28,21 @@ class SyndicateEmbeds
   end
 
   EmbedsHash = {
+    welcome_message: {
+      no_error: {
+        title: BotConfig.config.welcome_message_title,
+        description: wrap_strong('Click the button below to begin verification.'),
+        color: BLUE,
+        button_text: 'Verify'
+      }
+    },
+    how_to_verify: {
+      no_error: {
+        title: BotConfig.config.welcome_message_title,
+        description: BotConfig.config.how_to_verify_description,
+        color: BLUE
+      }
+    },
     verify: {
       no_error: {
         content: VERIFY_COMMAND,
