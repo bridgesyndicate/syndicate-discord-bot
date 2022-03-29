@@ -1,7 +1,9 @@
 require 'spec_helper'
-require 'syndicate_embeds'
 require 'discord_mock'
 require 'scrims'
+require 'bot_config'
+BotConfig.load(File.read('./config.yml'), :syndicate)
+require 'syndicate_embeds'
 
 RSpec.describe '#embeds' do
 
