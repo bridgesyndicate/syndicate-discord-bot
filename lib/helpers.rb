@@ -11,3 +11,7 @@ end
 def format_discord_id_mention(id)
   '<@' + id.to_s + '>'
 end
+
+def syn_logger(msg)
+  puts msg if SYNDICATE_ENV != 'test'
+end
