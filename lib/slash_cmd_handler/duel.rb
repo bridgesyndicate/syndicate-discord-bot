@@ -28,11 +28,11 @@ class SlashCmdHandler
         begin
           duel.create_duel(event.user.id.to_s,
                            duel_target.to_s)
+          discord_id_list = { red: duel.red_party_discord_id_list,
+                              blue: duel.blue_party_discord_id_list
+                            }
         rescue Scrims::Duel::PartySizesUnequalError => e
         end
-        discord_id_list = { red: duel.red_party_discord_id_list,
-                            blue: duel.blue_party_discord_id_list
-                          }
         SyndicateEmbeds::Builder.send(:duel_request_sent,
                            event: event,
                            error: e,
