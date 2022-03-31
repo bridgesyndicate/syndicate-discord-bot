@@ -13,12 +13,16 @@ class SlashCmdHandler
           puts "error. response is #{response}"
         when Net::HTTPBadRequest
           error = :invalid_format
+        when Net::HTTPForbidden
+          error = :invalid_format
         when Net::HTTPNotFound
           error = :not_found
         when Net::HTTPOK
           bot.server(DISCORD_SERVER_ID).member(event.user).add_role(
                      DiscordAccess.get_verified_role(
                      bot.server(DISCORD_SERVER_ID).roles))
+        else
+          error = :something_wrong
         end
         SyndicateEmbeds::Builder.send(:verify,
                                  event: event,
