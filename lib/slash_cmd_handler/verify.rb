@@ -22,7 +22,7 @@ class SlashCmdHandler
                      DiscordAccess.get_verified_role(
                      bot.server(DISCORD_SERVER_ID).roles))
         else
-          error = :something_wrong
+          error = :bad_status
         end
         SyndicateEmbeds::Builder.send(:verify,
                                  event: event,
