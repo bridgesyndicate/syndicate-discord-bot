@@ -122,20 +122,20 @@ class Scrims
       blue = member_repo.find_by_discord_id(blue_discord_id)
 
       if red and blue # both are in parties
-        syn_logger "both are in parties red: #[red}, blue: #[blue}"
+        syn_logger "both are in parties red: #{red}, blue: #{blue}"
         @red_party = party_repo.with_members(red.party_id).first.members
         @blue_party = party_repo.with_members(blue.party_id).first.members
-        syn_logger "both are in parties red_party: #[red_party}, blue_party: #[blue_party}"
+        syn_logger "both are in parties red_party: #{red_party}, blue_party: #{blue_party}"
         if (red_party.size != blue_party.size)
           raise PartySizesUnequalError.new("#{red_party.size}, #{blue_party.size}")
         end
       elsif red or blue # one in a party
         raise PartySizesUnequalError.new('Both members must be in a party')
       else # neither in a party
-        syn_logger "neither in party red: #[red}, blue: #[blue}"
+        syn_logger "neither in party red: #{red}, blue: #{blue}"
         @red_party = Array.new.push(MockRom.new(red_discord_id))
         @blue_party = Array.new.push(MockRom.new(blue_discord_id))
-        syn_logger "neither in party red_party: #[red_party}, blue_party: #[blue_party}"
+        syn_logger "neither in party red_party: #{red_party}, blue_party: #{blue_party}"
       end
       make_duel_request
     end
