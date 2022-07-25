@@ -2,7 +2,7 @@ class Ranked
   class Queue
     attr_accessor :queue, :process_counter
     def initialize
-      rom = Ranked::Storage.rom
+      rom = Ranked::Storage.new.rom
       @queue = Ranked::Player.new(rom)
       @process_counter = 0
     end

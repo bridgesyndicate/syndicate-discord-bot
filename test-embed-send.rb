@@ -58,7 +58,7 @@ def random_user
 end
 
 
-rom = Ranked::Storage.rom
+rom = Ranked::Storage.new.rom
 players = Ranked::Player.new(rom)
 
 5.times { players.create(random_user) }
