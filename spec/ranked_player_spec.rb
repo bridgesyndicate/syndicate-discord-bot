@@ -17,37 +17,37 @@ RSpec.describe '#user model' do
 
     before(:each) do
       rom = Ranked::Storage.new.rom
-      @players = Ranked::Player.new(rom)
+      @queue = Ranked::Storage::Queue.new(rom)
     end
 
     describe 'from initial state' do
       it 'queues players in sql' do
-        num_users.times { @players.create(random_user) }
-        expect(@players.ids.size).to eq num_users
+        num_users.times { @queue.create(random_user) }
+        expect(@queue.ids.size).to eq num_users
       end
       it 'creates players with default elo when no elo is set' do
-        @players.create(random_user.reject{ |k| k == :elo})
-        expect(@players.all.first.elo).to eq STARTING_ELO
+        @queue.create(random_user.reject{ |k| k == :elo})
+        expect(@queue.all.first.elo).to eq STARTING_ELO
       end
     end
 
     describe 'with players in the table' do
       before(:each) do
-        @players.create( {
+        @queue.create( {
                          discord_id: 10,
                          discord_username: 'harry',
                          queue_time: 1700000000,
                          elo: 1100
                        }
                      )
-        @players.create( {
+        @queue.create( {
                          discord_id: 20,
                          discord_username: 'ken',
                          queue_time: 1600000000,
                          elo: 900
                        }
                      )
-        @players.create( {
+        @queue.create( {
                          discord_id: 30,
                          discord_username: 'izzy',
                          queue_time: 1500000000,
@@ -57,20 +57,20 @@ RSpec.describe '#user model' do
       end
 
       it 'finds players by id' do
-        expect(@players.by_id(10).count).to eq 1
-        expect(@players.by_id(10).one.discord_username).to eq 'harry'
+        expect(@queue.by_id(10).count).to eq 1
+        expect(@queue.by_id(10).one.discord_username).to eq 'harry'
       end
 
       it 'has a delete method' do
-        expect(@players.by_id(10).methods.grep(/delete/).size).to eq 1
+        expect(@queue.by_id(10).methods.grep(/delete/).size).to eq 1
       end
       it 'sorts players by queue_time' do
-        expect(@players.sort_by_queue_time.map{|r| r.queue_time}).to eq [1500000000,
+        expect(@queue.sort_by_queue_time.map{|r| r.queue_time}).to eq [1500000000,
                                                                        1600000000,
                                                                        1700000000]
       end
       it 'sorts players by elo' do
-        expect(@players.sort_by_elo.map{|r| r.elo}).to eq [900, 1000, 1100]
+        expect(@queue.sort_by_elo.map{|r| r.elo}).to eq [900, 1000, 1100]
       end
     end
   end
