@@ -12,7 +12,7 @@ libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
 require 'bot_config'
-BotConfig.load(File.read('./config.yml'), :buckytour)
+BotConfig.load(File.read('./config.yml'), :syndicate)
 
 require 'delayed_worker'
 require 'discord_response_helper'
