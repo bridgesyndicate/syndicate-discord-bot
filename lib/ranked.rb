@@ -1,6 +1,6 @@
 require 'rom'
 
-require 'ranked/player'
+require 'ranked/storage/queue'
 require 'ranked/match'
 require 'ranked/queue'
 

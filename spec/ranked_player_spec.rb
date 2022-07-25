@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'ranked'
 require 'timecop'
-require 'ranked/player'
+require 'ranked/storage/queue'
 
 RSpec.describe '#user model' do
   def random_user
