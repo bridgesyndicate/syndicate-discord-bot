@@ -1,6 +1,6 @@
 require 'rom-repository'
 
-class Ranked
+class Scrims
   class Storage
     class Queue < ROM::Repository[:discord_user_queue]
       commands :create, update: :by_pk, delete: :by_pk

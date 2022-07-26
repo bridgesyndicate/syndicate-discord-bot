@@ -1,9 +1,9 @@
-class Ranked
+class Scrims
   class Queue
     attr_accessor :queue, :process_counter
     def initialize
-      rom = Ranked::Storage.new.rom
-      @queue = Ranked::Storage::Queue.new(rom)
+      rom = Scrims::Storage.new.rom
+      @queue = Scrims::Storage::Queue.new(rom)
       @process_counter = 0
     end
     def size

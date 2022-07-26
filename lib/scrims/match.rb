@@ -1,4 +1,4 @@
-class Ranked
+class Scrims
   class Match
     attr_accessor :playerA, :playerB
 

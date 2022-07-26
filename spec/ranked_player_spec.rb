@@ -1,7 +1,6 @@
 require 'spec_helper'
-require 'ranked'
+require 'scrims'
 require 'timecop'
-require 'ranked/storage/queue'
 
 RSpec.describe '#user model' do
   def random_user
@@ -16,8 +15,8 @@ RSpec.describe '#user model' do
     let(:num_users) { 3 }
 
     before(:each) do
-      rom = Ranked::Storage.new.rom
-      @queue = Ranked::Storage::Queue.new(rom)
+      rom = Scrims::Storage.new.rom
+      @queue = Scrims::Storage::Queue.new(rom)
     end
 
     describe 'from initial state' do

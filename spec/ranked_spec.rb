@@ -1,11 +1,11 @@
 require 'spec_helper'
-require 'ranked'
+require 'scrims'
 require 'timecop'
 
 RSpec.describe '#ranked' do
 
   before(:each) do
-    @queue = Ranked::Queue.new
+    @queue = Scrims::Queue.new
   end
 
   describe 'basic match making' do
@@ -62,7 +62,7 @@ RSpec.describe '#ranked' do
       it 'keeps the player queued' do
         @queue.queue_player(p1)
         @queue.queue_player(p4)
-        expect(@queue.process_queue).to be_a Ranked::Match
+        expect(@queue.process_queue).to be_a Scrims::Match
         expect(@queue.size).to eq 0
       end
     end
@@ -82,8 +82,8 @@ RSpec.describe '#ranked' do
           expect(@queue.process_queue).to eq nil
           expect(@queue.size).to eq 2
         end
-        Timecop.freeze(Ranked::MAX_QUEUE_TIME) do
-          expect(@queue.process_queue.class).to eq Ranked::Match
+        Timecop.freeze(Scrims::MAX_QUEUE_TIME) do
+          expect(@queue.process_queue.class).to eq Scrims::Match
           expect(@queue.size).to eq 0
         end
       end
@@ -93,7 +93,7 @@ RSpec.describe '#ranked' do
         @queue.queue_player(p1)
         @queue.queue_player(p2)
         @queue.queue_player(p3)
-        expect(@queue.process_queue.class).to eq Ranked::Match
+        expect(@queue.process_queue.class).to eq Scrims::Match
         expect(@queue.size).to eq 1
       end
     end
