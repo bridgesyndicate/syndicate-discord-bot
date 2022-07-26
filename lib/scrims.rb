@@ -25,10 +25,11 @@ class Scrims
       ROM.container(:sql, container_type) do |conf|
         create_tables(conf) unless use_postgres?
         conf.relation(:discord_user_queue) do
-          schema(infer: true)
-#          associations do
-#            belongs_to :parties            
-#          end
+          schema(infer: true) do
+            associations do
+              belongs_to :parties
+            end
+          end
         end
         conf.relation(:parties) do
           schema(infer: true) do
@@ -65,7 +66,9 @@ class Scrims
 
     def create_tables(conf)
       conf.default.connection.create_table(:discord_user_queue) do
-        primary_key :discord_id
+        primary_key :id
+        foreign_key :party_id, :parties
+        column :discord_id, String
         column :discord_username, String, null: false
         column :queue_time, Integer, null: false
         column :elo, Integer, null: false, default: STARTING_ELO

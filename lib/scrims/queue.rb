@@ -1,16 +1,15 @@
 class Scrims
   class Queue
-    attr_accessor :queue, :process_counter
+    attr_accessor :queue
     def initialize
       rom = Scrims::Storage.new.rom
       @queue = Scrims::Storage::Queue.new(rom)
-      @process_counter = 0
     end
     def size
       @queue.all.size
     end
     def dequeue_player queued_player
-      queue.by_id(queued_player).delete
+      queue.by_discord_id(queued_player).delete
     end
     def queue_player queued_player
       queue.create(queued_player)
@@ -35,7 +34,6 @@ class Scrims
               sorted_queue[best_match+1]]
     end
     def process_queue
-      @process_counter += 1
       if queue.size < 2
         return nil
       end
@@ -60,8 +58,8 @@ class Scrims
     end
     def new_match(playerA, playerB)
       match = Match.new(playerA, playerB)
-      queue.delete(playerA.discord_id)
-      queue.delete(playerB.discord_id)
+      queue.delete_by_discord_id(playerA.discord_id)
+      queue.delete_by_discord_id(playerB.discord_id)
       return match
     end
     def has_max_queue_time_players?

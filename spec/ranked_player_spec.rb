@@ -56,12 +56,12 @@ RSpec.describe '#user model' do
       end
 
       it 'finds players by id' do
-        expect(@queue.by_id(10).count).to eq 1
-        expect(@queue.by_id(10).one.discord_username).to eq 'harry'
+        expect(@queue.by_discord_id(10).count).to eq 1
+        expect(@queue.by_discord_id(10).one.discord_username).to eq 'harry'
       end
 
       it 'has a delete method' do
-        expect(@queue.by_id(10).methods.grep(/delete/).size).to eq 1
+        expect(@queue.by_discord_id(10).methods.grep(/delete/).size).to eq 1
       end
       it 'sorts players by queue_time' do
         expect(@queue.sort_by_queue_time.map{|r| r.queue_time}).to eq [1500000000,
