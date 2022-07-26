@@ -27,7 +27,7 @@ apt-get install -y postgresql-client-common postgresql-client-11
 psql postgres://AmazonPgUsername:AmazonPgPassword@${POSTGRES_HOST}/postgres
 ``
 
-and then
+and then (I don't think we need this any more, please remove)
 
 `ALTER TABLE discord_user_queue ALTER COLUMN discord_id SET DATA TYPE bigint;`
 
