@@ -69,7 +69,7 @@ class Scrims
         primary_key :id
         foreign_key :party_id, :parties
         column :discord_id, String
-        column :discord_username, String, null: false
+        column :discord_username, String
         column :queue_time, Integer, null: false
         column :elo, Integer, null: false, default: STARTING_ELO
       end
