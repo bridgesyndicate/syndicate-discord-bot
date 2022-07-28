@@ -23,7 +23,7 @@ class SlashCmdHandler
         duel_target = event.options['opponent']
         next unless ensure_sender_roles(event, roles_for_member(event.user), roles_for_member(duel_target), :duel_request_sent)
 
-        duel = Scrims::Duel.new($scrims_storage_rom)
+        duel = Scrims::Duel.new($rom)
         duel.discord_resolver = DiscordResolver.new(bot)
         begin
           duel.create_duel(event.user.id.to_s,
@@ -51,7 +51,7 @@ class SlashCmdHandler
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
         next unless ensure_recipient_roles(event, roles_for_member(event.user), :accept_duel_request)
 
-        duel = Scrims::Duel.new($scrims_storage_rom)
+        duel = Scrims::Duel.new($rom)
         duel.discord_resolver = DiscordResolver.new(bot)
         duel.elo_resolver = EloResolver.new
         begin

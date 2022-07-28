@@ -17,7 +17,7 @@ class SlashCmdHandler
     def add_handlers
       bot.application_command(:party).group(nil) do |group|
         group.subcommand(:leave) do |event|
-          leave = Scrims::Leave.new($scrims_storage_rom)
+          leave = Scrims::Leave.new($rom)
           begin
             leave.leave(event.user.id.to_s)
           rescue Scrims::Leave::MemberNotInPartyError => e
@@ -40,7 +40,7 @@ class SlashCmdHandler
                              discord_id_list: party_target)
         end
         group.subcommand(:list) do |event|
-          list_party = Scrims::ListParty.new($scrims_storage_rom)
+          list_party = Scrims::ListParty.new($rom)
           begin
             discord_id_list = list_party.list(event.user.id.to_s)
           rescue Scrims::ListParty::EmptyPartyError => e
@@ -53,7 +53,7 @@ class SlashCmdHandler
       end
 
       bot.button(custom_id: /^#{PARTY_INVITE_KEY}/) do |event|
-        invites = Scrims::Invite.new($scrims_storage_rom)
+        invites = Scrims::Invite.new($rom)
         invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         event.update_message(content: 'Processing Party...')
@@ -67,7 +67,7 @@ class SlashCmdHandler
         end
 
         if e.nil?
-          list_party = Scrims::ListParty.new($scrims_storage_rom)
+          list_party = Scrims::ListParty.new($rom)
           discord_id_list = list_party.list(invitor.to_s)
         end
         channel = bot.user(invitor).pm

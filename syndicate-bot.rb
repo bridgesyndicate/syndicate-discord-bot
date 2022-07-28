@@ -19,7 +19,6 @@ require 'discord_response_helper'
 require 'game_maker'
 require 'helpers'
 require 'leaderboard'
-require 'ranked'
 require 'sqs_poller'
 require 'syndicate_web_service'
 require 'slash_cmd_handler'
@@ -33,11 +32,10 @@ opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'
 bot = Discordrb::Bot.new(opts)
 DiscordWebhookClient.instance.set_bot(bot)
 
-queue = Ranked::Queue.new
+$rom = Scrims::Storage.new.rom
+queue = Scrims::Queue.new($rom)
 
 Thread.abort_on_exception = true
-
-$scrims_storage_rom = Scrims::Storage.new.rom
 
 bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
   discord_id = event.user.id

@@ -13,7 +13,7 @@ class SqsPoller
   end
 
   def unlock_players(game)
-    lock_repo = Scrims::Locks.new($scrims_storage_rom)
+    lock_repo = Scrims::Locks.new($rom)
     ids = game.blue_team_discord_ids + game.red_team_discord_ids
     lock_repo.unlock(ids)
   end

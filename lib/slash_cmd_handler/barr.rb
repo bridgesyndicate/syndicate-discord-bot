@@ -25,7 +25,7 @@ class SlashCmdHandler
           member.add_role(
             DiscordAccess.get_banned_role(bot.server(DISCORD_SERVER_ID).roles)
           )
-          leave = Scrims::Leave.new($scrims_storage_rom)
+          leave = Scrims::Leave.new($rom)
           begin
             leave.leave(event.user.id.to_s)
           rescue Scrims::Leave::MemberNotInPartyError => e
