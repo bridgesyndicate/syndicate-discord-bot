@@ -11,7 +11,7 @@ class Scrims
     attr_accessor :party_repo, :member_repo
 
     def initialize(rom)
-      @party_repo = Scrims::PartyRepo.new(rom)
+      @party_repo = Scrims::Storage::Party.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
     end
 

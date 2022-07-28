@@ -11,7 +11,7 @@ RSpec.describe '#leave' do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)
     @leave = Scrims::Leave.new(rom)
-    @party_repo = Scrims::PartyRepo.new(rom)
+    @party_repo = Scrims::Storage::Party.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
   end
 

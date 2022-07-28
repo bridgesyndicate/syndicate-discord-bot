@@ -72,6 +72,7 @@ class Scrims
         column :discord_username, String
         column :queue_time, Integer, null: false
         column :elo, Integer, null: false, default: STARTING_ELO
+        column :party_size, Integer, null: false, default: 1
       end
       conf.default.create_table(:parties) do
         primary_key :id

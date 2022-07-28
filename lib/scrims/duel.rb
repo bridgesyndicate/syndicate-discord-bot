@@ -34,7 +34,7 @@ class Scrims
                   :elo_hash
 
     def initialize(rom)
-      @party_repo = Scrims::PartyRepo.new(rom)
+      @party_repo = Scrims::Storage::Party.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
       @duel_request = DuelRequest.new(rom)
       @goals = 5

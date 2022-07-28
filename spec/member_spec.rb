@@ -15,7 +15,7 @@ RSpec.describe '#scrims members' do
 
   before(:each) do
     rom = Scrims::Storage.new.rom
-    @party_repo = Scrims::PartyRepo.new(rom)
+    @party_repo = Scrims::Storage::Party.new(rom)
     @party = @party_repo.create(party)
     @party_repo.create(other_party)
     @member_repo = Scrims::MemberRepo.new(rom)

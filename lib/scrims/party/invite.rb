@@ -16,7 +16,7 @@ class Scrims
     DEFAULT_MAX_PARTY_MEMBERS = 4
 
     def initialize(rom)
-      @party_repo = Scrims::PartyRepo.new(rom)
+      @party_repo = Scrims::Storage::Party.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
       @max_members = DEFAULT_MAX_PARTY_MEMBERS
     end

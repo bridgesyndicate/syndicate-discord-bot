@@ -11,7 +11,7 @@ RSpec.describe '#invite accept' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)
-    @party_repo = Scrims::PartyRepo.new(rom)
+    @party_repo = Scrims::Storage::Party.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
   end
 

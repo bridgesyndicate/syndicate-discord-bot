@@ -10,7 +10,7 @@ RSpec.describe '#scrims' do
 
   before(:each) do
     rom = Scrims::Storage.new.rom
-    @party_repo = Scrims::PartyRepo.new(rom)
+    @party_repo = Scrims::Storage::Party.new(rom)
   end
 
   describe 'party' do

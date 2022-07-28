@@ -1,5 +1,6 @@
 class Scrims
-  class PartyRepo < ROM::Repository[:parties]
+  class Storage
+  class Party < ROM::Repository[:parties]
     commands :create, update: :by_pk, delete: :by_pk
 
     def by_pk(party_id)
@@ -37,4 +38,5 @@ class Scrims
       delete(pk)
     end
   end
+end
 end

@@ -1,46 +1,18 @@
 require 'spec_helper'
 require 'scrims'
 require 'timecop'
+require_relative 'shared/queued_players'
 
 RSpec.describe '#ranked' do
 
   before(:each) do
-    @queue = Scrims::Queue.new
+    rom = Scrims::Storage.new.rom
+    @queue = Scrims::Queue.new(rom)
   end
 
   describe 'basic match making' do
+    include_context 'queued players'
     let(:now) { Time.now.to_i }
-    let(:p1)  {
-      {
-        discord_id: rand(2**32),
-        discord_username: 'harry',
-        queue_time: now,
-        elo: 600
-      }
-    }
-    let(:p2) {
-      {
-        discord_id: rand(2**32),
-        discord_username: 'ken',
-        queue_time: now
-      }
-    }
-    let(:p3) {
-      {
-        discord_id: rand(2**32),
-        discord_username: 'joe',
-        queue_time: now,
-        elo: 750
-      }
-    }
-    let(:p4) {
-      {
-        discord_id: rand(2**32),
-        discord_username: 'ellis',
-        queue_time: now,
-        elo: 550
-      }
-    }
 
     describe 'with one player queued' do
       it 'keeps the player queued' do
