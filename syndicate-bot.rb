@@ -33,7 +33,6 @@ bot = Discordrb::Bot.new(opts)
 DiscordWebhookClient.instance.set_bot(bot)
 
 $rom = Scrims::Storage.new.rom
-queue = Scrims::Queue.new($rom)
 
 Thread.abort_on_exception = true
 
@@ -56,51 +55,6 @@ bot.button(custom_id: /^#{DiscordWebhookClient::SPECTATE_KEY}/) do |event|
   end
 end
 
-bot.application_command(:q) do |event|
-  puts "Request to queue from #{event.user.id}, #{event.user.username}"
-
-  next unless ensure_verified_user(event)
-
-  response = SyndicateWebService.get_user_record(event.user.id)
-  unless response.class == Net::HTTPOK
-    event.respond(content: "We encountered an error.")
-    puts "error: cannot fetch user for #{event.user.id}"
-    break
-  end
-
-  user = JSON.parse(response.body)
-  queue_params = {
-    discord_id: event.user.id,
-    discord_username: event.user.username,
-    queue_time: Time.now.to_i,
-  }
-  queue_params.merge!(elo: user['elo']) if user['elo']
-  puts "queue_params for #{event.user.id} are #{queue_params}"
-  begin
-    queue.queue_player(queue_params)
-  rescue ROM::SQL::UniqueConstraintError => e
-  end
-  if e.nil?
-    event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")
-  else
-    event.respond(content: "You are already queued")
-  end
-  DelayedWorker.new(Ranked::MAX_QUEUE_TIME) do
-    GameMaker.from_match(queue.process_queue)
-  end.run
-  GameMaker.from_match(queue.process_queue)
-end
-
-bot.application_command(:dq) do |event|
-  puts "Request to dequeue from #{event.user.id}, #{event.user.username}"
-
-  if queue.dequeue_player(event.user.id) == 1
-    event.respond(content: "#{event.user.username}(#{event.user.id}) has been removed from the queue.")
-  else
-    event.respond(content: "You are not in the queue.")
-  end
-end
-
 bot.application_command(:list) do |event|
   queue_members = queue.queue.all
                     .map{ |u| "#{u.discord_username}|#{u.elo}" }
@@ -115,9 +69,13 @@ bot.application_command(:lb) do |event|
   DiscordWebhookClient.instance.send_leaderboard(leaderboard)
 end
 
+queue = Scrims::Queue.new($rom)
+
 SlashCmdHandler::Party.new(bot).add_handlers
 SlashCmdHandler::Duel.new(bot).add_handlers
 SlashCmdHandler::Barr.new(bot).add_handlers
+SlashCmdHandler::Queue.new(bot, queue).add_handlers
+SlashCmdHandler::Dequeue.new(bot, queue).add_handlers
 SlashCmdHandler::Verify.init(bot)
 WelcomeMessage.init(bot)
 
