@@ -1,5 +1,7 @@
 class Scrims
   class Queue
+    class AlreadyQueuedError < StandardError
+    end
     attr_accessor :queue, :party_repo
     def initialize(rom)
       @queue = Scrims::Storage::Queue.new(rom)
@@ -15,7 +17,11 @@ class Scrims
       queue.by_discord_id(queued_player).delete
     end
     def queue_player queued_player
-      queue.create(queued_player)
+      if queue.by_discord_id(queued_player[:discord_id]).to_a.empty?
+        queue.create(queued_player)
+      else
+        raise Scrims::Queue::AlreadyQueuedError
+      end
     end
     def queue_party queued_party
       party_size = party_repo

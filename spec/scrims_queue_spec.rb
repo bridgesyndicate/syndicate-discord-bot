@@ -20,6 +20,13 @@ RSpec.describe '#ranked' do
         expect(@queue.process_queue).to eq nil
         expect(@queue.size).to eq 1
       end
+
+      it 'throws an exception if the player is queued again' do
+        @queue.queue_player(p1)
+        expect{
+          @queue.queue_player(p1)
+        }.to raise_error Scrims::Queue::AlreadyQueuedError
+      end
     end
     describe 'with one player queued' do
       it 'unqueues the player' do
