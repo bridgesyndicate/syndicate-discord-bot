@@ -32,6 +32,21 @@ RSpec.describe '#parties in queue' do
     expect(@queue.size(party_size=2)).to eq 1
   end
 
+  let(:elo) { rand(2000) }
+
+  it 'throws an exception if the party is queued again' do
+    @queue.queue_party({ party_id: @pid,
+                         queue_time: Time.now.to_i,
+                         elo: elo
+                       })
+    expect{
+      @queue.queue_party({ party_id: @pid,
+                           queue_time: Time.now.to_i,
+                           elo: elo
+                         })
+    }.to raise_error Scrims::Queue::AlreadyQueuedError
+  end
+
   it 'queues two parties in sql' do
     @pid2 = @invites.accept(discord_id_3, discord_id_4)
     @queue.queue_party({ party_id: @pid,

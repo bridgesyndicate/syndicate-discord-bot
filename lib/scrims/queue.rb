@@ -24,14 +24,18 @@ class Scrims
       end
     end
     def queue_party queued_party
-      party_size = party_repo
-        .with_members(queued_party[:party_id])
-        .first
-        .members
-        .size
-      queue.create(queued_party
-                     .merge(party_size: party_size)
-                   )
+      if queue.by_party_id(queued_party[:party_id]).to_a.empty?
+        party_size = party_repo
+          .with_members(queued_party[:party_id])
+          .first
+          .members
+          .size
+        queue.create(queued_party
+                       .merge(party_size: party_size)
+                     )
+      else
+        raise Scrims::Queue::AlreadyQueuedError
+      end
     end
     def find_match_by_oldest_players(party_size=1)
       sorted_queue = queue.sort_by_queue_time(party_size=party_size)

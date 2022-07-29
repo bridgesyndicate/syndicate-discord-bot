@@ -29,6 +29,10 @@ class Scrims
         discord_user_queue.where(discord_id: id)
       end
 
+      def by_party_id(party_id)
+        discord_user_queue.where(party_id: party_id)
+      end
+
       def ids
         discord_user_queue.pluck(:discord_id)
       end
