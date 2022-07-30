@@ -1,5 +1,5 @@
 shared_context 'queued players' do
-  let(:p1)  {
+  let(:player_with_600_elo)  {
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'harry',
@@ -7,7 +7,7 @@ shared_context 'queued players' do
       elo: 600
     }
   }
-  let(:p2) {
+  let(:player_without_elo) {
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'ken',

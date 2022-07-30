@@ -73,8 +73,8 @@ RSpec.describe '#parties in queue' do
                     queue_time: Time.now.to_i,
                     elo: rand(2000)
                   })
-    @queue.queue_player(p1)
-    @queue.queue_player(p2)
+    @queue.queue_player(player_with_600_elo)
+    @queue.queue_player(player_without_elo)
     @queue.queue_player(p3)
     expect(@queue.process_queue.class).to eq Scrims::Match
     expect(@queue.size(party_size=1)).to eq 1
