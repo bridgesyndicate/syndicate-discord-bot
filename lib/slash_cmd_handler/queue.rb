@@ -19,14 +19,9 @@ class SlashCmdHandler
       bot.application_command(:q) do |event|
         puts "Request to queue from #{event.user.id}, #{event.user.username}"
 
-        #next unless ensure_verified_user(event)
+        next unless ensure_queuer_roles(event, roles_for_member(event.user))
 
         response = SyndicateWebService.get_user_record(event.user.id)
-        unless response.class == Net::HTTPOK
-          event.respond(content: "We encountered an error.")
-          puts "error: cannot fetch user for #{event.user.id}"
-          break
-        end
 
         user = JSON.parse(response.body)
         queue_params = {
@@ -38,7 +33,7 @@ class SlashCmdHandler
         puts "queue_params for #{event.user.id} are #{queue_params}"
         begin
           queue.queue_player(queue_params)
-        rescue ROM::SQL::UniqueConstraintError => e
+        rescue Scrims::Queue::AlreadyQueuedError => e
         end
         if e.nil?
           event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")

@@ -15,6 +15,13 @@ class SlashCmdHandler
       error.nil?
     end
 
+    def ensure_queuer_roles(event, sender_roles)
+      error = 'You must be verified to queue.' if !DiscordAccess.is_verified?(sender_roles)
+      error = 'You are banned.' if DiscordAccess.is_banned?(sender_roles)
+      event.respond(content: error) unless error.nil?
+      error.nil?
+    end
+
     def ensure_sender_roles(event, sender_roles, recipient_roles, type)
       error = :unverified_sender if !DiscordAccess.is_verified?(sender_roles)
       error = :banned_sender if DiscordAccess.is_banned?(sender_roles)
