@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'scrims'
 require 'timecop'
+require 'mock_elo_resolver'
 require_relative 'shared/queued_players'
 
 RSpec.describe '#parties in queue' do
@@ -22,6 +23,7 @@ RSpec.describe '#parties in queue' do
     @invites = Scrims::Invite.new(rom)
     @pid = @invites.accept(discord_id_1, discord_id_2)
     @queue = Scrims::Queue.new(rom)
+    @queue.elo_resolver = MockEloResolver.new
   end
 
   it 'queues a party in sql' do

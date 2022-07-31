@@ -2,7 +2,7 @@ class Scrims
   class Queue
     class AlreadyQueuedError < StandardError
     end
-    attr_accessor :queue, :party_repo
+    attr_accessor :queue, :party_repo, :elo_resolver
     def initialize(rom)
       @queue = Scrims::Storage::Queue.new(rom)
       @party_repo = Scrims::Storage::Party.new(rom)
@@ -18,7 +18,12 @@ class Scrims
     end
     def queue_player queued_player
       if queue.by_discord_id(queued_player[:discord_id]).to_a.empty?
-        queue.create(queued_player)
+        elo_resolver.discord_ids = Array.new.push(queued_player[:discord_id])
+        elo = elo_resolver
+          .resolve_elo_from_discord_ids[queued_player[:discord_id]]
+        queue.create(queued_player
+                       .merge(elo: elo.nil? ? STARTING_ELO : elo)
+                     )
       else
         raise Scrims::Queue::AlreadyQueuedError
       end

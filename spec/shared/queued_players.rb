@@ -3,8 +3,7 @@ shared_context 'queued players' do
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'harry',
-      queue_time: now,
-      elo: 600
+      queue_time: now
     }
   }
   let(:player_without_elo) {
@@ -18,16 +17,14 @@ shared_context 'queued players' do
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'joe',
-      queue_time: now,
-      elo: 750
+      queue_time: now
     }
   }
   let(:p4) {
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'ellis',
-      queue_time: now,
-      elo: 550
+      queue_time: now
     }
   }
 end

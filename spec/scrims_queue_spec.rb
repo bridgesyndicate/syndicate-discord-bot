@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'scrims'
 require 'timecop'
+require 'mock_elo_resolver'
 require_relative 'shared/queued_players'
 
 RSpec.describe '#ranked' do
@@ -8,6 +9,13 @@ RSpec.describe '#ranked' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @queue = Scrims::Queue.new(rom)
+    @queue.elo_resolver = MockEloResolver.new
+  end
+
+  describe 'elo resolver' do
+    it 'accepts an elo resolver' do
+      expect(@queue.elo_resolver.class).to eq MockEloResolver
+    end
   end
 
   describe 'basic match making' do
@@ -42,6 +50,7 @@ RSpec.describe '#ranked' do
       end
 
       it 'adds keeps the player\'s elo' do
+        @queue.elo_resolver.elo_map = { player_with_600_elo[:discord_id] => 600 }
         @queue.queue_player(player_with_600_elo)
         expect(@queue
           .queue
@@ -70,6 +79,7 @@ RSpec.describe '#ranked' do
     end
     describe 'with two players who are not elo-matchable queued' do
       it 'keeps the player queued' do
+        @queue.elo_resolver.elo_map = { player_with_600_elo[:discord_id] => 600 }
         @queue.queue_player(player_with_600_elo)
         @queue.queue_player(player_without_elo)
         expect(@queue.process_queue).to eq nil
@@ -78,6 +88,7 @@ RSpec.describe '#ranked' do
     end
     describe 'with two players past MAX_QUEUE_TIME' do
       it 'creates a match after MAX_QUEUE_TIME seconds' do
+        @queue.elo_resolver.elo_map = { player_with_600_elo[:discord_id] => 600 }
         @queue.queue_player(player_with_600_elo)
         @queue.queue_player(player_without_elo)
         Timecop.freeze(0) do
