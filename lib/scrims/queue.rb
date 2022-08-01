@@ -16,6 +16,9 @@ class Scrims
     def dequeue_player queued_player
       queue.by_discord_id(queued_player).delete
     end
+    def dequeue_party party_id
+      queue.by_party_id(party_id).delete
+    end
     def queue_player queued_player
       if queue.by_discord_id(queued_player[:discord_id]).to_a.empty?
         elo_resolver.discord_ids = Array.new.push(queued_player[:discord_id])
@@ -28,6 +31,16 @@ class Scrims
         raise Scrims::Queue::AlreadyQueuedError
       end
     end
+
+    def compute_average_elo(party_id)
+      elo_resolver.discord_ids = party_repo
+                                   .with_members(party_id)
+                                   .first.members
+                                   .map { |f| f.discord_id }
+      elos = elo_resolver.resolve_elo_from_discord_ids
+      (elos.values.sum / elos.size).to_i
+    end
+
     def queue_party queued_party
       if queue.by_party_id(queued_party[:party_id]).to_a.empty?
         party_size = party_repo
@@ -35,9 +48,11 @@ class Scrims
           .first
           .members
           .size
+        elo = compute_average_elo(queued_party[:party_id])
         queue.create(queued_party
                        .merge(party_size: party_size)
-                     )
+                       .merge(elo: elo)
+                    )
       else
         raise Scrims::Queue::AlreadyQueuedError
       end
