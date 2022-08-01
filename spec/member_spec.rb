@@ -32,7 +32,7 @@ RSpec.describe '#scrims members' do
         @member_count = rand(5) + 1
         @members = []
         @member_count.times do
-          discord_id = rand(2**32)
+          discord_id = rand(2**32).to_s
           @members.push(discord_id.to_s)
           @member_repo.create(
                               { party_id: @party.id,

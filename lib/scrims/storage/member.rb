@@ -9,6 +9,13 @@ class Scrims
       end
     end
 
+    def discord_id_in_party?(discord_id)
+      members
+        .where(discord_id: discord_id)
+        .to_a
+        .size == 1
+    end
+
     def find_by_discord_id(discord_id)
       members.where(discord_id: discord_id)
         .first

@@ -2,10 +2,11 @@ class Scrims
   class Queue
     class AlreadyQueuedError < StandardError
     end
-    attr_accessor :queue, :party_repo, :elo_resolver
+    attr_accessor :queue, :party_repo, :elo_resolver, :member_repo
     def initialize(rom)
       @queue = Scrims::Storage::Queue.new(rom)
       @party_repo = Scrims::Storage::Party.new(rom)
+      @member_repo = Scrims::MemberRepo.new(rom)
     end
     def size(party_size=1)
       queue

@@ -193,6 +193,22 @@ RSpec.describe '#ranked' do
       end
     end
     describe 'with two parties who are elo-matchable queued' do
+      it 'determines if a player is queued with a party' do
+        @queue.queue_party(party1)
+        @queue.queue_party(party2)
+        expect([
+                discord_id_1,
+                discord_id_2,
+                discord_id_3,
+                discord_id_4]
+                 .map{ |discord_id|
+                 @queue.member_repo.discord_id_in_party?(discord_id) }
+                 .uniq
+               ).to eq Array.new.push(true)
+        not_in_party = rand(2**32).to_s
+        expect(@queue.member_repo.discord_id_in_party?(not_in_party))
+          .to eq false
+      end
       it 'makes a match' do
         @queue.queue_party(party1)
         @queue.queue_party(party2)
