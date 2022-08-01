@@ -20,10 +20,12 @@ class Scrims
       queue.by_party_id(party_id).delete
     end
     def queue_player queued_player
-      if queue.by_discord_id(queued_player[:discord_id]).to_a.empty?
-        elo_resolver.discord_ids = Array.new.push(queued_player[:discord_id])
+      discord_id = queued_player[:discord_id]
+      if queue.by_discord_id(discord_id).to_a.empty?
+        elo_resolver.discord_ids = Array.new.push(discord_id)
         elo = elo_resolver
-          .resolve_elo_from_discord_ids[queued_player[:discord_id]]
+          .resolve_elo_from_discord_ids
+          .fetch(discord_id)
         queue.create(queued_player
                        .merge(elo: elo.nil? ? STARTING_ELO : elo)
                      )
