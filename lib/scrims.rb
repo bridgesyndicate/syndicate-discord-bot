@@ -65,15 +65,6 @@ class Scrims
     end
 
     def create_tables(conf)
-      conf.default.connection.create_table(:discord_user_queue) do
-        primary_key :id
-        foreign_key :party_id, :parties
-        column :discord_id, String
-        column :discord_username, String
-        column :queue_time, Integer, null: false
-        column :elo, Integer, null: false, default: STARTING_ELO
-        column :party_size, Integer, null: false, default: 1
-      end
       conf.default.create_table(:parties) do
         primary_key :id
         column :created_at, DateTime, null: false
@@ -83,6 +74,15 @@ class Scrims
         foreign_key :party_id, :parties
         column :discord_id, String, null: false, unique: true
         column :created_at, DateTime, null: false
+      end
+      conf.default.connection.create_table(:discord_user_queue) do
+        primary_key :id
+        foreign_key :party_id, :parties
+        column :discord_id, String
+        column :discord_username, String
+        column :queue_time, Integer, null: false
+        column :elo, Integer, null: false, default: STARTING_ELO
+        column :party_size, Integer, null: false, default: 1
       end
       conf.default.create_table(:duels) do
         primary_key :id

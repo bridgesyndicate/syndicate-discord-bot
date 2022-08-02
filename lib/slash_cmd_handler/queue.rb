@@ -12,6 +12,7 @@ class SlashCmdHandler
     def initialize(bot, queue)
       @bot = bot
       @queue = queue
+      @queue.elo_resolver = EloResolver.new
       @member_repo = Scrims::MemberRepo.new($rom)
       @party_repo = Scrims::Storage::Party.new($rom)
     end
@@ -23,7 +24,7 @@ class SlashCmdHandler
         if queue.member_repo.discord_id_in_party?(event.user.id)
           party_id = @member_repo.get_party(event.user.id)
           party = @party_repo.by_pk(party_id).first
-          binding.pry;1
+          party = party.to_h.transform_keys{|key| key == :id ? :party_id : key}
           queue.queue_party(party)
 
         else
