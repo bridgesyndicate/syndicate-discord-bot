@@ -136,6 +136,7 @@ RSpec.describe '#ranked' do
 
     describe 'with one party of size=2 queued' do
       it 'keeps the party queued' do
+        binding.pry;1
         @queue.queue_party(party1)
         expect(@queue.process_queue(party_size=2)).to eq nil
         expect(@queue.size(party_size=2)).to eq 1

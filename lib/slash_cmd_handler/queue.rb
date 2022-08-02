@@ -12,17 +12,23 @@ class SlashCmdHandler
     def initialize(bot, queue)
       @bot = bot
       @queue = queue
+      @member_repo = Scrims::MemberRepo.new($rom)
+      @party_repo = Scrims::Storage::Party.new($rom)
     end
 
     def add_handlers
       bot.application_command(:q) do |event|
         syn_logger "Request to queue from #{event.user.id}, #{event.user.username}"
         next unless ensure_queuer_roles(event, roles_for_member(event.user))
-
         if queue.member_repo.discord_id_in_party?(event.user.id)
-          # queue party
+          party_id = @member_repo.get_party(event.user.id)
+          party = @party_repo.by_pk(party_id).first
+          binding.pry;1
+          queue.queue_party(party)
+
         else
           # queue player
+        end
         
         queue_params = {
           discord_id: event.user.id,
