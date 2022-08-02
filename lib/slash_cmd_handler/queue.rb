@@ -21,34 +21,39 @@ class SlashCmdHandler
       bot.application_command(:q) do |event|
         syn_logger "Request to queue from #{event.user.id}, #{event.user.username}"
         next unless ensure_queuer_roles(event, roles_for_member(event.user))
-        if queue.member_repo.discord_id_in_party?(event.user.id)
-          party_id = @member_repo.get_party(event.user.id)
+        discord_id = event.user.id.to_s
+        if queue.member_repo.discord_id_in_party?(discord_id)
+          party_id = @member_repo.get_party(discord_id)
           party = @party_repo.by_pk(party_id).first
           party = party.to_h.transform_keys{|key| key == :id ? :party_id : key}
-          queue.queue_party(party)
-
+          entity = party
         else
-          # queue player
+          player = {
+            discord_id: event.user.id.to_s,
+            discord_username: event.user.username,
+          }
+          entity = player
         end
         
-        queue_params = {
-          discord_id: event.user.id,
-          discord_username: event.user.username,
-          queue_time: Time.now.to_i,
-        }
-        puts "queue_params for #{event.user.id} are #{queue_params}"
-
         begin
-          queue.queue_player(queue_params)
-          event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")
+          queue_entity(entity, event)
         rescue Scrims::Queue::AlreadyQueuedError => e
-          event.respond(content: "You are already queued")
+          event.respond(content: "You are already queued.")
         end
-
         DelayedWorker.new(Scrims::MAX_QUEUE_TIME) do
           GameMaker.from_match(queue.process_queue)
         end.run
         GameMaker.from_match(queue.process_queue)
+      end
+    end
+
+    def queue_entity(entity, event)
+      if entity.has_key?(:discord_id)
+        queue.queue_player(entity)
+        event.respond(content: "#{event.user.username} is queued. Type /dq to dequeue.")
+      else
+        queue.queue_party(entity)
+        event.respond(content: "#{event.user.username}'s party is queued. Type /dq to dequeue.")
       end
     end
   end

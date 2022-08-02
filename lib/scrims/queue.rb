@@ -29,6 +29,7 @@ class Scrims
           .fetch(discord_id)
         queue.create(queued_player
                        .merge(elo: elo.nil? ? STARTING_ELO : elo)
+                       .merge(queue_time: now.to_i)
                      )
       else
         raise Scrims::Queue::AlreadyQueuedError

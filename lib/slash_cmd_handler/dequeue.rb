@@ -13,16 +13,26 @@ class SlashCmdHandler
     def initialize(bot, queue)
       @bot = bot
       @queue = queue
+      @member_repo = Scrims::MemberRepo.new($rom)
     end
 
     def add_handlers
       bot.application_command(:dq) do |event|
         puts "Request to dequeue from #{event.user.id}, #{event.user.username}"
-
-        if queue.dequeue_player(event.user.id) == 1
-          event.respond(content: "#{event.user.username}(#{event.user.id}) has been removed from the queue.")
+        discord_id = event.user.id.to_s
+        if queue.member_repo.discord_id_in_party?(discord_id)
+          party_id = @member_repo.get_party(discord_id)
+          if queue.dequeue_party(party_id) >= 1
+            event.respond(content: "#{event.user.username}'s party has been removed from the queue.")
+          else
+            event.respond(content: "Your party is not queued.")
+          end
         else
-          event.respond(content: "You are not in the queue.")
+          if queue.dequeue_player(discord_id) >= 1
+            event.respond(content: "#{event.user.username} has been removed from the queue.")
+          else
+            event.respond(content: "You are not queued.")
+          end
         end
       end
     end

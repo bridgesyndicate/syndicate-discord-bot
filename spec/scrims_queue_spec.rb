@@ -235,11 +235,7 @@ RSpec.describe '#ranked' do
     describe 'with three parties queued, and two are elo-matchable' do
       let(:discord_id_5) { rand(2**32).to_s }
       let(:discord_id_6) { rand(2**32).to_s }
-      let(:party3) { {
-                       party_id: @pid3,
-                       queue_time: now
-                     }
-      }
+      let(:party3) { { party_id: @pid3 } }
       before(:each) do
         @pid3 = @invites.accept(discord_id_5, discord_id_6)
       end
