@@ -5,10 +5,6 @@ class Scrims
   class Locks < ROM::Repository[:locks]
     commands :create
 
-    def now
-      Time.now
-    end
-
     def locked?(discord_id)
       now1 = now
       locks

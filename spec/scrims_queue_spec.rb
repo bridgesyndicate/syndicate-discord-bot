@@ -118,16 +118,8 @@ RSpec.describe '#ranked' do
     let(:discord_id_2) { rand(2**32).to_s }
     let(:discord_id_3) { rand(2**32).to_s }
     let(:discord_id_4) { rand(2**32).to_s }
-    let(:party1) { {
-                     party_id: @pid,
-                     queue_time: now
-                   }
-    }
-    let(:party2) { {
-                     party_id: @pid2,
-                     queue_time: now
-                   }
-    }
+    let(:party1) { { party_id: @pid } }
+    let(:party2) { { party_id: @pid2 } }
     before(:each) do
       @invites = Scrims::Invite.new(@rom)
       @pid = @invites.accept(discord_id_1, discord_id_2)
@@ -136,7 +128,6 @@ RSpec.describe '#ranked' do
 
     describe 'with one party of size=2 queued' do
       it 'keeps the party queued' do
-        binding.pry;1
         @queue.queue_party(party1)
         expect(@queue.process_queue(party_size=2)).to eq nil
         expect(@queue.size(party_size=2)).to eq 1

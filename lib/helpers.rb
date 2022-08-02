@@ -15,3 +15,7 @@ end
 def syn_logger(msg)
   puts msg if SYNDICATE_ENV != 'test'
 end
+
+def now
+  Time.now
+end

@@ -55,6 +55,7 @@ class Scrims
         queue.create(queued_party
                        .merge(party_size: party_size)
                        .merge(elo: elo)
+                       .merge(queue_time: now.to_i)
                     )
       else
         raise Scrims::Queue::AlreadyQueuedError
