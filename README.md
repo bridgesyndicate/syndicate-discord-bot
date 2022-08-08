@@ -40,6 +40,7 @@ aws ecs run-task --enable-execute-command --task-definition SyndicateBastionTask
 aws ecs list-tasks --cluster SyndicateECSCluster --family SyndicateBastionTaskDefinition
 aws ecs execute-command --cluster SyndicateECSCluster --command "/bin/bash" --interactive --task cd22bf17bad34bd7af2fdf14906c4aa3
 psql postgres://AmazonPgUsername:AmazonPgPassword@${POSTGRES_HOST}/postgres
+aws ecs stop-task --cluster SyndicateECSCluster --task 8b4882f0be4b4d02be54f084b70533bb
 ```
 
 
