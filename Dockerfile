@@ -7,5 +7,5 @@ RUN set -eux; \
 	bundle install; \
 	find . -name interaction.rb
 
-CMD cd; ./idle.sh
+CMD cd; ./syndicate-bot.rb
 
