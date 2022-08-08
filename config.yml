@@ -33,9 +33,9 @@ buckytour_test:
                                  *If you are still having trouble, make a ticket in the BuckyTour Discord.*"
 syndicate:
   discord_application_id: 856369764729618432
-  discord_guild_id: 855996952348327946
-  discord_channel: 903122113924317187
-  discord_hook: 908851939649925150
+  discord_guild_id: 1001238356648271923
+  discord_channel: 1001238356648271926
+  discord_hook: 1006014050993455176
   fqdn: bridgesyndicate.gg
   icon_thumb: "https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png"
   show_elo: true
