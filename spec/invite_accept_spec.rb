@@ -11,6 +11,7 @@ RSpec.describe '#invite accept' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)
+    @invites.discord_resolver = MockDiscordResolver.new
     @party_repo = Scrims::Storage::Party.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
   end

@@ -15,6 +15,7 @@ RSpec.describe '#duel_accept' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invite_cmd = Scrims::Invite.new(rom)
+    @invite_cmd.discord_resolver = MockDiscordResolver.new
     @duel_cmd = Scrims::Duel.new(rom)
     @duel_cmd.discord_resolver = MockDiscordResolver.new
     @duel_cmd.elo_resolver = MockEloResolver.new

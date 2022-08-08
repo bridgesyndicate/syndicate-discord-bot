@@ -71,7 +71,13 @@ class GamePostSchema
           type: :string
         },
         elo_before_game: {
-          type: :object
+          type: :object,
+          minProperties: 2,
+          patternProperties: {
+            "[0-9]": {
+              type: :integer
+            }
+          },
         }
       }
     }

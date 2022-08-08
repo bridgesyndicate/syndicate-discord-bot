@@ -73,6 +73,7 @@ class Scrims
         primary_key :id
         foreign_key :party_id, :parties
         column :discord_id, String, null: false, unique: true
+        column :discord_username, String, null: false
         column :created_at, DateTime, null: false
       end
       conf.default.connection.create_table(:discord_user_queue) do

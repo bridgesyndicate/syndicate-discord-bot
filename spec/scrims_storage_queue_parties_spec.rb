@@ -21,6 +21,7 @@ RSpec.describe '#parties in queue' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)
+    @invites.discord_resolver = MockDiscordResolver.new
     @pid = @invites.accept(discord_id_1, discord_id_2)
     @queue = Scrims::Queue.new(rom)
     @queue.elo_resolver = MockEloResolver.new

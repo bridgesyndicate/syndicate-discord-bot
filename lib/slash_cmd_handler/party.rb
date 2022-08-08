@@ -54,6 +54,7 @@ class SlashCmdHandler
 
       bot.button(custom_id: /^#{PARTY_INVITE_KEY}/) do |event|
         invites = Scrims::Invite.new($rom)
+        invites.discord_resolver = DiscordResolver.new(bot)
         invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         event.update_message(content: 'Processing Party...')

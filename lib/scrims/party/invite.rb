@@ -1,4 +1,5 @@
 require 'time'
+require 'discord_resolver'
 
 class Scrims
   class Invite
@@ -12,7 +13,7 @@ class Scrims
     class MembersInDifferentPartiesError < StandardError
     end
 
-    attr_accessor :party_repo, :member_repo, :max_members
+    attr_accessor :party_repo, :member_repo, :max_members, :discord_resolver
     DEFAULT_MAX_PARTY_MEMBERS = 4
 
     def initialize(rom)
@@ -26,10 +27,14 @@ class Scrims
         party = party_repo.create({ created_at: Time.now.utc.iso8601 })
         member_repo.create({ party_id: party.id,
                              discord_id: discord_id_1,
+                             discord_username: discord_resolver
+                               .resolve_name_from_discord_id(discord_id_1),
                              created_at: Time.now.utc.iso8601
                            })
         member_repo.create({ party_id: party.id,
                              discord_id: discord_id_2,
+                             discord_username: discord_resolver
+                               .resolve_name_from_discord_id(discord_id_2),
                              created_at: Time.now.utc.iso8601
                            })
         return party.id
@@ -45,6 +50,8 @@ class Scrims
         member_repo.create({
                              party_id: party_id,
                              discord_id: discord_id,
+                             discord_username: discord_resolver
+                               .resolve_name_from_discord_id(discord_id),
                              created_at: Time.now.utc.iso8601
                            })
         return party_id

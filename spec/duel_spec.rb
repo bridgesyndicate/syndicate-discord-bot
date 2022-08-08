@@ -14,6 +14,7 @@ RSpec.describe '#duel' do
     before(:each) {
       rom = Scrims::Storage.new.rom
       @invite_cmd = Scrims::Invite.new(rom)
+      @invite_cmd.discord_resolver = MockDiscordResolver.new
       @duel_cmd = Scrims::Duel.new(rom)
       @list = Scrims::ListParty.new(rom)
       @duel_cmd.notifier = MockNotifier.new

@@ -10,6 +10,7 @@ RSpec.describe '#leave' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)
+    @invites.discord_resolver = MockDiscordResolver.new
     @leave = Scrims::Leave.new(rom)
     @party_repo = Scrims::Storage::Party.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)

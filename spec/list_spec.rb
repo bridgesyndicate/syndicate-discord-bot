@@ -8,6 +8,7 @@ RSpec.describe '#list' do
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)
+    @invites.discord_resolver = MockDiscordResolver.new
     @list = Scrims::ListParty.new(rom)
   end
 

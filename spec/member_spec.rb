@@ -37,6 +37,7 @@ RSpec.describe '#scrims members' do
           @member_repo.create(
                               { party_id: @party.id,
                                 discord_id: discord_id,
+                                discord_username: Faker::Internet.username,
                                 created_at: Time.now
                               })
         end

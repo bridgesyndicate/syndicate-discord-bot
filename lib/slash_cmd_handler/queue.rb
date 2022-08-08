@@ -1,13 +1,14 @@
 require 'scrims'
 require 'discord_access'
 require 'syndicate_embeds'
+require 'syndicate_web_service'
 
 class SlashCmdHandler
   class Queue
 
     include Helpers
 
-    attr_accessor :bot, :queue
+    attr_accessor :bot, :queue, :member_repo, :party_repo
 
     def initialize(bot, queue)
       @bot = bot
@@ -23,15 +24,17 @@ class SlashCmdHandler
         next unless ensure_queuer_roles(event, roles_for_member(event.user))
         discord_id = event.user.id.to_s
         if queue.member_repo.discord_id_in_party?(discord_id)
-          party_id = @member_repo.get_party(discord_id)
-          party = @party_repo.by_pk(party_id).first
+          party_id = member_repo.get_party(discord_id)
+          party = party_repo.by_pk(party_id).first
           party = party.to_h.transform_keys{|key| key == :id ? :party_id : key}
+          party_size = party_repo.member_count(party_id)
           entity = party
         else
           player = {
             discord_id: event.user.id.to_s,
             discord_username: event.user.username,
           }
+          party_size = 1
           entity = player
         end
         
@@ -41,9 +44,15 @@ class SlashCmdHandler
           event.respond(content: "You are already queued.")
         end
         DelayedWorker.new(Scrims::MAX_QUEUE_TIME) do
-          GameMaker.from_match(queue.process_queue)
+          game_maker = GameMaker.new(web_service_klass: SyndicateWebService,
+                                     party_repo: party_repo,
+                                     elo_resolver: queue.elo_resolver)
+          game_maker.from_match(queue.process_queue(party_size=party_size))
         end.run
-        GameMaker.from_match(queue.process_queue)
+        game_maker = GameMaker.new(web_service_klass: SyndicateWebService,
+                                   party_repo: party_repo,
+                                   elo_resolver: queue.elo_resolver)
+        game_maker.from_match(queue.process_queue(party_size=party_size))
       end
     end
 

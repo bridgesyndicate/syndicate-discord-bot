@@ -122,6 +122,7 @@ RSpec.describe '#ranked' do
     let(:party2) { { party_id: @pid2 } }
     before(:each) do
       @invites = Scrims::Invite.new(@rom)
+      @invites.discord_resolver = MockDiscordResolver.new
       @pid = @invites.accept(discord_id_1, discord_id_2)
       @pid2 = @invites.accept(discord_id_3, discord_id_4)
     end

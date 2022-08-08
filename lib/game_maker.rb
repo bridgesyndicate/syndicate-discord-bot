@@ -1,5 +1,13 @@
 class GameMaker
-  def self.make_game(blue_team_discord_ids:,
+  attr_accessor :web_service, :party_repo, :elo_resolver
+
+  def initialize(web_service_klass: nil, party_repo: nil, elo_resolver: nil)
+    @web_service = web_service_klass
+    @party_repo = party_repo
+    @elo_resolver = elo_resolver
+  end
+
+  def make_game(blue_team_discord_ids:,
                      blue_team_discord_names:,
                      red_team_discord_ids:,
                      red_team_discord_names:,
@@ -27,7 +35,7 @@ class GameMaker
     }
   end
 
-  def self.add_acceptance(game, discord_id)
+  def add_acceptance(game, discord_id)
     game[:accepted_by_discord_ids].push(
       {
         discord_id: discord_id,
@@ -56,14 +64,45 @@ class GameMaker
     JSON.pretty_generate(game)
   end
 
-  def self.from_match(match)
+  def get_discord_ids(player)
+    if player.party_id.nil?
+      Array.new.push(player.discord_id.to_s)
+    else
+      party_repo.with_members(player.party_id).to_a.first.members.map{|m| m.discord_id}
+    end
+  end
+
+  def get_discord_usernames(player)
+    if player.party_id.nil?
+      Array.new.push(player.discord_username)
+    else
+      party_repo.with_members(player.party_id).to_a.first.members.map{|m| m.discord_username}
+    end
+  end
+
+  def get_elo_map(match)
+    if match.playerA.party_id.nil?
+      { match.playerA.discord_id => match.playerA.elo,
+        match.playerB.discord_id => match.playerB.elo }
+    else
+      discord_ids_a = party_repo.with_members(match.playerA.party_id).to_a.first.members.map{|m| m.discord_id}
+      discord_ids_b = party_repo.with_members(match.playerB.party_id).to_a.first.members.map{|m| m.discord_id}
+      syn_logger "Team A discord_ids: #{discord_ids_a}"
+      syn_logger "Team B discord_ids: #{discord_ids_b}"
+      discord_ids = discord_ids_a + discord_ids_b
+      elo_resolver.discord_ids = discord_ids
+      elo_resolver.resolve_elo_from_discord_ids
+    end
+  end
+
+  def from_match(match)
     unless match.nil?
-      puts "Making match player A: #{match.playerA.discord_id}, #{match.playerA.discord_username}"
-      puts "Making match player B: #{match.playerB.discord_id}, #{match.playerB.discord_username}"
-      blue_team_discord_ids = [match.playerA.discord_id.to_s]
-      blue_team_discord_names = [match.playerA.discord_username]
-      red_team_discord_ids = [match.playerB.discord_id.to_s]
-      red_team_discord_names = [match.playerB.discord_username]
+      syn_logger "Making match player A: #{match.playerA.discord_id || match.playerA.party_id}, #{match.playerA.discord_username}"
+      syn_logger "Making match player B: #{match.playerB.discord_id || match.playerB.party_id}, #{match.playerB.discord_username}"
+      blue_team_discord_ids = get_discord_ids(match.playerA)
+      blue_team_discord_names = get_discord_usernames(match.playerA)
+      red_team_discord_ids = get_discord_ids(match.playerB)
+      red_team_discord_names = get_discord_usernames(match.playerB)
       goals = 5
       length = 900
       game = make_game(
@@ -75,30 +114,16 @@ class GameMaker
         goals: goals,
         length: length,
       )
-      game = game.merge({
-                   :elo_before_game => {
-                     match.playerA.discord_id => match.playerA.elo,
-                     match.playerB.discord_id => match.playerB.elo
-                   }
-                 }
-                )
-      game = SyndicateWebService.add_acceptance(game, match.playerB.discord_id.to_s)
+      game = game.merge({ :elo_before_game => get_elo_map(match) })
+      game = add_acceptance(game, match.playerB.discord_id.to_s)
       game_json = JSON.pretty_generate(game)
-      status = SyndicateWebService.send_game_to_syndicate_web_service(game_json)
+      syn_logger game_json
+      status = web_service.send_game_to_syndicate_web_service(game_json)
       if status.class == Net::HTTPOK
-        puts "Sent new game #{match}, #{status}"
-        # tell the players they are in a match.
-        # discord_webhook_client = DiscordWebhookClient.instance
-        # message = OpenStruct.new
-        # message.game = JSON.parse(game_json, object_class: OpenStruct)
-        # discord_webhook_client.send_new_game_alert(message, false)
+        syn_logger "Sent new game #{match}, #{status}"
       else
-        puts "Error sending game from match #{match}, #{status}"
+        syn_logger "Error sending game from match #{match}, #{status}"
       end
     end
   end
-
-
-
-  
 end
