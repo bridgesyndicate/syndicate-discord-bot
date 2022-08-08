@@ -33,6 +33,16 @@ and then (I don't think we need this any more, please remove)
 
 because I don't know how to do this in ROM and it seemed silly to learn to just do it once.
 
+## Bastion
+
+```
+aws ecs run-task --enable-execute-command --task-definition SyndicateBastionTaskDefinition --cluster SyndicateECSCluster  --network-configuration 'awsvpcConfiguration={subnets=[subnet-02f0a2e9ba4b5d279],securityGroups=[sg-0cde2458dac7fcd35],assignPublicIp=DISABLED}'
+aws ecs list-tasks --cluster SyndicateECSCluster --family SyndicateBastionTaskDefinition
+aws ecs execute-command --cluster SyndicateECSCluster --command "/bin/bash" --interactive --task cd22bf17bad34bd7af2fdf14906c4aa3
+psql postgres://AmazonPgUsername:AmazonPgPassword@${POSTGRES_HOST}/postgres
+```
+
+
 
 ### Webhook
 The webhook must be owned by the bot to creat buttons in webhooks:
