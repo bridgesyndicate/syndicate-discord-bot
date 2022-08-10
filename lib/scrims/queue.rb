@@ -23,12 +23,14 @@ class Scrims
     def dequeue_party party_id
       queue.by_party_id(party_id).delete
     end
-    def lock_player discord_id
-      lock_repo.lock(discord_id, 30.minutes)
+    def lock_players discord_id_list
+      discord_id_list.each do |discord_id|
+        lock_repo.lock(discord_id, 30.minutes)
+      end
     end
     def unlock_players discord_id_list
       discord_id_list.each do |discord_id|
-        @lock_repo.unlock(discord_id)
+        lock_repo.unlock(discord_id)
       end
     end
     def queue_player queued_player
@@ -46,7 +48,7 @@ class Scrims
                        .merge(elo: elo.nil? ? STARTING_ELO : elo)
                        .merge(queue_time: now.to_i)
                      )
-        lock_player(discord_id)
+        lock_players(discord_id.split)
       end
     end
 
@@ -60,24 +62,24 @@ class Scrims
     end
 
     def queue_party queued_party
-      if queue.by_party_id(queued_party[:party_id]).to_a.empty?
-        party_members = party_repo
+      party_members = party_repo
           .with_members(queued_party[:party_id])
           .first
           .members
+      discord_id_list = party_members.map { |member| member.discord_id }
+      if lock_repo.locked?(discord_id_list)
+        raise Scrims::Queue::LockedPlayerError
+      elsif !queue.by_party_id(queued_party[:party_id]).to_a.empty?
+        raise Scrims::Queue::AlreadyQueuedError
+      else
+        queue.by_party_id(queued_party[:party_id]).to_a.empty?
         elo = compute_average_elo(queued_party[:party_id])
         queue.create(queued_party
                        .merge(party_size: party_members.size)
                        .merge(elo: elo)
                        .merge(queue_time: now.to_i)
                     )
-        party_members.each do |member|
-          lock_player(member[:discord_id])
-        end
-      elsif !queue.by_party_id(queued_party[:party_id]).to_a.empty?
-        raise Scrims::Queue::AlreadyQueuedError
-      else
-        raise Scrims::Queue::LockedPlayerError
+        lock_players(discord_id_list)
       end
     end
     def find_match_by_oldest_players(party_size=1)

@@ -23,7 +23,6 @@ class SlashCmdHandler
         syn_logger "Request to queue from #{event.user.id}, #{event.user.username}"
         next unless ensure_queuer_roles(event, roles_for_member(event.user))
         discord_id = event.user.id.to_s
-        binding.pry;1
         if queue.member_repo.discord_id_in_party?(discord_id)
           party_id = member_repo.get_party(discord_id)
           party = party_repo.by_pk(party_id).first
