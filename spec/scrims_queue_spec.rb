@@ -10,6 +10,7 @@ RSpec.describe '#ranked' do
     @rom = Scrims::Storage.new.rom
     @queue = Scrims::Queue.new(@rom)
     @queue.elo_resolver = MockEloResolver.new
+    @lock_repo = Scrims::Locks.new(@rom)
   end
 
   describe 'elo resolver' do
@@ -29,12 +30,20 @@ RSpec.describe '#ranked' do
         expect(@queue.size).to eq 1
       end
 
+      it 'locks the player' do
+        @queue.queue_player(player_with_600_elo)
+        expect(@lock_repo
+          .locked?(player_with_600_elo[:discord_id])
+        ).to be true
+      end
+
       it 'throws an exception if the player is queued again' do
         @queue.queue_player(player_with_600_elo)
         expect{
           @queue.queue_player(player_with_600_elo)
-        }.to raise_error Scrims::Queue::AlreadyQueuedError
+        }.to raise_error Scrims::Queue::LockedPlayerError
       end
+
     end
 
     describe 'elo adding' do
@@ -134,11 +143,19 @@ RSpec.describe '#ranked' do
         expect(@queue.size(party_size=2)).to eq 1
       end
 
+      it 'locks the party' do
+        @queue.queue_party(party1)
+        discord_id_list = [discord_id_1, discord_id_2]
+        discord_id_list.each do |discord_id|
+          expect(@lock_repo.locked?(discord_id)). to be true
+        end
+      end
+
       it 'throws an exception if the party is queued again' do
         @queue.queue_party(party1)
         expect{
           @queue.queue_party(party1)
-        }.to raise_error Scrims::Queue::AlreadyQueuedError
+        }.to raise_error Scrims::Queue::LockedPlayerError
       end
     end
 

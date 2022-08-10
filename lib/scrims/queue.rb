@@ -1,12 +1,15 @@
 class Scrims
   class Queue
+    class LockedPlayerError < StandardError
+    end
     class AlreadyQueuedError < StandardError
     end
-    attr_accessor :queue, :party_repo, :elo_resolver, :member_repo
+    attr_accessor :queue, :party_repo, :elo_resolver, :member_repo, :lock_repo
     def initialize(rom)
       @queue = Scrims::Storage::Queue.new(rom)
       @party_repo = Scrims::Storage::Party.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
+      @lock_repo = Scrims::Locks.new(rom)
     end
     def size(party_size=1)
       queue
@@ -20,9 +23,21 @@ class Scrims
     def dequeue_party party_id
       queue.by_party_id(party_id).delete
     end
+    def lock_player discord_id
+      lock_repo.lock(discord_id, 30.minutes)
+    end
+    def unlock_players discord_id_list
+      discord_id_list.each do |discord_id|
+        @lock_repo.unlock(discord_id)
+      end
+    end
     def queue_player queued_player
       discord_id = queued_player[:discord_id]
-      if queue.by_discord_id(discord_id).to_a.empty?
+      if lock_repo.locked?(discord_id)
+        raise Scrims::Queue::LockedPlayerError
+      elsif !queue.by_discord_id(discord_id).to_a.empty?
+        raise Scrims::Queue::AlreadyQueuedError
+      else
         elo_resolver.discord_ids = Array.new.push(discord_id)
         elo = elo_resolver
           .resolve_elo_from_discord_ids
@@ -31,8 +46,7 @@ class Scrims
                        .merge(elo: elo.nil? ? STARTING_ELO : elo)
                        .merge(queue_time: now.to_i)
                      )
-      else
-        raise Scrims::Queue::AlreadyQueuedError
+        lock_player(discord_id)
       end
     end
 
@@ -47,19 +61,23 @@ class Scrims
 
     def queue_party queued_party
       if queue.by_party_id(queued_party[:party_id]).to_a.empty?
-        party_size = party_repo
+        party_members = party_repo
           .with_members(queued_party[:party_id])
           .first
           .members
-          .size
         elo = compute_average_elo(queued_party[:party_id])
         queue.create(queued_party
-                       .merge(party_size: party_size)
+                       .merge(party_size: party_members.size)
                        .merge(elo: elo)
                        .merge(queue_time: now.to_i)
                     )
-      else
+        party_members.each do |member|
+          lock_player(member[:discord_id])
+        end
+      elsif !queue.by_party_id(queued_party[:party_id]).to_a.empty?
         raise Scrims::Queue::AlreadyQueuedError
+      else
+        raise Scrims::Queue::LockedPlayerError
       end
     end
     def find_match_by_oldest_players(party_size=1)

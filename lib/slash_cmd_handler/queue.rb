@@ -23,6 +23,7 @@ class SlashCmdHandler
         syn_logger "Request to queue from #{event.user.id}, #{event.user.username}"
         next unless ensure_queuer_roles(event, roles_for_member(event.user))
         discord_id = event.user.id.to_s
+        binding.pry;1
         if queue.member_repo.discord_id_in_party?(discord_id)
           party_id = member_repo.get_party(discord_id)
           party = party_repo.by_pk(party_id).first
@@ -41,7 +42,8 @@ class SlashCmdHandler
         begin
           queue_entity(entity, event)
         rescue Scrims::Queue::AlreadyQueuedError => e
-          event.respond(content: "You are already queued.")
+        rescue Scrims::Queue::LockedPlayerError => e
+          event.respond(content: "You cannot /q while queued or in a game.")
         end
         DelayedWorker.new(Scrims::MAX_QUEUE_TIME) do
           game_maker = GameMaker.new(web_service_klass: SyndicateWebService,
