@@ -42,12 +42,14 @@ RSpec.describe '#parties in queue' do
                          queue_time: Time.now.to_i,
                          elo: elo
                        })
-    expect{
-      @queue.queue_party({ party_id: @pid,
-                           queue_time: Time.now.to_i,
-                           elo: elo
-                         })
-    }.to raise_error Scrims::Queue::AlreadyQueuedError
+    Timecop.freeze(30.minutes) do # otherwise it will raise LockedPlayerError
+      expect{
+        @queue.queue_party({ party_id: @pid,
+                             queue_time: Time.now.to_i,
+                             elo: elo
+                           })
+      }.to raise_error Scrims::Queue::AlreadyQueuedError
+    end
   end
 
   it 'queues two parties in sql' do
