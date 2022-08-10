@@ -37,11 +37,20 @@ RSpec.describe '#ranked' do
         ).to be true
       end
 
-      it 'throws an exception if the player is queued again' do
+      it 'throws a locked player exception if the player is queued again' do
         @queue.queue_player(player_with_600_elo)
         expect{
           @queue.queue_player(player_with_600_elo)
         }.to raise_error Scrims::Queue::LockedPlayerError
+      end
+
+      it 'throws an already queued exception if the player is queued again after they are unlocked' do
+        Timecop.freeze(30.minutes) do
+          @queue.queue_player(player_with_600_elo)
+          expect{
+            @queue.queue_player(player_with_600_elo)
+          }.to raise_error Scrims::Queue::LockedPlayerError
+        end
       end
 
     end
@@ -151,11 +160,20 @@ RSpec.describe '#ranked' do
         end
       end
 
-      it 'throws an exception if the party is queued again' do
+      it 'throws a locked player exception if the party is queued again' do
         @queue.queue_party(party1)
         expect{
           @queue.queue_party(party1)
         }.to raise_error Scrims::Queue::LockedPlayerError
+      end
+
+      it 'throws an already queued exception if the party is queued again when they are no longer locked' do
+        @queue.queue_party(party1)
+        Timecop.freeze(30.minutes) do
+          expect{
+            @queue.queue_party(party1)
+          }.to raise_error Scrims::Queue::AlreadyQueuedError
+        end
       end
     end
 
