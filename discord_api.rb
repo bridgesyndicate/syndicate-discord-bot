@@ -54,11 +54,6 @@ class DiscordApi
            )
     end
 
-    def create_application_and_guild_command(command_definition)
-      puts JSON.pretty_generate(create_guild_command(command_definition))
-      puts JSON.pretty_generate(create_application_command(command_definition))
-    end
-
     private
 
     def call_api(path,

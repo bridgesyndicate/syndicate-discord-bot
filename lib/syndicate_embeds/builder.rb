@@ -24,7 +24,8 @@ class SyndicateEmbeds
              channel: event.channel,
              error: nil,
              discord_id_list: nil,
-             custom_id: nil
+             custom_id: nil,
+             forced_description: nil
             )
 
       error = convert_error(error)
@@ -34,7 +35,7 @@ class SyndicateEmbeds
 
       channel.send_embed do |embed, view|
         add_title(embed, entry) if has_title?(entry)
-        add_description(embed, entry, discord_id_list) if has_description?(entry)
+        add_description(embed, entry, discord_id_list, forced_description: forced_description) if (has_description?(entry) || !forced_description.nil?)
         add_fields(embed, entry, discord_id_list) if has_fields?(entry)
         add_button(entry, view, custom_id) if has_button?(entry)
         add_image(embed, entry) if has_image?(entry)
@@ -94,11 +95,15 @@ class SyndicateEmbeds
       !entry.description.nil?
     end
 
-    def add_description(embed, entry, discord_id_list)
-      description = entry.description
-      embed.description =
-        [description, discord_id_list]
-          .join('')
+    def add_description(embed, entry, discord_id_list, forced_description: nil)
+      if forced_description.nil?
+        description = entry.description
+        embed.description =
+          [description, discord_id_list]
+             .join('')
+      else # /lb command uses use forced_description
+        embed.description = forced_description
+      end
     end
 
     def has_fields?(entry)

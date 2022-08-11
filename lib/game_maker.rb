@@ -13,7 +13,8 @@ class GameMaker
                      red_team_discord_names:,
                      goals:,
                      length:,
-                     via:
+                     via:,
+                     season:
                     )
     {
       uuid: SecureRandom.uuid,
@@ -31,7 +32,8 @@ class GameMaker
           accepted_at: Time.now.utc.iso8601
         }
       },
-      queued_via: via
+      queued_via: via,
+      season: season
     }
   end
 
@@ -105,6 +107,7 @@ class GameMaker
       red_team_discord_names = get_discord_usernames(match.playerB)
       goals = 5
       length = 900
+      season = BotConfig.config.current_season
       game = make_game(
         via: 'queue match',
         blue_team_discord_ids: blue_team_discord_ids,
@@ -113,6 +116,7 @@ class GameMaker
         red_team_discord_names: red_team_discord_names,
         goals: goals,
         length: length,
+        season: season
       )
       game = game.merge({ :elo_before_game => get_elo_map(match) })
       game = add_acceptance(game, match.playerB.discord_id.to_s)

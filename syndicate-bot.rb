@@ -62,20 +62,15 @@ bot.application_command(:list) do |event|
   event.respond(content: "The current queue is : #{queue_members}")
 end
 
-bot.application_command(:lb) do |event|
-  rom = Leaderboard.rom
-  leaderboard = Leaderboard.new(rom).sort_by_elo
-  event.respond(content: 'The current leaderboard:')
-  DiscordWebhookClient.instance.send_leaderboard(leaderboard)
-end
-
 queue = Scrims::Queue.new($rom)
+leaderboard = Scrims::Leaderboard.new($rom)
 
 SlashCmdHandler::Party.new(bot).add_handlers
 SlashCmdHandler::Duel.new(bot).add_handlers
 SlashCmdHandler::Barr.new(bot).add_handlers
 SlashCmdHandler::Queue.new(bot, queue).add_handlers
 SlashCmdHandler::Dequeue.new(bot, queue).add_handlers
+SlashCmdHandler::Leaderboard.new(bot, leaderboard).add_handlers
 SlashCmdHandler::Verify.init(bot)
 WelcomeMessage.init(bot)
 

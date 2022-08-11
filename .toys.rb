@@ -136,12 +136,14 @@ end
 tool 'create-lb-command' do
   def run
     require_relative 'discord_api'
+    require_relative 'lb_options'
     client = DiscordApi.new(bot_token: $token)
     definition = {
       name: 'lb',
       description: 'Display the leaderboard',
     }
-    client.create_application_and_guild_command(definition)
+    definition[:options] = lb_options
+    client.create_application_command(definition)
   end
 end
 
