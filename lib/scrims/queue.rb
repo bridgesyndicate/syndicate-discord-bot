@@ -23,16 +23,6 @@ class Scrims
     def dequeue_party party_id
       queue.by_party_id(party_id).delete
     end
-    def lock_players discord_id_list
-      discord_id_list.each do |discord_id|
-        lock_repo.lock(discord_id, 30.minutes)
-      end
-    end
-    def unlock_players discord_id_list
-      discord_id_list.each do |discord_id|
-        lock_repo.unlock(discord_id)
-      end
-    end
     def queue_player queued_player
       discord_id = queued_player[:discord_id]
       if lock_repo.locked?(discord_id)
@@ -48,7 +38,6 @@ class Scrims
                        .merge(elo: elo.nil? ? STARTING_ELO : elo)
                        .merge(queue_time: now.to_i)
                      )
-        lock_players(discord_id.split)
       end
     end
 
@@ -79,7 +68,6 @@ class Scrims
                        .merge(elo: elo)
                        .merge(queue_time: now.to_i)
                     )
-        lock_players(discord_id_list)
       end
     end
     def find_match_by_oldest_players(party_size=1)

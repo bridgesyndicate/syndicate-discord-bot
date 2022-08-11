@@ -5,10 +5,10 @@ class Scrims
   class Locks < ROM::Repository[:locks]
     commands :create
 
-    def locked?(discord_id)
+    def locked?(discord_ids)
       now1 = now
       locks
-        .where(discord_id: discord_id)
+        .where(discord_id: discord_ids)
         .where{ (expires_at > now1 ) } # no idea why now does not work. oh might be a reserved word
         .count > 0
     end
@@ -18,6 +18,12 @@ class Scrims
       locks
         .where(discord_id: discord_ids)
         .delete
+    end
+
+    def lock_players(discord_id_list, duration_seconds)
+      discord_id_list.each do |discord_id|
+        lock(discord_id, duration_seconds)
+      end
     end
 
     def lock(discord_id, duration_seconds)

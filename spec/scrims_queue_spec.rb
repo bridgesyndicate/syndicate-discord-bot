@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'scrims'
 require 'timecop'
 require 'mock_elo_resolver'
+require 'mock_discord_resolver'
 require_relative 'shared/queued_players'
 
 RSpec.describe '#ranked' do
@@ -30,27 +31,18 @@ RSpec.describe '#ranked' do
         expect(@queue.size).to eq 1
       end
 
-      it 'locks the player' do
-        @queue.queue_player(player_with_600_elo)
-        expect(@lock_repo
-          .locked?(player_with_600_elo[:discord_id])
-        ).to be true
-      end
-
-      it 'throws a locked player exception if the player is queued again' do
-        @queue.queue_player(player_with_600_elo)
+      it 'throws an exception if the player attempts to queue when locked' do
+        @lock_repo.lock(player_with_600_elo[:discord_id], 30.minutes)
         expect{
           @queue.queue_player(player_with_600_elo)
         }.to raise_error Scrims::Queue::LockedPlayerError
       end
 
-      it 'throws an already queued exception if the player is queued again after they are unlocked' do
-        Timecop.freeze(30.minutes) do
+      it 'throws an exception if the player tries to queue again when queued' do
+        @queue.queue_player(player_with_600_elo)
+        expect{
           @queue.queue_player(player_with_600_elo)
-          expect{
-            @queue.queue_player(player_with_600_elo)
-          }.to raise_error Scrims::Queue::LockedPlayerError
-        end
+        }.to raise_error Scrims::Queue::AlreadyQueuedError
       end
 
     end
@@ -152,28 +144,18 @@ RSpec.describe '#ranked' do
         expect(@queue.size(party_size=2)).to eq 1
       end
 
-      it 'locks the party' do
-        @queue.queue_party(party1)
-        discord_id_list = [discord_id_1, discord_id_2]
-        discord_id_list.each do |discord_id|
-          expect(@lock_repo.locked?(discord_id)). to be true
-        end
-      end
-
-      it 'throws a locked player exception if the party is queued again' do
-        @queue.queue_party(party1)
+      it 'throws an exception if the party attempts to queue when a member is locked' do
+        @lock_repo.lock(discord_id_1, 30.minutes)
         expect{
           @queue.queue_party(party1)
         }.to raise_error Scrims::Queue::LockedPlayerError
       end
 
-      it 'throws an already queued exception if the party is queued again when they are no longer locked' do
+      it 'throws an exception if the party tries to queue again when queued' do
         @queue.queue_party(party1)
-        Timecop.freeze(30.minutes) do
-          expect{
-            @queue.queue_party(party1)
-          }.to raise_error Scrims::Queue::AlreadyQueuedError
-        end
+        expect{
+          @queue.queue_party(party1)
+        }.to raise_error Scrims::Queue::AlreadyQueuedError
       end
     end
 
