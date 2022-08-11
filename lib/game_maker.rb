@@ -1,9 +1,12 @@
-class GameMaker
-  attr_accessor :web_service, :party_repo, :elo_resolver
+require 'timecop'
 
-  def initialize(web_service_klass: nil, party_repo: nil, elo_resolver: nil)
+class GameMaker
+  attr_accessor :web_service, :party_repo, :lock_repo, :elo_resolver
+
+  def initialize(web_service_klass: nil, party_repo: nil, lock_repo: nil, elo_resolver: nil)
     @web_service = web_service_klass
     @party_repo = party_repo
+    @lock_repo = lock_repo
     @elo_resolver = elo_resolver
   end
 
@@ -103,6 +106,7 @@ class GameMaker
       blue_team_discord_names = get_discord_usernames(match.playerA)
       red_team_discord_ids = get_discord_ids(match.playerB)
       red_team_discord_names = get_discord_usernames(match.playerB)
+      lock_repo.lock_players(blue_team_discord_ids + red_team_discord_ids, 30.minutes)
       goals = 5
       length = 900
       game = make_game(
