@@ -8,7 +8,7 @@ class SlashCmdHandler
 
     include Helpers
 
-    attr_accessor :bot, :queue, :member_repo, :party_repo
+    attr_accessor :bot, :queue, :member_repo, :party_repo, :lock_repo
 
     def initialize(bot, queue)
       @bot = bot
@@ -16,6 +16,7 @@ class SlashCmdHandler
       @queue.elo_resolver = EloResolver.new
       @member_repo = Scrims::MemberRepo.new($rom)
       @party_repo = Scrims::Storage::Party.new($rom)
+      @lock_repo = Scrims::Locks.new($rom)
     end
 
     def add_handlers
@@ -47,11 +48,13 @@ class SlashCmdHandler
         DelayedWorker.new(Scrims::MAX_QUEUE_TIME) do
           game_maker = GameMaker.new(web_service_klass: SyndicateWebService,
                                      party_repo: party_repo,
+                                     lock_repo: lock_repo,
                                      elo_resolver: queue.elo_resolver)
           game_maker.from_match(queue.process_queue(party_size=party_size))
         end.run
         game_maker = GameMaker.new(web_service_klass: SyndicateWebService,
                                    party_repo: party_repo,
+                                   lock_repo: lock_repo,
                                    elo_resolver: queue.elo_resolver)
         game_maker.from_match(queue.process_queue(party_size=party_size))
       end
