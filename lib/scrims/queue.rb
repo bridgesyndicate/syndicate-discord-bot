@@ -28,7 +28,7 @@ class Scrims
           .resolve_elo_from_discord_ids
           .fetch(discord_id)
         queue.create(queued_player
-                       .merge(elo: elo.nil? ? STARTING_ELO : elo)
+                       .merge(elo: elo['elo'].nil? ? STARTING_ELO : elo['elo'])
                        .merge(queue_time: now.to_i)
                      )
       else
@@ -41,8 +41,9 @@ class Scrims
                                    .with_members(party_id)
                                    .first.members
                                    .map { |f| f.discord_id }
-      elos = elo_resolver.resolve_elo_from_discord_ids
-      (elos.values.sum / elos.size).to_i
+      elo_map = elo_resolver.resolve_elo_from_discord_ids
+      elos = elo_map.values.flat_map(&:values)
+      (elos.sum / elos.size).to_i
     end
 
     def queue_party queued_party
