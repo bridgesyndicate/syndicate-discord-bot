@@ -83,18 +83,18 @@ class GameMaker
   end
 
   def get_elo_map(match)
+    discord_ids = []
     if match.playerA.party_id.nil?
-      { match.playerA.discord_id => match.playerA.elo,
-        match.playerB.discord_id => match.playerB.elo }
+      discord_ids = [match.playerA.discord_id, match.playerB.discord_id]
     else
       discord_ids_a = party_repo.with_members(match.playerA.party_id).to_a.first.members.map{|m| m.discord_id}
       discord_ids_b = party_repo.with_members(match.playerB.party_id).to_a.first.members.map{|m| m.discord_id}
       syn_logger "Team A discord_ids: #{discord_ids_a}"
       syn_logger "Team B discord_ids: #{discord_ids_b}"
       discord_ids = discord_ids_a + discord_ids_b
-      elo_resolver.discord_ids = discord_ids
-      elo_resolver.resolve_elo_from_discord_ids
     end
+    elo_resolver.discord_ids = discord_ids
+    elo_resolver.resolve_elo_from_discord_ids
   end
 
   def from_match(match)

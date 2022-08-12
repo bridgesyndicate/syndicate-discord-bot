@@ -4,7 +4,7 @@ require 'elo_resolver'
 RSpec.describe '#elo resolver' do
   describe 'for players without elo' do
 
-    let(:response) { File.read('spec/mocks/syndicate-web-service/user/by-discord-id/post-response-with-nulls.json') }
+    let(:response) { File.read('spec/mocks/syndicate-web-service/user/by-discord-id/post-response.json') }
     let(:elo_resolver) { EloResolver.new }
     let(:discord_ids) { %w/829088868817043467 246107858712788993 327218070827565088 424617772039798794 717098844432760833 484145959287390270/ }
 
@@ -28,7 +28,7 @@ RSpec.describe '#elo resolver' do
 
     it 'uses resolves as the STARTING_ELO' do
       expect(elo_resolver.resolve_elo_from_discord_ids
-             .values).to eq [STARTING_ELO, 1030, STARTING_ELO, STARTING_ELO, 1991, 1404]
+             .values.flat_map(&:values)).to eq [STARTING_ELO, 1030, STARTING_ELO, STARTING_ELO, 1991, 1404]
     end
   end
 end
