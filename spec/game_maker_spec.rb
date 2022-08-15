@@ -11,17 +11,13 @@ BotConfig.load(File.read('./config.yml'), :syndicate)
 RSpec.describe '#game maker' do
 
   let(:p1) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                              elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
   let(:p2) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                                elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
   let(:p3) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                              elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
   let(:p4) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                                elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
 
   describe 'with a match that is players' do
     let(:match) { Scrims::Match.new(p1, p2) }

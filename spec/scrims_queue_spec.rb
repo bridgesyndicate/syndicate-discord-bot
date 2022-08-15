@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'scrims'
 require 'timecop'
 require 'mock_elo_resolver'
+require 'mock_discord_resolver'
 require_relative 'shared/queued_players'
 
 RSpec.describe '#ranked' do
@@ -24,15 +25,15 @@ RSpec.describe '#ranked' do
 
     describe 'with one player queued' do
       it 'keeps the player queued' do
-        @queue.queue_player(player_with_600_elo)
+        @queue.queue_player(p1)
         expect(@queue.process_queue).to eq nil
         expect(@queue.size).to eq 1
       end
 
       it 'throws an exception if the player is queued again' do
-        @queue.queue_player(player_with_600_elo)
+        @queue.queue_player(p1)
         expect{
-          @queue.queue_player(player_with_600_elo)
+          @queue.queue_player(p1)
         }.to raise_error Scrims::Queue::AlreadyQueuedError
       end
     end
@@ -40,18 +41,13 @@ RSpec.describe '#ranked' do
     describe 'elo adding' do
       include_context 'queued players'
 
-      it 'adds elo when it queues a player without it' do
-        @queue.queue_player(player_without_elo)
-        expect(@queue
-          .queue
-          .discord_user_queue
-          .to_a
-          .first[:elo]).to eq STARTING_ELO
-      end
-
-      it 'adds keeps the player\'s elo' do
-        @queue.elo_resolver.elo_map = { player_with_600_elo[:discord_id] => 600 }
-        @queue.queue_player(player_with_600_elo)
+      it 'keeps the player\'s elo' do
+        @queue.elo_resolver.elo_map = {
+          p1[:discord_id] => {
+            'elo' => 600
+          }
+        }
+        @queue.queue_player(p1)
         expect(@queue
           .queue
           .discord_user_queue
@@ -62,35 +58,56 @@ RSpec.describe '#ranked' do
 
     describe 'with one party queued' do
       it 'unqueues the party' do
-        @queue.queue_player(player_with_600_elo)
+        @queue.queue_player(p1)
         expect(@queue.process_queue).to eq nil
         expect(@queue.size).to eq 1
-        @queue.dequeue_player(player_with_600_elo[:discord_id])
+        @queue.dequeue_player(p1[:discord_id])
         expect(@queue.size).to eq 0
       end
     end
     describe 'with two players who are elo-matchable queued' do
       it 'makes a match' do
-        @queue.queue_player(player_with_600_elo)
+        @queue.elo_resolver.elo_map = {
+          p1[:discord_id] => {
+            'elo' => 600
+          },
+          p4[:discord_id] => {
+            'elo' => (600 + (Scrims::MAX_ELO_DELTA - 1))
+          }
+        }
+        @queue.queue_player(p1)
         @queue.queue_player(p4)
         expect(@queue.process_queue).to be_a Scrims::Match
         expect(@queue.size).to eq 0
       end
     end
+
+    let(:no_match_map) {
+      {
+        p1[:discord_id] => {
+          'elo' => 600
+        },
+        p2[:discord_id] => {
+          'elo' => (600 + Scrims::MAX_ELO_DELTA + 1)
+        }
+      }
+    }
+
     describe 'with two players who are not elo-matchable queued' do
       it 'keeps the player queued' do
-        @queue.elo_resolver.elo_map = { player_with_600_elo[:discord_id] => 600 }
-        @queue.queue_player(player_with_600_elo)
-        @queue.queue_player(player_without_elo)
+        @queue.elo_resolver.elo_map = no_match_map
+        @queue.queue_player(p1)
+        @queue.queue_player(p2)
         expect(@queue.process_queue).to eq nil
         expect(@queue.size).to eq 2
       end
     end
+
     describe 'with two players past MAX_QUEUE_TIME' do
       it 'creates a match after MAX_QUEUE_TIME seconds' do
-        @queue.elo_resolver.elo_map = { player_with_600_elo[:discord_id] => 600 }
-        @queue.queue_player(player_with_600_elo)
-        @queue.queue_player(player_without_elo)
+        @queue.elo_resolver.elo_map = no_match_map
+        @queue.queue_player(p1)
+        @queue.queue_player(p2)
         Timecop.freeze(0) do
           expect(@queue.process_queue).to eq nil
           expect(@queue.size).to eq 2
@@ -103,8 +120,8 @@ RSpec.describe '#ranked' do
     end
     describe 'with three players queued, and two are elo-matchable' do
       it 'makes a match' do
-        @queue.queue_player(player_with_600_elo)
-        @queue.queue_player(player_without_elo)
+        @queue.queue_player(p1)
+        @queue.queue_player(p2)
         @queue.queue_player(p3)
         expect(@queue.process_queue.class).to eq Scrims::Match
         expect(@queue.size).to eq 1
@@ -120,6 +137,41 @@ RSpec.describe '#ranked' do
     let(:discord_id_4) { rand(2**32).to_s }
     let(:party1) { { party_id: @pid } }
     let(:party2) { { party_id: @pid2 } }
+
+    let(:match_map) {
+      {
+        discord_id_1 => {
+          'elo' => 1120
+        },
+        discord_id_2 => {
+          'elo' => 1220
+        },
+        discord_id_3 => {
+          'elo' => 200
+        },
+        discord_id_4 => {
+          'elo' => 2140
+        }
+      }
+    }
+
+    let(:no_match_map) {
+      {
+        discord_id_1 => {
+          'elo' => 1120
+        },
+        discord_id_2 => {
+          'elo' => 1220
+        },
+        discord_id_3 => {
+          'elo' => 200
+        },
+        discord_id_4 => {
+          'elo' => 300
+        }
+      }
+    }
+
     before(:each) do
       @invites = Scrims::Invite.new(@rom)
       @invites.discord_resolver = MockDiscordResolver.new
@@ -144,35 +196,20 @@ RSpec.describe '#ranked' do
 
     describe 'elo adding' do
 
-      it 'it uses STARTING_ELO when the players in a party have no elo' do
-        @queue.queue_party(party1)
-        expect(@queue
-          .queue
-          .discord_user_queue
-          .to_a
-          .first[:elo]).to eq STARTING_ELO
-      end
-
       it 'computes the party\'s average elo when all have available elo' do
-        @queue.elo_resolver.elo_map = { discord_id_1 => 200,
-                                        discord_id_2 => 1000
-                                      }
+        @queue.elo_resolver.elo_map = { discord_id_1 => {
+            'elo' => 200
+          },
+          discord_id_2 => {
+            'elo' => 1000
+          }
+        }
         @queue.queue_party(party1)
         expect(@queue
           .queue
           .discord_user_queue
           .to_a
           .first[:elo]).to eq 600
-      end
-
-      it 'computes the party\'s average elo when one has available elo' do
-        @queue.elo_resolver.elo_map = { discord_id_2 => 2000 }
-        @queue.queue_party(party1)
-        expect(@queue
-          .queue
-          .discord_user_queue
-          .to_a
-          .first[:elo]).to eq 1500
       end
     end
 
@@ -187,6 +224,7 @@ RSpec.describe '#ranked' do
     end
     describe 'with two parties who are elo-matchable queued' do
       it 'determines if a player is queued with a party' do
+        @queue.elo_resolver.elo_map = match_map
         @queue.queue_party(party1)
         @queue.queue_party(party2)
         expect([
@@ -203,6 +241,7 @@ RSpec.describe '#ranked' do
           .to eq false
       end
       it 'makes a match' do
+        @queue.elo_resolver.elo_map = match_map
         @queue.queue_party(party1)
         @queue.queue_party(party2)
         expect(@queue.process_queue(party_size=2)).to be_a Scrims::Match
@@ -211,7 +250,7 @@ RSpec.describe '#ranked' do
     end
     describe 'with two parties that are not elo-matchable queued' do
       it 'keeps the parties queued' do
-        @queue.elo_resolver.elo_map = { discord_id_3 => 500, discord_id_4 => 400 }
+        @queue.elo_resolver.elo_map = no_match_map
         @queue.queue_party(party1)
         @queue.queue_party(party2)
         expect(@queue.process_queue(party_size=2)).to eq nil
@@ -220,7 +259,7 @@ RSpec.describe '#ranked' do
     end
     describe 'with two parties past MAX_QUEUE_TIME' do
       it 'creates a match after MAX_QUEUE_TIME seconds' do
-        @queue.elo_resolver.elo_map = { discord_id_3 => 500, discord_id_4 => 400 }
+        @queue.elo_resolver.elo_map = no_match_map
         @queue.queue_party(party1)
         @queue.queue_party(party2)
         Timecop.freeze(0) do
@@ -233,6 +272,7 @@ RSpec.describe '#ranked' do
         end
       end
     end
+
     describe 'with three parties queued, and two are elo-matchable' do
       let(:discord_id_5) { rand(2**32).to_s }
       let(:discord_id_6) { rand(2**32).to_s }
@@ -242,9 +282,15 @@ RSpec.describe '#ranked' do
       end
 
       it 'makes a match' do
-        @queue.elo_resolver.elo_map = { discord_id_3 => 1600,
-                                        discord_id_4 => 1550
-                                      }
+        @queue.elo_resolver.elo_map = no_match_map.merge({
+                                                           discord_id_5 => {
+                                                             'elo' => 1190
+                                                           },
+                                                           discord_id_6 => {
+                                                             'elo' => 1190
+                                                           }
+                                                         }
+                                                         )
         @queue.queue_party(party1)
         @queue.queue_party(party2)
         @queue.queue_party(party3)
@@ -260,9 +306,3 @@ RSpec.describe '#ranked' do
     end
   end
 end
-
-# #EloRating::k_factor = 10
-# match = EloRating::Match.new
-# match.add_player(rating: q1.elo)
-# match.add_player(rating: q2.elo, winner: true)
-# puts match.updated_ratings
