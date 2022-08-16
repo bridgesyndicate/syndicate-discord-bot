@@ -10,14 +10,6 @@ RSpec.describe '#parties in queue' do
   let(:discord_id_3) { rand(2**32).to_s }
   let(:discord_id_4) { rand(2**32).to_s }
 
-  def random_user
-    { discord_id: rand(2**32),
-      discord_username: Faker::Internet.username,
-      queue_time: Time.now.to_i,
-      elo: rand(2000)
-    }
-  end
-
   before(:each) do
     rom = Scrims::Storage.new.rom
     @invites = Scrims::Invite.new(rom)

@@ -43,4 +43,8 @@ RSpec.describe '#discord_access' do
     end
     expect(DiscordAccess.get_banned_role(roles).first.name).to eq 'banned'
   end
+  it 'is_banned? is true for a banned user' do
+    roles = [DiscordMock::Role.new('banned')]
+    expect(DiscordAccess.is_banned?(roles)).to be true
+  end
 end
