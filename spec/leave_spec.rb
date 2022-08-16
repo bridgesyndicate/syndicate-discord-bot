@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'mock_discord_resolver'
+require 'mock_elo_resolver'
 require 'scrims'
 
 RSpec.describe '#leave' do
@@ -14,6 +16,8 @@ RSpec.describe '#leave' do
     @leave = Scrims::Leave.new(rom)
     @party_repo = Scrims::Storage::Party.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
+    @queue = Scrims::Queue.new(rom)
+    @queue.elo_resolver = MockEloResolver.new
   end
 
   describe 'when the player is not in a party' do
@@ -28,16 +32,28 @@ RSpec.describe '#leave' do
   end
 
   describe 'when there are two members in a party' do
+    before(:each) do
+      @pid = @invites.accept(discord_id_1, discord_id_2)
+    end
     describe 'and one leaves' do
       before(:each) do
-        @party = @invites.accept(discord_id_1, discord_id_2)
         @leave.leave(discord_id_1)
       end
       it 'deletes both members' do
-        expect(@party_repo.empty?(@party)).to be true
+        expect(@party_repo.empty?(@pid)).to be true
       end
       it 'deletes the party' do
-        expect(@party_repo.exists?(@party)).to eq false
+        expect(@party_repo.exists?(@pid)).to eq false
+      end
+    end
+    describe 'and they are queued' do
+      it 'throws an exception when one leaves' do
+        party = @party_repo.by_pk(@pid).first
+        party = party.to_h.transform_keys{|key| key == :id ? :party_id : key}
+        @queue.queue_party(party)
+        expect {
+          @leave.leave(discord_id_1)
+        }.to raise_error Scrims::Leave::MemberInQueueError
       end
     end
   end

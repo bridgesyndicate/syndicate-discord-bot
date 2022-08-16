@@ -12,14 +12,17 @@ class Scrims
     end
     class MembersInDifferentPartiesError < StandardError
     end
+    class MemberInQueueError < StandardError
+    end
 
-    attr_accessor :party_repo, :member_repo, :max_members, :discord_resolver
+    attr_accessor :party_repo, :member_repo, :max_members, :queue, :discord_resolver
     DEFAULT_MAX_PARTY_MEMBERS = 4
 
     def initialize(rom)
       @party_repo = Scrims::Storage::Party.new(rom)
       @member_repo = Scrims::MemberRepo.new(rom)
       @max_members = DEFAULT_MAX_PARTY_MEMBERS
+      @queue = Scrims::Queue.new(rom)
     end
 
     def add_users_to_new_party(discord_id_1, discord_id_2)
@@ -63,6 +66,9 @@ class Scrims
       party_for_invitor = member_repo.get_party(invitor)
       party_for_invitee = member_repo.get_party(invitee)
 
+      [invitor, invitee, party_for_invitor, party_for_invitee].each do |entity|
+        raise MemberInQueueError if queue.entity_queued?(entity)
+      end
       if party_for_invitor and party_for_invitee
         member_repo.get_party(invitee)
         raise MembersInDifferentPartiesError

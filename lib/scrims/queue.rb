@@ -115,5 +115,14 @@ class Scrims
       sorted_queue = queue.sort_by_queue_time(party_size)
       sorted_queue[0].queue_time + MAX_QUEUE_TIME <= Time.now.to_i
     end
+    def entity_queued?(entity)
+      if entity.class == String
+        !queue.by_discord_id(entity).to_a.empty?
+      elsif entity.class == Integer
+        !queue.by_party_id(entity).to_a.empty?
+      else
+        false
+      end
+    end
   end
 end

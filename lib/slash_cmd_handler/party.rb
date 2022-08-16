@@ -21,6 +21,7 @@ class SlashCmdHandler
           begin
             leave.leave(event.user.id.to_s)
           rescue Scrims::Leave::MemberNotInPartyError => e
+          rescue Scrims::Leave::MemberInQueueError => e
           end
          SyndicateEmbeds::Builder.send(:party_leave, event: event, error: e)
         end
@@ -62,6 +63,7 @@ class SlashCmdHandler
         begin
           invites.accept(event.user.id.to_s, invitor.to_s)
         rescue Scrims::Invite::MembersInDifferentPartiesError => e
+        rescue Scrims::Invite::MemberInQueueError => e
         rescue Scrims::Invite::TooManyMembersError => e
           max_members = SyndicateEmbeds.wrap_strong(Scrims::Invite::DEFAULT_MAX_PARTY_MEMBERS.to_s)
         rescue ROM::SQL::UniqueConstraintError => e

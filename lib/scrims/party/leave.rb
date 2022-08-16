@@ -7,6 +7,8 @@ class Scrims
         super
       end
     end
+    class MemberInQueueError < StandardError
+    end
 
     attr_accessor :party_repo, :member_repo, :queue
 
@@ -19,6 +21,8 @@ class Scrims
     def leave(discord_id)
       if member_repo.get_party(discord_id).nil?
         raise MemberNotInPartyError.new
+      elsif !queue.by_party_id(member_repo.get_party(discord_id)).to_a.empty?
+        raise MemberInQueueError.new
       else
         party_id = member_repo.find_by_discord_id(discord_id).party_id
         if queue.by_party_id(party_id).exist?

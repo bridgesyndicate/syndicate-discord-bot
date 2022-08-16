@@ -59,6 +59,7 @@ class SlashCmdHandler
         rescue Scrims::DoubleLockError => e
         rescue Scrims::Duel::ExpiredDuelError => e
         rescue Scrims::Duel::LockedPlayerError => e
+        rescue Scrims::Duel::MemberInQueueError => e
         rescue Scrims::Duel::MissingDuelError => e
         rescue Scrims::Duel::InvalidAcceptorError => e
         end

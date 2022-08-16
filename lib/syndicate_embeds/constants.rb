@@ -117,6 +117,11 @@ class SyndicateEmbeds
         content: PARTY_LEAVE_COMMAND,
         description: wrap_strong('You are not in a party.'),
         color: RED
+      },
+      member_in_queue_error: {
+        content: PARTY_LEAVE_COMMAND,
+        description: wrap_strong('You must /dq before you can leave the party.'),
+        color: RED
       }
     },
     party_list: {
@@ -181,6 +186,10 @@ class SyndicateEmbeds
       },
       members_in_different_parties_error: {
         description: wrap_strong('This player is in a different party.'),
+        color: RED
+      },
+      member_in_queue_error: {
+        description: wrap_strong('You or the player that invited you is currently queued.'),
         color: RED
       },
       too_many_members_error: {
@@ -261,6 +270,10 @@ class SyndicateEmbeds
       },
       locked_player_error: {
         description: wrap_strong('A player from this duel is in another game.'),
+        color: RED
+      },
+      member_in_queue_error: {
+        description: wrap_strong('A player from this duel is currently queued.'),
         color: RED
       },
       missing_duel_error: {
