@@ -11,8 +11,10 @@ require 'scrims/locks'
 require 'scrims/storage/queue'
 require 'scrims/storage/party'
 require 'scrims/storage/member'
+require 'scrims/storage/leaderboard'
 require 'scrims/match'
 require 'scrims/queue'
+require 'scrims/leaderboard'
 
 
 
@@ -53,6 +55,9 @@ class Scrims
           end
         end
         conf.relation(:locks) do
+          schema(infer: true)
+        end
+        conf.relation(:syndicate_leader_board) do
           schema(infer: true)
         end
       end
@@ -96,6 +101,15 @@ class Scrims
         column :discord_id, String, null: false, unique: true
         column :expires_at, DateTime, null: false
         column :created_at, DateTime, null: false
+      end
+      conf.default.create_table(:syndicate_leader_board) do
+        primary_key :discord_id
+        column :minecraft_uuid, String, null: false, unique: true
+        column :elo, Integer, null: false, default: STARTING_ELO
+        column :wins, Integer, null: false, default: 0
+        column :losses, Integer, null: false, default: 0
+        column :ties, Integer, null: false, default: 0
+        column :season, String
       end
     end
   end

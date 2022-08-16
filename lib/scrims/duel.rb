@@ -12,6 +12,8 @@ class Scrims
     end
     class LockedPlayerError < StandardError
     end
+    class MemberInQueueError < StandardError
+    end
     class MissingDuelError < StandardError
     end
     class InvalidAcceptorError < StandardError
@@ -31,7 +33,7 @@ class Scrims
     attr_accessor :party_repo, :member_repo, :discord_resolver, :goals, :length,
                   :red_party, :blue_party, :red_names, :blue_names, :elo_resolver,
                   :notifier, :from_discord_id, :duel_request, :locks, :uuid,
-                  :elo_hash
+                  :elo_hash, :queue
 
     def initialize(rom)
       @party_repo = Scrims::Storage::Party.new(rom)
@@ -41,6 +43,7 @@ class Scrims
       @length = 900
       @locks = Locks.new(rom)
       @elo_hash = {}
+      @queue = Scrims::Queue.new(rom)
     end
 
     def get_participants(participant_json)
@@ -120,7 +123,9 @@ class Scrims
       @from_discord_id = red_discord_id # red initiates the duel
       red = member_repo.find_by_discord_id(red_discord_id)
       blue = member_repo.find_by_discord_id(blue_discord_id)
-
+      [red_discord_id, blue_discord_id, member_repo.get_party(red_discord_id), member_repo.get_party(blue_discord_id)].each do |entity|
+        raise MemberInQueueError if queue.entity_queued?(entity)
+      end
       if red and blue # both are in parties
         syn_logger "both are in parties red: #{red}, blue: #{blue}"
         @red_party = party_repo.with_members(red.party_id).first.members
@@ -153,7 +158,6 @@ class Scrims
       elo_resolver
         .discord_ids = red_party_discord_id_list + blue_party_discord_id_list
     end
-
 
     def duel_hash
       {

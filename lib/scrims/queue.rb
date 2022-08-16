@@ -35,8 +35,7 @@ class Scrims
           .resolve_elo_from_discord_ids
           .fetch(discord_id)
         queue.create(queued_player
-                       .merge(elo: elo.nil? ? STARTING_ELO : elo)
-                       .merge(queue_time: now.to_i)
+                       .merge(elo: elo['elo'], queue_time: now.to_i)
                      )
       end
     end
@@ -47,7 +46,8 @@ class Scrims
                                    .first.members
                                    .map { |f| f.discord_id }
       elos = elo_resolver.resolve_elo_from_discord_ids
-      (elos.values.sum / elos.size).to_i
+        .map{ |k,v| v['elo'] }
+      (elos.sum / elos.size).to_i
     end
 
     def queue_party queued_party
@@ -122,6 +122,15 @@ class Scrims
     def has_max_queue_time_players?(party_size=1)
       sorted_queue = queue.sort_by_queue_time(party_size)
       sorted_queue[0].queue_time + MAX_QUEUE_TIME <= Time.now.to_i
+    end
+    def entity_queued?(entity)
+      if entity.class == String
+        !queue.by_discord_id(entity).to_a.empty?
+      elsif entity.class == Integer
+        !queue.by_party_id(entity).to_a.empty?
+      else
+        false
+      end
     end
   end
 end

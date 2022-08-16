@@ -16,7 +16,8 @@ class GameMaker
                      red_team_discord_names:,
                      goals:,
                      length:,
-                     via:
+                     via:,
+                     season:
                     )
     {
       uuid: SecureRandom.uuid,
@@ -34,7 +35,8 @@ class GameMaker
           accepted_at: Time.now.utc.iso8601
         }
       },
-      queued_via: via
+      queued_via: via,
+      season: season
     }
   end
 
@@ -84,18 +86,18 @@ class GameMaker
   end
 
   def get_elo_map(match)
+    discord_ids = []
     if match.playerA.party_id.nil?
-      { match.playerA.discord_id => match.playerA.elo,
-        match.playerB.discord_id => match.playerB.elo }
+      discord_ids = [match.playerA.discord_id, match.playerB.discord_id]
     else
       discord_ids_a = party_repo.with_members(match.playerA.party_id).to_a.first.members.map{|m| m.discord_id}
       discord_ids_b = party_repo.with_members(match.playerB.party_id).to_a.first.members.map{|m| m.discord_id}
       syn_logger "Team A discord_ids: #{discord_ids_a}"
       syn_logger "Team B discord_ids: #{discord_ids_b}"
       discord_ids = discord_ids_a + discord_ids_b
-      elo_resolver.discord_ids = discord_ids
-      elo_resolver.resolve_elo_from_discord_ids
     end
+    elo_resolver.discord_ids = discord_ids
+    elo_resolver.resolve_elo_from_discord_ids
   end
 
   def from_match(match)
@@ -109,6 +111,7 @@ class GameMaker
       lock_repo.lock_players(blue_team_discord_ids + red_team_discord_ids, 30.minutes)
       goals = 5
       length = 900
+      season = BotConfig.config.current_season
       game = make_game(
         via: 'queue match',
         blue_team_discord_ids: blue_team_discord_ids,
@@ -117,6 +120,7 @@ class GameMaker
         red_team_discord_names: red_team_discord_names,
         goals: goals,
         length: length,
+        season: season
       )
       game = game.merge({ :elo_before_game => get_elo_map(match) })
       game = add_acceptance(game, match.playerB.discord_id.to_s)

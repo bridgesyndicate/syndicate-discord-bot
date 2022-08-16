@@ -6,7 +6,8 @@ class SyndicateEmbeds
   INVISIBLE = '0x2f3137'
   RED = '0xf34653'
   GREEN = '0x58cf5c'
-  BLUE = '0x4ec5f8'
+  BLUE = '0x4b7bbf'
+  GOLD = '0xffd700'
 
   # emojis:
   CUMULATIVE_RED_EMOJI = '<:red_1:939769191865679872><:red_2:939769191773384706><:red_3:942565501186490449><:red_4:939769191475593228>'
@@ -28,6 +29,18 @@ class SyndicateEmbeds
   end
 
   EmbedsHash = {
+    leaderboard: {
+      no_error: {
+        content: '`/leaderboard:`',
+        title: wrap_strong('The Leaderboard:'),
+        color: BLUE
+      },
+      page_out_of_bounds_error: {
+        content: '`/leaderboard:`',
+        description: wrap_strong('The page you provided doesn\'t exist.'),
+        color: RED
+      }
+    },
     welcome_message: {
       no_error: {
         title: BotConfig.config.welcome_message_title,
@@ -104,6 +117,11 @@ class SyndicateEmbeds
         content: PARTY_LEAVE_COMMAND,
         description: wrap_strong('You are not in a party.'),
         color: RED
+      },
+      member_in_queue_error: {
+        content: PARTY_LEAVE_COMMAND,
+        description: wrap_strong('You must /dq before you can leave the party.'),
+        color: RED
       }
     },
     party_list: {
@@ -168,6 +186,10 @@ class SyndicateEmbeds
       },
       members_in_different_parties_error: {
         description: wrap_strong('This player is in a different party.'),
+        color: RED
+      },
+      member_in_queue_error: {
+        description: wrap_strong('You or the player that invited you is currently queued.'),
         color: RED
       },
       too_many_members_error: {
@@ -248,6 +270,10 @@ class SyndicateEmbeds
       },
       locked_player_error: {
         description: wrap_strong('A player from this duel is in another game.'),
+        color: RED
+      },
+      member_in_queue_error: {
+        description: wrap_strong('A player from this duel is currently queued.'),
         color: RED
       },
       missing_duel_error: {

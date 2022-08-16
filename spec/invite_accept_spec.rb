@@ -1,4 +1,6 @@
 require 'spec_helper'
+require 'mock_discord_resolver'
+require 'mock_elo_resolver'
 require 'scrims'
 
 RSpec.describe '#invite accept' do
@@ -14,6 +16,8 @@ RSpec.describe '#invite accept' do
     @invites.discord_resolver = MockDiscordResolver.new
     @party_repo = Scrims::Storage::Party.new(rom)
     @member_repo = Scrims::MemberRepo.new(rom)
+    @queue = Scrims::Queue.new(rom)
+    @queue.elo_resolver = MockEloResolver.new
   end
 
   describe 'when members are already in a party' do
@@ -22,6 +26,23 @@ RSpec.describe '#invite accept' do
         other_party = @invites.accept(discord_id_1, discord_id_2)
         party = @invites.accept(discord_id_1, discord_id_3)
         expect(@party_repo.parties.to_a.size).to eq 1
+      end
+      it 'raises an exception if a member from the existing party is queued' do
+        party_id = @invites.accept(discord_id_1, discord_id_2)
+        party = @party_repo.by_pk(party_id).first
+        party = party.to_h.transform_keys{|key| key == :id ? :party_id : key}
+        @queue.queue_party(party)
+        expect {
+          @invites.accept(discord_id_1, discord_id_3)
+        }.to raise_error Scrims::Invite::MemberInQueueError
+      end
+      it 'raises an exception if the player that is not in a party is queued' do
+        other_party = @invites.accept(discord_id_1, discord_id_2)
+        player_3 = {discord_id: discord_id_3}
+        @queue.queue_player(player_3)
+        expect {
+          @invites.accept(discord_id_1, discord_id_3)
+        }.to raise_error Scrims::Invite::MemberInQueueError
       end
     end
     describe 'when the invitee is in a party' do
@@ -67,6 +88,13 @@ RSpec.describe '#invite accept' do
           expect {
             @invites.accept(discord_id_1, discord_id_1)
           }.to raise_error ROM::SQL::UniqueConstraintError
+        end
+        it 'raises an exception if one of the members is queued' do
+          player_1 = {discord_id: discord_id_1}
+          @queue.queue_player(player_1)
+          expect {
+            @invites.accept(discord_id_1, discord_id_2)
+          }.to raise_error Scrims::Invite::MemberInQueueError
         end
       end
     end

@@ -1,12 +1,12 @@
 shared_context 'queued players' do
-  let(:player_with_600_elo)  {
+  let(:p1)  {
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'harry',
       queue_time: now
     }
   }
-  let(:player_without_elo) {
+  let(:p2) {
     {
       discord_id: rand(2**32).to_s,
       discord_username: 'ken',

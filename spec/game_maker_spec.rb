@@ -6,6 +6,8 @@ require 'game_maker'
 require 'scrims'
 require 'scrims/match'
 require 'schema/game_post'
+require 'bot_config'
+BotConfig.load(File.read('./config.yml'), :syndicate)
 
 RSpec.describe '#game maker' do
 
@@ -15,22 +17,20 @@ RSpec.describe '#game maker' do
   end
 
   let(:p1) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                              elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
   let(:p2) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                                elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
   let(:p3) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                              elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
   let(:p4) { OpenStruct.new({ discord_id: rand(2**32).to_s,
-                              discord_username: Faker::Internet.username,
-                                elo: rand(2000) }) }
+                              discord_username: Faker::Internet.username }) }
 
   describe 'with a match that is players' do
     let(:match) { Scrims::Match.new(p1, p2) }
+    let(:elo_resolver) { MockEloResolver.new }
     let(:game_maker) { GameMaker.new(web_service_klass: MockSyndicateWebService,
-                                     lock_repo: @lock_repo) }
+                                     lock_repo: @lock_repo,
+                                     elo_resolver: elo_resolver) }
     let(:game) { game_maker.from_match(match) }
 
     it 'makes a match with klass foo' do
