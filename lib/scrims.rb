@@ -87,7 +87,7 @@ class Scrims
         column :discord_id, String
         column :discord_username, String
         column :queue_time, Integer, null: false
-        column :elo, Integer, null: false, default: STARTING_ELO
+        column :elo, Integer, null: false
         column :party_size, Integer, null: false, default: 1
       end
       conf.default.create_table(:duels) do
@@ -105,7 +105,7 @@ class Scrims
       conf.default.create_table(:syndicate_leader_board) do
         primary_key :discord_id
         column :minecraft_uuid, String, null: false, unique: true
-        column :elo, Integer, null: false, default: STARTING_ELO
+        column :elo, Integer, null: false
         column :wins, Integer, null: false, default: 0
         column :losses, Integer, null: false, default: 0
         column :ties, Integer, null: false, default: 0

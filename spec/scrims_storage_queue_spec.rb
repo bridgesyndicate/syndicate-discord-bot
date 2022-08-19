@@ -24,9 +24,10 @@ RSpec.describe '#user model' do
         num_users.times { @queue.create(random_user) }
         expect(@queue.ids.size).to eq num_users
       end
-      it 'creates players with default elo when no elo is set' do
-        @queue.create(random_user.reject{ |k| k == :elo})
-        expect(@queue.all.first.elo).to eq STARTING_ELO
+      it 'fails to create players when no elo is set' do
+        expect {
+          @queue.create(random_user.reject{ |k| k == :elo})
+        }.to raise_error ROM::SQL::NotNullConstraintError
       end
     end
 
