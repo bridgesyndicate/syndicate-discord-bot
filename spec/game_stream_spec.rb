@@ -1,3 +1,4 @@
+require 'spec_helper'
 require 'rspec'
 require 'ostruct'
 require 'game_stream'
@@ -45,6 +46,20 @@ describe 'GameStream' do
 
   context 'game score' do
     let(:json) { File.read('./spec/mocks/game-score-sqs.json') }
+
+    it 'parses the event_name' do
+      expect(game_stream.event_name).to eq 'MODIFY'
+    end
+    it 'is not a new game' do
+      expect(game_stream.new_game?).to eq false
+    end
+    it 'is a game score' do
+      expect(game_stream.game_score?).to eq true
+    end
+  end
+
+  context 'season game score' do
+    let(:json) { File.read('./spec/mocks/2x2-game-score-with-season-sqs.json') }
 
     it 'parses the event_name' do
       expect(game_stream.event_name).to eq 'MODIFY'

@@ -1,0 +1,417 @@
+{
+  "event_id": "915c0a2196292a5271a80bebb8a537db",
+  "event_name": "MODIFY",
+  "event_version": "1.1",
+  "event_source": "aws:dynamodb",
+  "aws_region": "us-west-2",
+  "dynamodb": {
+    "approximate_creation_date_time": "2022-08-19 06:31:31 +0000",
+    "keys": {
+      "game_uuid": "eb600fdf-6ee4-4797-a625-139752b903c2"
+    },
+    "new_image": {
+      "game": {
+        "before_game": false,
+        "game_started_at": 1660890253415,
+        "required_players": 4,
+        "game_score": {
+          "red": 5,
+          "blue": 3
+        },
+        "queued_via": "queue match",
+        "uuid": "eb600fdf-6ee4-4797-a625-139752b903c2",
+        "blue_team_discord_ids": [
+          "417766998471213061",
+          "240177490906054658"
+        ],
+        "elo_before_game": {
+          "417766998471213061": {
+            "season_elos": {
+              "season1": 1012,
+              "seasontest": 1012
+            },
+            "elo": 930
+          },
+          "246107858712788993": {
+            "season_elos": {
+              "season1": 1035
+            },
+            "elo": 1032
+          },
+          "882712836852301886": {
+            "season_elos": {
+              "season1": 977
+            },
+            "elo": 967
+          },
+          "240177490906054658": {
+            "season_elos": {
+              "season1": 988,
+              "seasonfoo": 988
+            },
+            "elo": 986
+          }
+        },
+        "player_map": {
+          "ottoclicker": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+          "viceww": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+          "ep1cpr0gamer": "9bf95247-d0ed-4c22-877e-0ac31532ade7",
+          "bdamja": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563"
+        },
+        "final_game_length_formatted": "07:17",
+        "season": "season1",
+        "state": "AFTER_GAME",
+        "last_scorer_name": "§cbdamja",
+        "joined_players": [
+          "ottoclicker",
+          "viceww",
+          "ep1cpr0gamer",
+          "bdamja"
+        ],
+        "goals_to_win": 5,
+        "red_team_discord_names": [
+          "ign ottoclicker",
+          "bdamja"
+        ],
+        "goals_scored": [
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "goal_time": 1660890280212
+          },
+          {
+            "player_uuid": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+            "goal_time": 1660890340413
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "goal_time": 1660890363662
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "goal_time": 1660890434469
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "goal_time": 1660890533517
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "goal_time": 1660890605563
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "goal_time": 1660890664763
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "goal_time": 1660890689817
+          }
+        ],
+        "blue_team_minecraft_uuids": [
+          "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+          "9bf95247-d0ed-4c22-877e-0ac31532ade7"
+        ],
+        "queued_at": "2022-08-19T06:22:27Z",
+        "during_game": false,
+        "red_team_minecraft_uuids": [
+          "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+          "2b7fa93b-f690-46b8-bfe6-a07b2ec42563"
+        ],
+        "map_name": "hyperfrost",
+        "game_ended_at": 1660890689820,
+        "kills_registered": [
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890265964
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890271670
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890278016
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890297267
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890313113
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890320365
+          },
+          {
+            "player_uuid": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+            "kill_time": 1660890333517
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890355466
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890386763
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890399565
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890403514
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890405163
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890416017
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890450916
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890456617
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890473365
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890481467
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890490315
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890499618
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890508264
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890510165
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890510615
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890511865
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890519464
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890521864
+          },
+          {
+            "player_uuid": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+            "kill_time": 1660890549517
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890558073
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890565913
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890599021
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890616965
+          },
+          {
+            "player_uuid": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+            "kill_time": 1660890621867
+          },
+          {
+            "player_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+            "kill_time": 1660890627069
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890644417
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890656621
+          },
+          {
+            "player_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+            "kill_time": 1660890687467
+          }
+        ],
+        "number_of_joined_players": 4,
+        "remaining_time_in_seconds": 463,
+        "blue_team_discord_names": [
+          "viceversa",
+          "ken"
+        ],
+        "accepted_by_discord_ids": [
+          {
+            "accepted_at": "2022-08-19T06:22:27Z",
+            "discord_id": "882712836852301886"
+          },
+          {
+            "accepted_at": "2022-08-19T06:22:27Z",
+            "discord_id": "246107858712788993"
+          },
+          {
+            "accepted_at": "2022-08-19T06:22:27Z",
+            "discord_id": "417766998471213061"
+          },
+          {
+            "accepted_at": "2022-08-19T06:22:27Z",
+            "discord_id": "240177490906054658"
+          }
+        ],
+        "dequeued_at": "2022-08-19T06:22:29.419Z",
+        "remaining_time_formatted": "07:44",
+        "red_team_discord_ids": [
+          "882712836852301886",
+          "246107858712788993"
+        ],
+        "game_length_in_seconds": 900,
+        "task_ip": "10.0.0.126",
+        "elo_info": [
+          {
+            "class": "Pair",
+            "winner": {
+              "minecraft_uuid": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+              "minecraft_name": "ottoclicker",
+              "discord_name": "ign ottoclicker",
+              "discord_id": "882712836852301886",
+              "start_elo": {
+                "elo": 967,
+                "season": 977
+              },
+              "end_elo": 978,
+              "class": "Player"
+            },
+            "loser": {
+              "minecraft_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+              "minecraft_name": "viceww",
+              "discord_name": "viceversa",
+              "discord_id": "417766998471213061",
+              "start_elo": {
+                "elo": 930,
+                "season": 1012
+              },
+              "end_elo": 919,
+              "class": "Player"
+            }
+          },
+          {
+            "class": "Pair",
+            "winner": {
+              "minecraft_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+              "minecraft_name": "bdamja",
+              "discord_name": "bdamja",
+              "discord_id": "246107858712788993",
+              "start_elo": {
+                "elo": 1032,
+                "season": 1035
+              },
+              "end_elo": 1042,
+              "class": "Player"
+            },
+            "loser": {
+              "minecraft_uuid": "9bf95247-d0ed-4c22-877e-0ac31532ade7",
+              "minecraft_name": "ep1cpr0gamer",
+              "discord_name": "ken",
+              "discord_id": "240177490906054658",
+              "start_elo": {
+                "elo": 986,
+                "season": 988
+              },
+              "end_elo": 976,
+              "class": "Player"
+            }
+          },
+          {
+            "class": "Pair",
+            "winner": {
+              "minecraft_uuid": "c21842bf-f4b3-4e28-ad5d-72cf0679fa64",
+              "minecraft_name": "ottoclicker",
+              "discord_name": "ign ottoclicker",
+              "discord_id": "882712836852301886",
+              "start_elo": {
+                "elo": 967,
+                "season": 977
+              },
+              "end_elo": 989,
+              "class": "Player"
+            },
+            "loser": {
+              "minecraft_uuid": "9bf95247-d0ed-4c22-877e-0ac31532ade7",
+              "minecraft_name": "ep1cpr0gamer",
+              "discord_name": "ken",
+              "discord_id": "240177490906054658",
+              "start_elo": {
+                "elo": 986,
+                "season": 988
+              },
+              "end_elo": 976,
+              "class": "Player"
+            },
+            "season": "season1"
+          },
+          {
+            "class": "Pair",
+            "winner": {
+              "minecraft_uuid": "2b7fa93b-f690-46b8-bfe6-a07b2ec42563",
+              "minecraft_name": "bdamja",
+              "discord_name": "bdamja",
+              "discord_id": "246107858712788993",
+              "start_elo": {
+                "elo": 1032,
+                "season": 1035
+              },
+              "end_elo": 1046,
+              "class": "Player"
+            },
+            "loser": {
+              "minecraft_uuid": "f0885cea-8291-4734-be1b-bf37f6bcab7c",
+              "minecraft_name": "viceww",
+              "discord_name": "viceversa",
+              "discord_id": "417766998471213061",
+              "start_elo": {
+                "elo": 930,
+                "season": 1012
+              },
+              "end_elo": 1001,
+              "class": "Player"
+            },
+            "season": "season1"
+          }
+        ]
+      },
+      "updated_at": "2022-08-19T06:22:29Z",
+      "game_uuid": "eb600fdf-6ee4-4797-a625-139752b903c2",
+      "created_at": "2022-08-19T06:22:29Z"
+    },
+    "sequence_number": "1506149100000000065884947910",
+    "size_bytes": 4929,
+    "stream_view_type": "NEW_IMAGE"
+  }
+}
