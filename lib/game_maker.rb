@@ -29,7 +29,8 @@ class GameMaker
       goals_to_win: goals,
       game_length_in_seconds: length,
       queued_at: Time.now.utc.iso8601,
-      accepted_by_discord_ids: blue_team_discord_ids.map{ |id|
+      accepted_by_discord_ids: (red_team_discord_ids + blue_team_discord_ids)
+        .map{ |id|
         {
           discord_id: id,
           accepted_at: Time.now.utc.iso8601
@@ -38,16 +39,6 @@ class GameMaker
       queued_via: via,
       season: season
     }
-  end
-
-  def add_acceptance(game, discord_id)
-    game[:accepted_by_discord_ids].push(
-      {
-        discord_id: discord_id,
-        accepted_at: Time.now.utc.iso8601
-      }
-    )
-    return game
   end
 
   def self.make_team_duel(party1, party2)
@@ -123,7 +114,6 @@ class GameMaker
         season: season
       )
       game = game.merge({ :elo_before_game => get_elo_map(match) })
-      game = add_acceptance(game, match.playerB.discord_id.to_s)
       game_json = JSON.pretty_generate(game)
       syn_logger game_json
       status = web_service.send_game_to_syndicate_web_service(game_json)
