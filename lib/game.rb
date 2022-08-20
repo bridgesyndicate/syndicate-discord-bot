@@ -11,8 +11,8 @@ class Game
   def make_elo_map
     @elo_change = {}
     game["elo_info"].each do |pair|
-      @elo_change[pair.winner.discord_id] = pair.winner.end_elo - pair.winner.start_elo
-      @elo_change[pair.loser.discord_id] = pair.loser.end_elo - pair.loser.start_elo
+      @elo_change[pair.winner.discord_id] = pair.winner.end_elo - pair.winner.start_elo.season
+      @elo_change[pair.loser.discord_id] = pair.loser.end_elo - pair.loser.start_elo.season
     end
   end
 

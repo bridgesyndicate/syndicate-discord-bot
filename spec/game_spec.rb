@@ -94,4 +94,23 @@ describe '#game model' do
       expect(game.loser_score).to eq 0
     end
   end
+  context 'with season elo' do
+    let(:game_json) { File.read('./spec/mocks/2x2-game-score-with-season-sqs.json') }
+    it 'gets the right winner name' do
+      expect(game.winner_names)
+        .to eq '<@882712836852301886>, <@246107858712788993>'
+    end
+    it 'gets the right loser name' do
+      expect(game.loser_names)
+        .to eq '<@417766998471213061>, <@240177490906054658>'
+    end
+    it 'gets the right winner elo' do
+      expect(game.winner_names(:with_elo_changes))
+        .to eq '<@882712836852301886> (+12), <@246107858712788993> (+11)'
+    end
+    it 'gets the right loser elo' do
+      expect(game.loser_names(:with_elo_changes))
+        .to eq '<@417766998471213061> (-11), <@240177490906054658> (-12)'
+    end
+  end
 end
