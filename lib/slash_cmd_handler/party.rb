@@ -28,7 +28,7 @@ class SlashCmdHandler
         group.subcommand(:invite) do |event|
           puts "#{event.user.id}, #{event.user.username} using invite command"
           party_target = event.options['player']
-          next unless ensure_sender_roles(event, roles_for_member(event.user), roles_for_member(party_target), :party_invite_sent)
+          next unless ensure_able_to_play(event, event.user.id.to_s)
           custom_id = "#{PARTY_INVITE_KEY}_#{event.user.id}"
           invitor = event.user.id.to_s
           invitee_channel = bot.server(DISCORD_SERVER_ID).member(party_target).pm
@@ -59,7 +59,7 @@ class SlashCmdHandler
         invitor = event.interaction.button.custom_id
                                .sub(/^#{PARTY_INVITE_KEY}_/,'')
         event.update_message(content: 'Processing Party...')
-        next unless ensure_recipient_roles(event, roles_for_member(event.user), :accept_party_invite)
+        next unless ensure_able_to_play(event, event.user.id.to_s)
         begin
           invites.accept(event.user.id.to_s, invitor.to_s)
         rescue Scrims::Invite::MembersInDifferentPartiesError => e

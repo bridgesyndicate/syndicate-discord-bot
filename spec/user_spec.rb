@@ -31,6 +31,19 @@ describe '#user' do
       end
     end
 
+    describe 'web service returns 400' do
+      before(:each) do
+        stub_request(:get, %r{/Prod/auth/user/by-discord-id})
+          .to_return(status: 400, body: nil)
+      end
+
+      it 'returns bad request' do
+        expect {
+          User.new(discord_id: discord_id)
+        }.to raise_error User::BadRequest
+      end
+    end
+
     describe 'web service returns 404' do
       before(:each) do
         stub_request(:get, %r{/Prod/auth/user/by-discord-id})
@@ -42,9 +55,14 @@ describe '#user' do
           User.new(discord_id: discord_id)
         }.to raise_error User::UnregisteredUser
       end
-    end
 
-    it 'fails to instantiate when the discord id does not exist and the service returns 404' do
+      describe 'discord id does not exist' do
+        it 'fails to instantiate' do
+          expect {
+            User.new(discord_id: nil)
+          }.to raise_error User::DiscordIdRequiredError
+        end
+      end
     end
   end
 
@@ -75,5 +93,11 @@ describe '#user' do
       expect(user.properties[:minecraft_uuid])
         .to eq user2.properties[:minecraft_uuid]
     end
+
+    it 'a valid user is verified' do
+      user = User.new(discord_id: discord_id)
+      expect(user.is_verified?).to be true
+    end
+
   end
 end

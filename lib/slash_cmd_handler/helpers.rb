@@ -15,29 +15,11 @@ class SlashCmdHandler
       error.nil?
     end
 
-    def ensure_requester_roles(event, sender_roles)
-      error = 'You must be verified to use this command.' if !DiscordAccess.is_verified?(sender_roles)
-      error = 'You are banned.' if DiscordAccess.is_banned?(sender_roles)
+    def ensure_able_to_play(event, discord_id)
+      user = User.new(discord_id)
+      error = 'You must be verified to use this command.' if !user.is_verified?
+      error = 'You are banned.' if user.is_banned?
       event.respond(content: error) unless error.nil?
-      error.nil?
-    end
-
-    def ensure_sender_roles(event, sender_roles, recipient_roles, type)
-      error = :unverified_sender if !DiscordAccess.is_verified?(sender_roles)
-      error = :banned_sender if DiscordAccess.is_banned?(sender_roles)
-      error = :famous_recipient if DiscordAccess.is_famous?(recipient_roles) && !DiscordAccess.is_famous?(sender_roles)
-      SyndicateEmbeds::Builder.send(type,
-                        event: event,
-                        error: error) unless error.nil?
-      error.nil?
-    end
-
-    def ensure_recipient_roles(event, recipient_roles, type)
-      error = :unverified_recipient if !DiscordAccess.is_verified?(recipient_roles)
-      error = :banned_recipient if DiscordAccess.is_banned?(recipient_roles)
-      SyndicateEmbeds::Builder.update(type,
-                          event: event,
-                          error: error) unless error.nil?
       error.nil?
     end
 

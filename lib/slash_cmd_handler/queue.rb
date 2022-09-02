@@ -22,7 +22,7 @@ class SlashCmdHandler
     def add_handlers
       bot.application_command(:q) do |event|
         syn_logger "Request to queue from #{event.user.id}, #{event.user.username}"
-        next unless ensure_requester_roles(event, roles_for_member(event.user))
+        next unless ensure_able_to_play(event, event.user.id.to_s)
         discord_id = event.user.id.to_s
         if queue.member_repo.discord_id_in_party?(discord_id)
           party_id = member_repo.get_party(discord_id)
