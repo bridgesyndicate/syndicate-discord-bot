@@ -77,6 +77,11 @@ class SyndicateEmbeds
         content: VERIFY_COMMAND,
         description: wrap_strong('Your code was not found or invalid.'),
         color: RED
+      },
+      unknown_member: {
+        content: VERIFY_COMMAND,
+        description: wrap_strong('ur not in the server'),
+        color: RED
       }
     },
     barr: {

@@ -19,8 +19,8 @@ class SlashCmdHandler
         when Net::HTTPNotFound
           error = :not_found
         when Net::HTTPOK
-          User.new(discord_id: event.user.id.to_s)
-          event.user.add_role(DiscordAccess.get_verified_role(bot.server(DISCORD_SERVER_ID).roles))
+          user = User.new(discord_id: event.user.id.to_s)
+          user.add_verified_role(bot)
         else
           error = :bad_status
         end

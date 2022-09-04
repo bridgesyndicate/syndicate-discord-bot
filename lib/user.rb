@@ -50,5 +50,11 @@ class User
   def is_banned?
     false
   end
+
+  def add_verified_role(bot)
+    discord_server = bot.server(BotConfig.config.discord_guild_id)
+    member = discord_server.member(properties[:discord_id])
+    member.add_role(DiscordAccess.get_verified_role(discord_server.roles)) unless member.nil?
+  end
 end
 
