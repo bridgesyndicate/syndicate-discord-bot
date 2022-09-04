@@ -77,7 +77,7 @@ class SyndicateEmbeds
         content: VERIFY_COMMAND,
         description: wrap_strong('Your code was not found or invalid.'),
         color: RED
-      },
+      }
     },
     barr: {
       no_error: {
