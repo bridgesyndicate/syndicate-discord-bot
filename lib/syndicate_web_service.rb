@@ -162,6 +162,7 @@ class SyndicateWebService
     end
     req.body = ''
     return https.request(req)
+  end
 
   def self.get_player_by_minecraft_name(minecraft_name)
     url = generate_knopfnsxoh_url("auth/user/by-minecraft-name/#{minecraft_name}")
