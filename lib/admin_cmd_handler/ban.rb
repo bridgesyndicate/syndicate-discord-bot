@@ -27,7 +27,7 @@ class AdminCmdHandler
         case status
           when Net::HTTPOK
             discord_id = JSON.parse(status.body)['user']['discord_id']
-            ban_user(ign, discord_id)
+            ban_user(event, ign, discord_id)
           when Net::HTTPNotFound
             if JSON.parse(status.body)['reason'] == 'Mojang cannot find this username'
               event.respond("Mojang couldn't resolve Minecraft username: #{ign}")
@@ -45,10 +45,17 @@ class AdminCmdHandler
       bot_command.run # note: bot must be restarted when taking away/giving admin role
     end
 
-    def ban_user(ign, discord_id)
+    def ban_user(event, ign, discord_id)
       user = User.new(discord_id: discord_id)
-      status = SyndicateWebService.get_player_by_minecraft_name(event.options['ign'])
-      event.respond("Player #{ign} is now banned.")
+      minecraft_uuid = {minecraft_uuid: user.properties[:minecraft_uuid]}
+      status = SyndicateWebService.ban_player_by_minecraft_uuid(minecraft_uuid)
+      case status
+        when Net::HTTPOK
+          event.respond("Player #{ign} is now banned.")
+        else
+          puts status
+          event.respond("no")
+      end
     end
   end
 end
