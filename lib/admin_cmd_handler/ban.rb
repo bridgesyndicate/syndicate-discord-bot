@@ -15,12 +15,12 @@ class AdminCmdHandler
     end
 
     def add_handlers
-      bot_command.command(:ban,
+      bot_command.command(:unban,
                           min_args: 1,
                           max_args: 1,
                           description: 'Bans a player via Minecraft IGN.',
                           usage: 'ban [ign]') do |event, ign|
-        syn_logger "#{event.user.id}, #{event.user.username} using ban " +
+        syn_logger "#{event.user.id}, #{event.user.username} using unban " +
                    "command on #{ign}"
         next unless ensure_admin(event, roles_for_member(event.user), :ban)
         status = SyndicateWebService.get_player_by_minecraft_name(ign)
@@ -47,8 +47,8 @@ class AdminCmdHandler
 
     def ban_user(event, ign, discord_id)
       user = User.new(discord_id: discord_id)
-      minecraft_uuid = {minecraft_uuid: user.properties[:minecraft_uuid]}
-      status = SyndicateWebService.ban_player_by_minecraft_uuid(minecraft_uuid)
+      minecraft_uuid = user.properties[:minecraft_uuid]
+      status = SyndicateWebService.unban_player_by_minecraft_uuid(minecraft_uuid)
       case status
         when Net::HTTPOK
           event.respond("Player #{ign} is now banned.")

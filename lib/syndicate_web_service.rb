@@ -147,10 +147,8 @@ class SyndicateWebService
   end
 
   def self.unban_player_by_minecraft_uuid(minecraft_uuid)
-    url = generate_knopfnsxoh_url(
-      "auth/ban")
+    url = generate_knopfnsxoh_url("auth/ban/#{minecraft_uuid}")
     signer = get_sigv4_signer
-    body = minecraft_uuid.to_json
     signature = sign_request(signer, 'DELETE', url, '')
     uri = URI.parse(url)
     https = Net::HTTP.new(uri.host,uri.port)
@@ -161,6 +159,7 @@ class SyndicateWebService
       req[header] = signature.headers[header]
     end
     req.body = ''
+
     return https.request(req)
   end
 
