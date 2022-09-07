@@ -120,5 +120,22 @@ class SyndicateWebService
     @signature = get_request_signature
     set_request
     protocol.request(req)
+
+
+    def ban_user_by_minecraft_uuid_post(minecraft_uuid)
+    @body = { minecraft_uuid: minecraft_uuid} .to_json
+    @method = POST
+    set_path("auth/ban")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
+  def unban_user_by_minecraft_uuid_delete(minecraft_uuid)
+    @method = DELETE
+    set_path("auth/ban/#{minecraft_uuid}")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
   end
 end

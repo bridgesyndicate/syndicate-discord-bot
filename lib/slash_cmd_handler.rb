@@ -1,7 +1,6 @@
 require 'slash_cmd_handler/helpers'
 require 'slash_cmd_handler/party'
 require 'slash_cmd_handler/duel'
-require 'slash_cmd_handler/barr'
 require 'slash_cmd_handler/verify'
 require 'slash_cmd_handler/queue'
 require 'slash_cmd_handler/dequeue'

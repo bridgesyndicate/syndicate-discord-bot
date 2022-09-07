@@ -22,6 +22,7 @@ require 'leaderboard'
 require 'sqs_poller'
 require 'syndicate_web_service'
 require 'slash_cmd_handler'
+require 'admin_cmd_handler'
 require 'discord_access'
 require 'welcome_message'
 
@@ -30,6 +31,7 @@ SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
 opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'
 bot = Discordrb::Bot.new(opts)
+bot_command = Discordrb::Commands::CommandBot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'], prefix: '-')
 DiscordWebhookClient.instance.set_bot(bot)
 
 $rom = Scrims::Storage.new.rom
@@ -67,12 +69,13 @@ leaderboard = Scrims::Leaderboard.new($rom)
 
 SlashCmdHandler::Party.new(bot).add_handlers
 SlashCmdHandler::Duel.new(bot).add_handlers
-SlashCmdHandler::Barr.new(bot).add_handlers
 SlashCmdHandler::Queue.new(bot, queue).add_handlers
 SlashCmdHandler::Dequeue.new(bot, queue).add_handlers
 SlashCmdHandler::Leaderboard.new(bot, leaderboard).add_handlers
 SlashCmdHandler::Verify.init(bot)
 WelcomeMessage.init(bot)
+
+AdminCmdHandler::Ban.new(bot, bot_command).add_handlers
 
 poller = SqsPoller.new
 poller.run

@@ -2,6 +2,7 @@ class DiscordAccess
   VERIFIED_ROLE_NAME = 'verified'
   BANNED_ROLE_NAME = 'banned'
   MODERATOR_ROLE_NAME = 'moderator'
+  ADMIN_ROLE_NAME = 'admin'
   FAMOUS_ROLE_NAME = '*'
 
   class << self
@@ -27,6 +28,12 @@ class DiscordAccess
       roles.map { |role|
         role.name.downcase }
         .include?(MODERATOR_ROLE_NAME)
+    end
+
+    def is_admin?(roles)
+      roles.map { |role|
+        role.name.downcase }
+        .include?(ADMIN_ROLE_NAME)
     end
 
     def get_verified_role(roles)

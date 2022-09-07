@@ -15,6 +15,11 @@ class SlashCmdHandler
       error.nil?
     end
 
+    def ensure_admin(event, sender_roles, type)
+      error = :insufficient_permission if !DiscordAccess.is_admin?(sender_roles)
+      error.nil?
+    end
+
     def ensure_able_to_play(event, discord_id, command_or_button)
       begin
         user = User.new(discord_id: discord_id)
