@@ -52,8 +52,12 @@ class SyndicateWebService
     case method
     when POST
       @req = Net::HTTP::Post.new(uri.path)
-    else
+    when GET
       @req = Net::HTTP::Get.new(uri.path)
+    when DELETE
+      @req = Net::HTTP::Delete.new(uri.path)
+    else
+      raise 'unhandled HTTP method'
     end
     add_headers_to_request
     @req.body = body
@@ -120,9 +124,9 @@ class SyndicateWebService
     @signature = get_request_signature
     set_request
     protocol.request(req)
+  end
 
-
-    def ban_user_by_minecraft_uuid_post(minecraft_uuid)
+  def ban_user_by_minecraft_uuid_post(minecraft_uuid)
     @body = { minecraft_uuid: minecraft_uuid} .to_json
     @method = POST
     set_path("auth/ban")
