@@ -25,7 +25,7 @@ class User
 
   def get_properties
     begin
-      res = SyndicateWebService.get_user_record(discord_id)
+      res = SyndicateWebService.new.get_user_record(discord_id)
     rescue
       raise CouldNotPopulateUser
     end

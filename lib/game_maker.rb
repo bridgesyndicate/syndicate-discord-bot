@@ -116,7 +116,7 @@ class GameMaker
       game = game.merge({ :elo_before_game => get_elo_map(match) })
       game_json = JSON.pretty_generate(game)
       syn_logger game_json
-      status = web_service.send_game_to_syndicate_web_service(game_json)
+      status = web_service.new.send_game_to_syndicate_web_service(game_json)
       if status.class == Net::HTTPOK
         syn_logger "Sent new game #{match}, #{status}"
       else

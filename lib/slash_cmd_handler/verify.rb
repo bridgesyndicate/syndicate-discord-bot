@@ -7,7 +7,7 @@ class SlashCmdHandler
     def self.init(bot)
       bot.application_command(:verify) do |event|
         code = event.options['code']
-        response = SyndicateWebService.register_with_syndicate_web_service(code, event.user.id)
+        response = SyndicateWebService.new.register_with_syndicate_web_service(code, event.user.id)
         case response
         when Net::HTTPBadGateway
           error = :bad_status

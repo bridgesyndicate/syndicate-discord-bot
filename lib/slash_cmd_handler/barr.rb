@@ -17,7 +17,7 @@ class SlashCmdHandler
              "command on #{event.options['ign']}"
 
         next unless ensure_moderator(event, roles_for_member(event.user), :barr)
-        status = SyndicateWebService.get_player_by_minecraft_name(event.options['ign'])
+        status = SyndicateWebService.new.get_player_by_minecraft_name(event.options['ign'])
         if status.class == Net::HTTPOK
           puts "#{Time.now.inspect.to_s} status OK"
           discord_id = JSON.parse(status.body)['user']['discord_id']

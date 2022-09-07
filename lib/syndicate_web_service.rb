@@ -1,7 +1,9 @@
 require 'secrets.rb'
 
 class SyndicateWebService
-  def self.generate_knopfnsxoh_url(resource)
+  attr_accessor :req, :body, :url, :uri, :signature, :method
+
+  def generate_url(resource)
     if SYNDICATE_ENV == 'development'
       "http://localhost:4567/#{resource}"
     else
@@ -9,14 +11,14 @@ class SyndicateWebService
     end
   end
 
-  def self.get_sigv4_signer
+  def get_sigv4_signer
     Aws::Sigv4::Signer.new(
       service: 'execute-api',
       credentials: AwsCredentials.instance.credentials,
       region: AwsCredentials.instance.region)
   end
 
-  def self.sign_request(signer, method, url, body)
+  def sign_request(signer)
     signer.sign_request(
       http_method: method,
       url: url,
@@ -24,123 +26,99 @@ class SyndicateWebService
     )
   end
 
-  def self.send_game_to_syndicate_web_service(game_json)
-    url = generate_knopfnsxoh_url('auth/game')
-    signer = get_sigv4_signer
-    signature = sign_request(signer, 'POST', url, game_json)
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Post.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
+  def header_list
+    %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
+  end
+
+  def add_headers_to_request
     header_list.each do |header|
-      req[header] = signature.headers[header]
-    end
-    puts game_json if SYNDICATE_ENV == 'development'
-    req.body = game_json
-    begin
-      https.request(req)
-    rescue Exception => e
-      e
+      @req[header] = @signature.headers[header]
     end
   end
 
-  def self.get_user_record(discord_id)
-    url = generate_knopfnsxoh_url("auth/user/by-discord-id/#{discord_id}")
+  def get_request_signature
     signer = get_sigv4_signer
-    signature = sign_request(signer, 'GET', url, '')
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Get.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
-    header_list.each do |header|
-      req[header] = signature.headers[header]
-    end
-    req.body = ''
-    return https.request(req)
+    syn_logger body unless body.nil? or body.empty?
+    sign_request(signer)
   end
 
-  def self.register_with_syndicate_web_service(kick_code, discord_id)
-    url = generate_knopfnsxoh_url("auth/register/by-kick-code/#{kick_code}/discord-id/#{discord_id}")
-    signer = get_sigv4_signer
-    signature = sign_request(signer, 'POST', url, '')
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Post.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
-    header_list.each do |header|
-      req[header] = signature.headers[header]
-    end
-    req.body = ''
-    return https.request(req)
+  def protocol
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true unless SYNDICATE_ENV == 'development'
+    return http
   end
 
-  def self.accept_game_syndicate_web_service(uuid, discord_id)
-    url = generate_knopfnsxoh_url("auth/game/accept/#{uuid}/discord-id/#{discord_id}")
-    signer = get_sigv4_signer
-    signature = sign_request(signer, 'POST', url, '')
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Post.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
-    header_list.each do |header|
-      req[header] = signature.headers[header]
+  def set_request
+    case method
+    when POST
+      @req = Net::HTTP::Post.new(uri.path)
+    else
+      @req = Net::HTTP::Get.new(uri.path)
     end
-    req.body = ''
-    return https.request(req)
+    add_headers_to_request
+    @req.body = body
   end
 
-  def self.warp_game_syndicate_web_service(game_uuid, discord_id)
-    url = generate_knopfnsxoh_url(
-      "auth/warp/by-discord-id/#{discord_id}/to-game/#{game_uuid}")
-    signer = get_sigv4_signer
-    signature = sign_request(signer, 'POST', url, '')
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Post.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
-    header_list.each do |header|
-      req[header] = signature.headers[header]
-    end
-    req.body = ''
-    return https.request(req)
+  def set_path(path)
+    @url = generate_url(path)
+    @uri = URI.parse(url)
   end
 
-  def self.user_by_discord_id_post(discord_ids)
-    url = generate_knopfnsxoh_url(
-      "auth/user/by-discord-id")
-    signer = get_sigv4_signer
-    body = discord_ids.to_json
-    signature = sign_request(signer, 'POST', url, body)
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Post.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
-    header_list.each do |header|
-      req[header] = signature.headers[header]
-    end
-    req.body = body
-    return https.request(req)
+  def send_game_to_syndicate_web_service(game_json)
+    @body = game_json
+    @method = POST
+    set_path('auth/game')
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
   end
 
-  def self.get_player_by_minecraft_name(minecraft_name)
-    url = generate_knopfnsxoh_url("auth/user/by-minecraft-name/#{minecraft_name}")
-    signer = get_sigv4_signer
-    signature = sign_request(signer, 'GET', url, '')
-    uri = URI.parse(url)
-    https = Net::HTTP.new(uri.host,uri.port)
-    https.use_ssl = true unless SYNDICATE_ENV == 'development'
-    req = Net::HTTP::Get.new(uri.path)
-    header_list = %w/host x-amz-date x-amz-security-token x-amz-content-sha256 authorization/
-    header_list.each do |header|
-      req[header] = signature.headers[header]
-    end
-    req.body = ''
-    return https.request(req)
+  def get_user_record(discord_id)
+    @method = GET
+    set_path("auth/user/by-discord-id/#{discord_id}")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
+  def register_with_syndicate_web_service(kick_code, discord_id)
+    @method = POST
+    set_path("auth/register/by-kick-code/#{kick_code}/discord-id/#{discord_id}")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
+  def accept_game_syndicate_web_service(uuid, discord_id)
+    @method = POST
+    set_path("auth/game/accept/#{uuid}/discord-id/#{discord_id}")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
+  def warp_game_syndicate_web_service(game_uuid, discord_id)
+    @method = POST
+    set_path("auth/warp/by-discord-id/#{discord_id}/to-game/#{game_uuid}")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
+  def user_by_discord_id_post(discord_ids)
+    @body = discord_ids.to_json
+    @method = POST
+    set_path("auth/user/by-discord-id")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
+  def get_player_by_minecraft_name(minecraft_name)
+    @method = GET
+    set_path("auth/user/by-minecraft-name/#{minecraft_name}")
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
   end
 end
