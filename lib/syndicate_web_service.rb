@@ -68,78 +68,66 @@ class SyndicateWebService
     @uri = URI.parse(url)
   end
 
+  def perform_request
+    @signature = get_request_signature
+    set_request
+    protocol.request(req)
+  end
+
   def send_game_to_syndicate_web_service(game_json)
     @body = game_json
     @method = POST
     set_path('auth/game')
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def get_user_record(discord_id)
     @method = GET
     set_path("auth/user/by-discord-id/#{discord_id}")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def register_with_syndicate_web_service(kick_code, discord_id)
     @method = POST
     set_path("auth/register/by-kick-code/#{kick_code}/discord-id/#{discord_id}")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def accept_game_syndicate_web_service(uuid, discord_id)
     @method = POST
     set_path("auth/game/accept/#{uuid}/discord-id/#{discord_id}")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def warp_game_syndicate_web_service(game_uuid, discord_id)
     @method = POST
     set_path("auth/warp/by-discord-id/#{discord_id}/to-game/#{game_uuid}")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def user_by_discord_id_post(discord_ids)
     @body = discord_ids.to_json
     @method = POST
     set_path("auth/user/by-discord-id")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def get_player_by_minecraft_name(minecraft_name)
     @method = GET
     set_path("auth/user/by-minecraft-name/#{minecraft_name}")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def ban_user_by_minecraft_uuid_post(minecraft_uuid)
     @body = { minecraft_uuid: minecraft_uuid} .to_json
     @method = POST
     set_path("auth/ban")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 
   def unban_user_by_minecraft_uuid_delete(minecraft_uuid)
     @method = DELETE
     set_path("auth/ban/#{minecraft_uuid}")
-    @signature = get_request_signature
-    set_request
-    protocol.request(req)
+    perform_request
   end
 end
