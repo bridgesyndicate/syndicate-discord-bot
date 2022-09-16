@@ -79,7 +79,7 @@ class SyndicateEmbeds
         color: RED
       }
     },
-    barr: {
+    ban: {
       no_error: {
         content: BARR_COMMAND,
         description: wrap_strong('This user is now banned: '),
@@ -101,9 +101,15 @@ class SyndicateEmbeds
         color: RED
       }
     },
-    barr_acknowledge: {
+    ban_acknowledge: {
       no_error: {
         description: wrap_strong('You have been banned.'),
+        color: INVISIBLE
+      }
+    },
+    unban_acknowledge: {
+      no_error: {
+        description: wrap_strong('You have been unbanned.'),
         color: INVISIBLE
       }
     },

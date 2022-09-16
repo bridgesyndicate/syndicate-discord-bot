@@ -1,1 +1,1 @@
-require 'admin_cmd_handler/ban'
+require 'admin_cmd_handler/ban_unban'

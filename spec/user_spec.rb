@@ -99,5 +99,26 @@ describe '#user' do
       expect(user.is_verified?).to be true
     end
 
+    it 'a user is not banned by default' do
+      user = User.new(discord_id: discord_id)
+      expect(user.is_banned?).to be nil
+    end
+
+    it 'a banned user has the banned property' do
+      user = User.new(discord_id: discord_id)
+      user.ban
+      user2 = User.new(discord_id: discord_id)
+      expect(user2.is_banned?).to be true
+    end
+
+    it 'an unbanned user no longer has the banned property' do
+      user = User.new(discord_id: discord_id)
+      user.ban
+      user2 = User.new(discord_id: discord_id)
+      user.unban
+      user3 = User.new(discord_id: discord_id)
+      expect(user3.is_banned?).to be nil
+    end
+
   end
 end

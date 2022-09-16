@@ -184,13 +184,13 @@ tool 'create-party-command' do
   end
 end
 
-tool 'create-barr-command' do
+tool 'create-ban-command' do
   def run
     require_relative 'discord_api'
     client = DiscordApi.new(bot_token: $token)
     definition = {
-      name: 'barr',
-      description: 'Barr (ban) a player',
+      name: 'ban',
+      description: 'Ban a player',
       options: [
         {
           name: 'ign',
@@ -203,3 +203,24 @@ tool 'create-barr-command' do
     client.create_application_command(definition)
   end
 end
+
+tool 'create-unban-command' do
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: $token)
+    definition = {
+      name: 'unban',
+      description: 'Unban a player',
+      options: [
+        {
+          name: 'ign',
+          description: 'The Minecraft IGN of the player to unban',
+          type: 3,
+          required: true,
+        }
+      ]
+    }
+    client.create_application_command(definition)
+  end
+end
+

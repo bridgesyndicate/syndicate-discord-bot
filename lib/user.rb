@@ -48,13 +48,33 @@ class User
   end
 
   def is_banned?
-    false
+    properties[:banned]
+  end
+
+  def ban
+    cache[discord_id][:banned] = true
+  end
+
+  def unban
+    cache[discord_id].delete(:banned)
   end
 
   def add_verified_role(bot)
     discord_server = bot.server(BotConfig.config.discord_guild_id)
     member = discord_server.member(properties[:discord_id])
     member.add_role(DiscordAccess.get_verified_role(discord_server.roles)) unless member.nil?
+  end
+
+  def add_banned_role(bot)
+    discord_server = bot.server(BotConfig.config.discord_guild_id)
+    member = discord_server.member(properties[:discord_id])
+    member.add_role(DiscordAccess.get_banned_role(discord_server.roles)) unless member.nil?
+  end
+
+  def remove_banned_role(bot)
+    discord_server = bot.server(BotConfig.config.discord_guild_id)
+    member = discord_server.member(properties[:discord_id])
+    member.remove_role(DiscordAccess.get_banned_role(discord_server.roles)) unless member.nil?
   end
 end
 

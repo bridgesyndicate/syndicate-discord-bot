@@ -31,7 +31,6 @@ SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
 opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
 opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'
 bot = Discordrb::Bot.new(opts)
-bot_command = Discordrb::Commands::CommandBot.new(token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'], prefix: '-')
 DiscordWebhookClient.instance.set_bot(bot)
 
 $rom = Scrims::Storage.new.rom
@@ -75,7 +74,7 @@ SlashCmdHandler::Leaderboard.new(bot, leaderboard).add_handlers
 SlashCmdHandler::Verify.init(bot)
 WelcomeMessage.init(bot)
 
-AdminCmdHandler::Ban.new(bot, bot_command).add_handlers
+AdminCmdHandler::BanUnban.new(bot).add_handlers
 
 poller = SqsPoller.new
 poller.run

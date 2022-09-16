@@ -20,7 +20,7 @@ class SlashCmdHandler
     def add_handlers
       bot.application_command(:lb) do |event|
         syn_logger "#{event.user.id}, #{event.user.username} using leaderboard command"
-        next unless ensure_able_to_play(event, event.user.id.to_s, 'command')
+        next unless ensure_able_to_play(event, event.user.id.to_s, 'command', 'You')
         begin
           lb_formatted = leaderboard.format_lb(event.options['sort'] || DEFAULT_SORTING_TYPE,
                                                event.options['page'] || DEFAULT_PAGE_NUMBER,
