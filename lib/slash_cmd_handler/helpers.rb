@@ -21,7 +21,7 @@ class SlashCmdHandler
       error.nil?
     end
 
-    def ensure_able_to_play(event, discord_id, command_or_button, you_or_they)
+    def ensure_able_to_play(bot, event, discord_id, command_or_button, you_or_they)
       begin
         user = User.new(discord_id: discord_id)
       rescue User::UnregisteredUser => e
@@ -31,6 +31,7 @@ class SlashCmdHandler
           event.interaction.edit_response(content: you_or_they + ' must be verified to accept this invite.')
         end
       end
+      user.add_verified_role(bot) if e.nil?
 
       if user.is_banned?
         e = :banned
@@ -39,6 +40,7 @@ class SlashCmdHandler
         elsif command_or_button == 'button'
           event.interaction.edit_response(content: you_or_they + ' are banned.')
         end
+        user.add_banned_role(bot)
       end
       e.nil?
     end
