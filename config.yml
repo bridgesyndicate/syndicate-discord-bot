@@ -34,7 +34,7 @@ buckytour_test:
 syndicate:
   discord_application_id: 856369764729618432
   discord_guild_id: 1001238356648271923
-  discord_channel: 1001238356648271926
+  discord_channel: 1001243339976351895
   discord_hook: 1006014050993455176
   fqdn: bridgesyndicate.gg
   icon_thumb: "https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png"
