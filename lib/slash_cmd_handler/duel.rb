@@ -70,7 +70,7 @@ class SlashCmdHandler
                             }
           game_json = duel.to_json
           puts "game json: #{game_json}"
-          status = SyndicateWebService
+          status = SyndicateWebService.new
                     .send_game_to_syndicate_web_service(game_json)
         end
 
