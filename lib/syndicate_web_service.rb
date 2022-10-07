@@ -38,7 +38,6 @@ class SyndicateWebService
 
   def get_request_signature
     signer = get_sigv4_signer
-    syn_logger body unless body.nil? or body.empty?
     sign_request(signer)
   end
 

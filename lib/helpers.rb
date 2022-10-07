@@ -16,7 +16,9 @@ def format_discord_id_mention(id)
 end
 
 def syn_logger(msg)
-  puts msg if SYNDICATE_ENV != 'test'
+  s = 0
+  caller.each_with_index { |c, i| s = d if c.include?(__method__.to_s) }
+  puts "#{caller[s]}: #{msg}" if SYNDICATE_ENV != 'test'
 end
 
 def now

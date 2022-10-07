@@ -6,7 +6,8 @@ RSpec.describe '#syndicate web service' do
   let(:kick_code) { '56ldtzDOy5u2PyGM' }
   shared_examples 'a proper request' do
     it 'sends a proper request' do
-      expect(result).to be_a Net::HTTPOK
+      expect(result).to be_a Net::HTTPOK if status == 200
+      expect(result).to be_a Net::HTTPNotFound if status == 404
     end
   end
 
@@ -30,9 +31,9 @@ RSpec.describe '#syndicate web service' do
                'X-Amz-Content-Sha256'=>'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                 'X-Amz-Date'=>'20211019T223700Z'
               })
-        .to_return(status: 200, body: "", headers: {})
+        .to_return(status: status, body: "", headers: {})
     end
-
+    let(:status) { 200 }
     it_behaves_like 'a proper request'
   end
 
@@ -52,9 +53,9 @@ RSpec.describe '#syndicate web service' do
                 'X-Amz-Content-Sha256'=>'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
                 'X-Amz-Date'=>'20211019T223700Z'
               })
-        .to_return(status: 200, body: "", headers: {})
+        .to_return(status: status, body: "", headers: {})
     end
-
+    let(:status) { 200 }
     it_behaves_like 'a proper request'
   end  
   
@@ -76,9 +77,21 @@ RSpec.describe '#syndicate web service' do
                  'X-Amz-Content-Sha256'=>'df90f61398053a24602e04c21223f1a30880e971a7cad8f0b3ac8aede753c9ed',
                  'X-Amz-Date'=>'20211019T223700Z'
                })
-        .to_return(status: 200, body: "", headers: {})
+        .to_return(status: status, body: response_body, headers: {})
     end
     
-    it_behaves_like 'a proper request'
+    describe '200 OK' do
+      let(:response_body) { '' }
+      let(:status) { 200 }
+      it_behaves_like 'a proper request'
+    end
+    describe '404 Not Found' do
+      let(:response_body) { 'some bad error' }
+      let(:status) { 404 }
+      it_behaves_like 'a proper request'
+      it 'has a response body that we can print' do
+        expect(result.body).to eq 'some bad error'
+      end
+    end
   end
 end
