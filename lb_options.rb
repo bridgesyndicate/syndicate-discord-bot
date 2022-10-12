@@ -29,6 +29,12 @@ def lb_options
       description: 'Page of the leaderboard',
       type: 4,
       required: false
+    },
+    {
+      name: 'season',
+      description: 'Season of the leaderboard',
+      type: 3,
+      required: false
     }
   ]
 end
