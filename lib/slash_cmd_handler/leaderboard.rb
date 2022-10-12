@@ -7,6 +7,7 @@ class SlashCmdHandler
 
     DEFAULT_SORTING_TYPE = 'elo'
     DEFAULT_PAGE_NUMBER = 1
+    CURRENT_SEASON = BotConfig.config.current_season
 
     include Helpers
 
@@ -24,7 +25,7 @@ class SlashCmdHandler
         begin
           lb_formatted = leaderboard.format_lb(event.options['sort'] || DEFAULT_SORTING_TYPE,
                                                event.options['page'] || DEFAULT_PAGE_NUMBER,
-                                               BotConfig.config.current_season,
+                                               event.options['season'] || CURRENT_SEASON,
                                                event.user.id)
         rescue Scrims::Leaderboard::PageOutOfBoundsError => e
         end
