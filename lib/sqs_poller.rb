@@ -2,14 +2,17 @@ require 'discord_webhook_client'
 require 'game_stream'
 
 class SqsPoller
-  attr_accessor :sqs_client, :thread, :discord_webhook_client
+  attr_accessor :thread, :discord_webhook_client
 
   SQS_QUEUE_URL = 'https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_production_player_messages'
 
   def initialize
-    @sqs_client = Aws::SQS::Client
-                    .new(credentials: AwsCredentials.instance.credentials)
     @discord_webhook_client = DiscordWebhookClient.instance
+  end
+
+  def sqs_client
+    Aws::SQS::Client
+      .new(credentials: AwsCredentials.instance.credentials)
   end
 
   def unlock_players(game)
