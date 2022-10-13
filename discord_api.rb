@@ -1,17 +1,12 @@
 require "faraday"
 require "json"
-require 'bot_config'
-BotConfig.load(File.read('./config.yml'), :buckytour_test)
 
 class DiscordApi
 
-    DISCORD_APPLICATION_ID = BotConfig.config.discord_application_id # the bots id
-    DISCORD_GUILD_ID = BotConfig.config.discord_guild_id # the server's id
-
-    def initialize(bot_token:)
-      @client_id = DISCORD_APPLICATION_ID
-      @guild_id = DISCORD_GUILD_ID
+    def initialize(bot_token:, application_id:, guild_id:)
       @bot_token = bot_token
+      @client_id = application_id
+      @guild_id = guild_id
     end
 
     def list_guild_commands

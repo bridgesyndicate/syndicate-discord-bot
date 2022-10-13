@@ -3,16 +3,15 @@ require 'bot_config'
 
 RSpec.describe '#config' do
 
-  let(:namespace) { :syndicate }
   let(:some_key) { :discord_channel }
 
   before(:each) do
     config_string = File.read(config_file)
-    BotConfig.load(config_string, :buckytour_test)
+    BotConfig.load(config_string)
   end
 
   describe 'when the config file exists' do
-    let(:config_file) { './config.yml' }
+    let(:config_file) { './production-config.yml' }
 
     it 'gets values from keys' do
       expect(BotConfig.config.discord_channel.class).to eq Integer

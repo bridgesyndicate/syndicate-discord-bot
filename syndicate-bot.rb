@@ -12,7 +12,7 @@ libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
 require 'bot_config'
-BotConfig.load(File.read('./config.yml'), :syndicate)
+BotConfig.load(File.read(ARGV.pop))
 
 require 'delayed_worker'
 require 'discord_response_helper'
@@ -25,10 +25,12 @@ require 'slash_cmd_handler'
 require 'admin_cmd_handler'
 require 'discord_access'
 require 'welcome_message'
+require 'mock_secrets'
 
 SYNDICATE_ENV = ENV['SYNDICATE_ENV'] || 'production'
-
-opts = { token: Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN'] }
+secrets_manager_klass = Object.const_get(BotConfig.config.secrets_manager_klass).instance
+token = secrets_manager_klass.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+opts = { token: token }
 opts.merge(log_mode: :debug) if SYNDICATE_ENV == 'production'
 bot = Discordrb::Bot.new(opts)
 DiscordWebhookClient.instance.set_bot(bot)

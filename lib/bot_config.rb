@@ -6,8 +6,8 @@ class BotConfig
     @@config
   end
 
-  def self.load(config_string, namespace)
+  def self.load(config_string)
     @@config = OpenStruct
-      .new(YAML.load(config_string)[namespace.to_s])
+      .new(YAML.load(config_string))
   end
  end

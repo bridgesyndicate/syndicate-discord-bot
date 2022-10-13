@@ -6,8 +6,6 @@ require 'game_maker'
 require 'scrims'
 require 'scrims/match'
 require 'schema/game_post'
-require 'bot_config'
-BotConfig.load(File.read('./config.yml'), :syndicate)
 
 RSpec.describe '#game maker' do
 

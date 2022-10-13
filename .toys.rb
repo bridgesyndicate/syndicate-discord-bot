@@ -7,8 +7,14 @@ libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 
 require 'secrets.rb'
+require 'mock_secrets.rb'
+require 'bot_config.rb'
 
-$token = Secrets.instance.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+BotConfig.load(File.read(ARGV.pop))
+secrets_manager_klass = Object.const_get(BotConfig.config.secrets_manager_klass).instance
+TOKEN = secrets_manager_klass.get_secret('discord-bot-token')['DISCORD_BOT_TOKEN']
+APPLICATION_ID = BotConfig.config.discord_application_id
+GUILD_ID = BotConfig.config.discord_guild_id
 
 tool 'hello' do
   def run
@@ -17,48 +23,53 @@ tool 'hello' do
 end
 
 tool 'list-application-commands' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     result = client.list_application_commands
     puts JSON.pretty_generate(result)
   end
 end
 
 tool 'list-guild-commands' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     result = client.list_guild_commands
     puts JSON.pretty_generate(result)
   end
 end
 
 tool 'delete-application-command' do
+  required_arg :config
   flag :command_id, '--command-id ID'
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     result = client.delete_application_command(command_id)
     puts JSON.pretty_generate(result)
   end
 end
 
 tool 'delete-guild-command' do
+  required_arg :config
   flag :command_id, '--command-id ID'
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     result = client.delete_guild_command(command_id)
     puts JSON.pretty_generate(result)
   end
 end
 
 tool 'create-duel-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
     require_relative 'game_options'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'duel',
       description: 'Challenge a verified player to a game of Bridge',
@@ -78,9 +89,10 @@ tool 'create-duel-command' do
 end
 
 tool 'create-register-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'verify',
       description: 'Use a code to complete your registration',
@@ -98,9 +110,10 @@ tool 'create-register-command' do
 end
 
 tool 'create-queue-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'q',
       description: 'Hop into the bridge queue.',
@@ -110,9 +123,10 @@ tool 'create-queue-command' do
 end
 
 tool 'create-dequeue-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'dq',
       description: 'Remove myself from the queue.',
@@ -122,9 +136,10 @@ tool 'create-dequeue-command' do
 end
 
 tool 'create-list-queue-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'list',
       description: 'List the queue',
@@ -134,10 +149,11 @@ tool 'create-list-queue-command' do
 end
 
 tool 'create-lb-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
     require_relative 'lb_options'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'lb',
       description: 'Display the leaderboard',
@@ -148,9 +164,10 @@ tool 'create-lb-command' do
 end
 
 tool 'create-party-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: "party",
       description: "Party commands",
@@ -185,9 +202,10 @@ tool 'create-party-command' do
 end
 
 tool 'create-ban-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'ban',
       description: 'Ban a player',
@@ -205,9 +223,10 @@ tool 'create-ban-command' do
 end
 
 tool 'create-unban-command' do
+  required_arg :config
   def run
     require_relative 'discord_api'
-    client = DiscordApi.new(bot_token: $token)
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
     definition = {
       name: 'unban',
       description: 'Unban a player',

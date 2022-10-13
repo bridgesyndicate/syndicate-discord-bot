@@ -1,6 +1,8 @@
 require 'simplecov'
 require 'webmock/rspec'
 require 'helpers'
+require 'bot_config'
+BotConfig.load(File.read('./development-config.yml'))
 
 SimpleCov.start
 

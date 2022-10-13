@@ -1,0 +1,13 @@
+discord_application_id: 1029878414347346011
+discord_guild_id: 1029876213545701469
+discord_channel: 1029876214208413771
+discord_hook: 1029940263239561267
+fqdn: bridgesyndicate.gg
+icon_thumb: "https://s3.us-west-2.amazonaws.com/www.bridgesyndicate.gg/bridge-icon-128x128-transparent.png"
+show_elo: true
+include_duel_options: true
+admin_discord_id: 246107858712788993
+welcome_message_title: ''
+how_to_verify_description: ''
+secrets_manager_klass: 'MockSecrets'
+season_klass: Season
