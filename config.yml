@@ -31,6 +31,7 @@ buckytour_test:
                                 **2) In THIS channel, do `/verify <your code>`**\n
                                 **3) You should now be verified!**\n\n
                                  *If you are still having trouble, make a ticket in the BuckyTour Discord.*"
+  season_klass: Season
 syndicate:
   discord_application_id: 856369764729618432
   discord_guild_id: 1001238356648271923
@@ -48,3 +49,4 @@ syndicate:
                                 **3) You should now be verified!**\n\n
                                  *If you are still having trouble, make a ticket in the Bridge Syndicate Discord.*"
   current_season: 'preseason2'
+  season_klass: Season

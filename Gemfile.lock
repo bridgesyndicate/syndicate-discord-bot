@@ -187,6 +187,8 @@ GEM
       toys-core (= 0.12.2)
     toys-core (0.12.2)
     transproc (1.1.1)
+    tzinfo (2.0.5)
+      concurrent-ruby (~> 1.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8)
@@ -223,6 +225,7 @@ DEPENDENCIES
   sqlite3
   timecop
   toys
+  tzinfo
   webmock
 
 BUNDLED WITH

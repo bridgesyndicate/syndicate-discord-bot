@@ -1,4 +1,6 @@
 require 'timecop'
+require 'bot_config'
+require 'season'
 
 class GameMaker
   attr_accessor :web_service, :party_repo, :lock_repo, :elo_resolver
@@ -102,7 +104,7 @@ class GameMaker
       lock_repo.lock_players(blue_team_discord_ids + red_team_discord_ids, 30.minutes)
       goals = 5
       length = 900
-      season = BotConfig.config.current_season
+      season = Object.const_get(BotConfig.config.season_klass).new.season_name
       game = make_game(
         via: 'queue match',
         blue_team_discord_ids: blue_team_discord_ids,
