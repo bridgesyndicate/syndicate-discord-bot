@@ -77,6 +77,7 @@ SlashCmdHandler::Verify.init(bot)
 WelcomeMessage.init(bot)
 
 AdminCmdHandler::BanUnban.new(bot).add_handlers
+AdminCmdHandler::Unlock.new(bot).add_handlers
 
 poller = SqsPoller.new
 poller.run

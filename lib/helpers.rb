@@ -1,4 +1,4 @@
-DISCORD_SERVER_ID=1001238356648271923 #TODO: make this grab from the config, without breaking every spec
+DISCORD_SERVER_ID=BotConfig.config.discord_guild_id
 STARTING_ELO=1000
 UUID_REGEX = /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/
 POST='POST'

@@ -243,3 +243,26 @@ tool 'create-unban-command' do
   end
 end
 
+tool 'create-unlock-command' do
+  required_arg :config
+  def run
+    require_relative 'discord_api'
+    client = DiscordApi.new(bot_token: TOKEN, application_id: APPLICATION_ID, guild_id: GUILD_ID)
+    definition = {
+      name: 'unlock',
+      description: 'Unlocks a player',
+      default_member_permissions: "0",
+      dm_permission: false,
+      options: [
+        {
+          name: 'discord_id',
+          description: 'The Discord ID of the player to unlock',
+          type: 3,
+          required: true,
+        }
+      ]
+    }
+    client.create_application_command(definition)
+  end
+end
+
