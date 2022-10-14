@@ -4,8 +4,6 @@ ADD syn-bot.tar /root
 
 RUN set -eux; \
     	cd; \
-	bundle config set without development; \
-	bundle config set path vendor/bundle; \
 	bundle install; \
 	find . -name interaction.rb
 
