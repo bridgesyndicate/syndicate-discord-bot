@@ -1,12 +1,8 @@
 #!/usr/bin/env ruby
-
 # frozen_string_literal: true
-require 'bundler'
-require 'time'
-Bundler.require
-require 'discordrb'
-require 'discordrb/webhooks'
-require 'rom-repository'
+
+require 'rubygems'
+require 'bundler/setup'
 
 libpath = File.join(File.expand_path(File.dirname(__FILE__)), 'lib')
 $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
