@@ -19,6 +19,7 @@ gem 'rom-sql'
 gem 'sqlite3'
 gem 'toys'
 gem 'tzinfo'
+gem 'tzinfo-data'
 
 group :test do
   gem 'faker'
