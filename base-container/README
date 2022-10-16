@@ -1,0 +1,10 @@
+The Dockerfile.broke was an attempt but the libruby doesnt link
+
+root@e4e7bcdc5cbb:~# ldd vendor/bundle/ruby/2.7.0/gems/ffi-1.15.5/lib/ffi_c.so
+	linux-vdso.so.1 (0x00007ffcea966000)
+	libruby.so.2.7 => not found
+	libffi.so.7 => /lib/x86_64-linux-gnu/libffi.so.7 (0x00007f9963780000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f996358e000)
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f996356b000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f99637b7000)
+

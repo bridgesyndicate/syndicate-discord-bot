@@ -1,0 +1,21 @@
+FROM public.ecr.aws/ubuntu/ubuntu:20.04
+
+WORKDIR /root
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+	    build-essential \
+	    ca-certificates \
+	    curl \
+	    libdb-dev \
+	    libgdbm-dev \
+	    libpq-dev \
+	    libreadline-dev \
+	    libsqlite3-dev \
+	    libssl-dev \
+	    openssl \
+	    zlib1g-dev
+
+WORKDIR /
+ADD ruby-2.7.6.tar.gz /
+RUN cd ruby-2.7.6 && ./configure && make && make install
