@@ -45,7 +45,7 @@ class Season
 
   def is_early_last_day?
     day == COMPETITION_DAYS.last and
-      now.hour > 23
+      now.hour < 23
   end
 
   def is_middle_day?
