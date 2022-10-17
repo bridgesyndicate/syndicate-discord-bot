@@ -67,4 +67,9 @@ RSpec.describe '#season clock' do
       expect(season.season_name).to eq 'season15'
     end
   end
+  it 'is season2 on Sun Oct 16 02:00:00 PDT 2022' do
+    Timecop.freeze(Time.parse('Sun Oct 16 02:00:00 PDT 2022').utc) do
+      expect(season.season_name).to eq 'season2'
+    end
+  end
 end
