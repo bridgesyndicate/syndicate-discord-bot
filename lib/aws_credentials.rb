@@ -29,8 +29,8 @@ class AwsCredentials
       @refresh_time = Time.now.to_i + ALMOST_SIX_HOURS_IN_SECONDS
       @cached_credentials = get_credentials
     else
-      cached_credentials
       syn_logger "use cached"
+      cached_credentials
     end
   end
 
