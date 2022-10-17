@@ -19,16 +19,18 @@ class AwsCredentials
   end
 
   def get_credentials
-    syn_logger 'refreshing aws_credentials'
     ENV['SYNDICATE_ENV'] == 'production' ? production_credentials : dev_credentials
   end
 
   def credentials
+    syn_logger "credentials, now: #{Time.now.to_i}, refresh_time: #{refresh_time}"
     if refresh_time.nil? or refresh_time < Time.now.to_i
+      syn_logger 'refreshing aws_credentials'
       @refresh_time = Time.now.to_i + ALMOST_SIX_HOURS_IN_SECONDS
       @cached_credentials = get_credentials
     else
       cached_credentials
+      syn_logger "use cached"
     end
   end
 
