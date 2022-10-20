@@ -103,13 +103,17 @@ class Scrims
         column :created_at, DateTime, null: false
       end
       conf.default.create_table(:syndicate_leader_board) do
-        primary_key :discord_id
-        column :minecraft_uuid, String, null: false, unique: true
+        column :discord_id, String, null: false
+        column :minecraft_uuid, String, size: 36, null: false
         column :elo, Integer, null: false
         column :wins, Integer, null: false, default: 0
         column :losses, Integer, null: false, default: 0
         column :ties, Integer, null: false, default: 0
         column :season, String
+        index [:discord_id, :minecraft_uuid, :season], unique: true
+        index :losses
+        index :ties
+        index :wins
       end
     end
   end

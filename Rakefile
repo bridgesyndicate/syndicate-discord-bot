@@ -7,6 +7,9 @@ $LOAD_PATH.unshift(libpath) unless $LOAD_PATH.include?(libpath)
 dotpath = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(dotpath) unless $LOAD_PATH.include?(dotpath)
 
+require 'bot_config'
+BotConfig.load(File.read(ARGV.pop))
+
 require 'scrims'
 require 'helpers'
 

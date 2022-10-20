@@ -91,3 +91,32 @@ Lastly:
 2. run the bot on the cloud and test out all of the slash commands, both in the server and in DMs
 3. add the "Welcome" embed to the #verify channel. either with disco-hook or hard coded from a local bot instance
 ```
+
+
+## Dropping tables
+I didn't want to commit this into the code because mistakenly dropping tables is bad.
+`lib/scrims.rb`
+```ruby
+    def drop_pg_tables
+      ROM.container(:sql, container_type) do |conf|
+        conf.default.drop_table(:discord_user_queue)
+        conf.default.drop_table(:members)
+        conf.default.drop_table(:parties)
+        conf.default.drop_table(:locks)
+        conf.default.drop_table(:duels)
+        conf.default.drop_table(:syndicate_leader_board)
+      end
+    end
+```
+
+`Rakefile`
+
+```ruby
+task :drop_scrims_tables do
+  puts "Dropping tables on #{ENV['POSTGRES_HOST']}"
+  puts 'ctrl-c to ABORT, enter to continue'
+  foo = STDIN.gets
+  storage = Scrims::Storage.new
+  storage.drop_pg_tables
+end
+```
