@@ -11,3 +11,4 @@ welcome_message_title: ''
 how_to_verify_description: ''
 secrets_manager_klass: 'Secrets'
 season_klass: Season
+sqs_queue_url: "https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_production_player_messages"

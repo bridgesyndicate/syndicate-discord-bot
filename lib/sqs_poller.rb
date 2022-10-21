@@ -1,10 +1,11 @@
 require 'discord_webhook_client'
 require 'game_stream'
+require 'bot_config'
 
 class SqsPoller
   attr_accessor :thread, :discord_webhook_client
 
-  SQS_QUEUE_URL = 'https://sqs.us-west-2.amazonaws.com/595508394202/syndicate_production_player_messages'
+  SQS_QUEUE_URL = BotConfig.config.sqs_queue_url
 
   def initialize
     @discord_webhook_client = DiscordWebhookClient.instance
