@@ -47,7 +47,7 @@ class SlashCmdHandler
 
       bot.button(custom_id: /^duel_accept_uuid_/) do |event|
         event.update_message(content: 'Processing Duel...')
-        puts "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
+        syn_logger "#{Time.now.inspect.to_s} duel accept button hit by #{event.user.id}"
         uuid = event.interaction.button.custom_id.split('duel_accept_uuid_')[1]
         next unless ensure_able_to_play(bot, event, event.user.id.to_s, 'button', 'You')
 
@@ -62,30 +62,21 @@ class SlashCmdHandler
         rescue Scrims::Duel::MemberInQueueError => e
         rescue Scrims::Duel::MissingDuelError => e
         rescue Scrims::Duel::InvalidAcceptorError => e
-        end
-
-        if e.nil?
+        else
           discord_id_list = { red: duel.red_party_discord_id_list,
                               blue: duel.blue_party_discord_id_list
                             }
           game_json = duel.to_json
-          puts "game json: #{game_json}"
-          status = SyndicateWebService.new
-                    .send_game_to_syndicate_web_service(game_json)
+          syn_logger "game json: #{game_json}"
+          status = SyndicateWebService.new.send_game_to_syndicate_web_service(game_json)
+          syn_logger "Sent game to web service: #{status.inspect}"
+          e = :bad_status unless status.class == Net::HTTPOK
         end
-
-        if ( status.class == Net::HTTPOK || status.nil? )
-          puts "status OK"
-          SyndicateEmbeds::Builder.update(:accept_duel_request,
-                               event: event,
-                               error: e,
-                               discord_id_list: discord_id_list)
-        else
-          event.interaction.edit_response(content: "Something went wrong.")
-          puts status.inspect
-          puts status.body
-          puts status.to_hash.inspect
-        end
+        syn_logger "Error making game: #{e}" unless e.nil?
+        SyndicateEmbeds::Builder.update(:accept_duel_request,
+                                       event: event,
+                                       error: e,
+                                       discord_id_list: discord_id_list)
       end
     end
   end
