@@ -25,7 +25,8 @@ class SyndicateEmbeds
              error: nil,
              discord_id_list: nil,
              custom_id: nil,
-             forced_description: nil
+             forced_description: nil,
+             forced_title: nil
             )
 
       error = convert_error(error)
@@ -34,7 +35,7 @@ class SyndicateEmbeds
       add_content(event, entry) if has_content?(entry)
 
       channel.send_embed do |embed, view|
-        add_title(embed, entry) if has_title?(entry)
+        add_title(embed, entry, forced_title: forced_title) if has_title?(entry) || forced_title
         add_description(embed, entry, discord_id_list, forced_description: forced_description) if (has_description?(entry) || !forced_description.nil?)
         add_fields(embed, entry, discord_id_list) if has_fields?(entry)
         add_button(entry, view, custom_id) if has_button?(entry)
@@ -87,8 +88,8 @@ class SyndicateEmbeds
       !entry.title.nil?
     end
 
-    def add_title(embed, entry)
-      embed.title = entry.title
+    def add_title(embed, entry, forced_title: nil)
+      forced_title.nil? ? embed.title = entry.title : embed.title = forced_title
     end
 
     def has_description?(entry)

@@ -32,7 +32,6 @@ class SyndicateEmbeds
     leaderboard: {
       no_error: {
         content: '`/leaderboard:`',
-        title: wrap_strong('The Leaderboard:'),
         color: BLUE
       },
       page_out_of_bounds_error: {
