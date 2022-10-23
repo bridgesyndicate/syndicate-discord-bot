@@ -1,3 +1,4 @@
+require 'bundler'
 require 'simplecov'
 require 'webmock/rspec'
 require 'bot_config'
